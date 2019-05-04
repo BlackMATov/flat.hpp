@@ -135,18 +135,43 @@ namespace flat_hpp
             return data_.max_size();
         }
 
-        template < typename P
-                 , typename = std::enable_if_t<std::is_constructible<value_type, P>::value> >
-        std::pair<iterator, bool> insert(P&& p) {
-            //TODO(BlackMat): implme
-            return std::make_pair(end(), false);
+        mapped_type& operator[](key_type&& key) {
+            return insert(value_type(std::move(key), mapped_type())).first->second;
         }
 
-        template < typename P
-                 , typename = std::enable_if_t<std::is_constructible<value_type, P>::value> >
-        std::pair<iterator, bool> insert(const_iterator hint, P&& p) {
+        mapped_type& operator[](const key_type& key) {
+            return insert(value_type(key, mapped_type())).first->second;
+        }
+
+        mapped_type& at(const key_type& key) {
+            const auto iter = find(key);
+            if ( iter != end() ) {
+                return iter->second;
+            }
+            throw std::out_of_range("flat_map::at: key not found");
+        }
+
+        const mapped_type& at(const key_type& key) const {
+            const auto iter = find(key);
+            if ( iter != end() ) {
+                return iter->second;
+            }
+            throw std::out_of_range("flat_map::at: key not found");
+        }
+
+        std::pair<iterator, bool> insert(const value_type& value) {
+            bool found = true;
+            iterator iter = lower_bound(value.first);
+            if ( iter == end() || compare_(value.first, iter->first) ) {
+                iter = data_.insert(iter, value);
+                found = false;
+            }
+            return std::make_pair(iter, !found);
+        }
+
+        std::pair<iterator, bool> insert(const_iterator hint, const value_type& value) {
             //TODO(BlackMat): implme
-            return std::make_pair(end(), false);
+            return insert(value);
         }
 
         template < typename InputIter >
@@ -165,7 +190,7 @@ namespace flat_hpp
         template < typename... Args >
         std::pair<iterator, bool> emplace_hint(const_iterator hint, Args&&... args) {
             //TODO(BlackMat): implme
-            return insert(value_type(std::forward<Args>(args)...));
+            return insert(hint, value_type(std::forward<Args>(args)...));
         }
 
         void clear() noexcept {
@@ -197,13 +222,19 @@ namespace flat_hpp
         }
 
         iterator find(const key_type& key) {
-            //TODO(BlackMat): implme
-            return end();
+            iterator iter = lower_bound(key);
+            if ( iter != end() && compare_(key, iter->first) ) {
+                iter = end();
+            }
+            return iter;
         }
 
         const_iterator find(const key_type& key) const {
-            //TODO(BlackMat): implme
-            return end();
+            const_iterator iter = lower_bound(key);
+            if ( iter != end() && compare_(key, iter->first) ) {
+                iter = end();
+            }
+            return iter;
         }
 
         std::pair<iterator, iterator> equal_range(const key_type& key) {
@@ -218,22 +249,30 @@ namespace flat_hpp
 
         iterator lower_bound(const key_type& key) {
             //TODO(BlackMat): implme
-            return end();
+            return std::lower_bound(begin(), end(), key, [this](const value_type& l, const key_type& r){
+                return compare_(l.first, r);
+            });
         }
 
         const_iterator lower_bound(const key_type& key) const {
             //TODO(BlackMat): implme
-            return end();
+            return std::lower_bound(begin(), end(), key, [this](const value_type& l, const key_type& r){
+                return compare_(l.first, r);
+            });
         }
 
         iterator upper_bound(const key_type& key) {
             //TODO(BlackMat): implme
-            return end();
+            return std::upper_bound(begin(), end(), key, [this](const key_type& l, const value_type& r){
+                return compare_(l, r.first);
+            });
         }
 
         const_iterator upper_bound(const key_type& key) const {
             //TODO(BlackMat): implme
-            return end();
+            return std::upper_bound(begin(), end(), key, [this](const key_type& l, const value_type& r){
+                return compare_(l, r.first);
+            });
         }
 
         key_compare key_comp() const {

@@ -18,13 +18,12 @@ namespace
         using value_type = T;
 
         T* allocate(std::size_t n) {
-            (void)n;
-            return nullptr;
+            return static_cast<T*>(std::malloc(sizeof(T) * n));
         }
 
         void deallocate(T* p, std::size_t n) {
-            (void)p;
             (void)n;
+            std::free(p);
         }
     };
 
@@ -87,7 +86,7 @@ TEST_CASE("flat_map") {
         }
 
         {
-            std::vector<std::pair<const int,unsigned>> v;
+            std::vector<std::pair<int,unsigned>> v;
             auto s0 = map_t(v.cbegin(), v.cend());
             auto s1 = map_t(v.cbegin(), v.cend(), alloc_t());
             auto s2 = map_t(v.cbegin(), v.cend(), std::less<int>());
@@ -108,10 +107,21 @@ TEST_CASE("flat_map") {
         s0.size();
         s0.max_size();
     }
+    SECTION("access") {
+        using map_t = flat_map<int, unsigned>;
+        map_t s0;
+        s0[1] = 42;
+        s0.at(1);
+        my_as_const(s0).at(1);
+    }
     SECTION("inserts") {
         struct obj_t {
             obj_t(int i) : i(i) {}
             int i;
+
+            bool operator<(const obj_t& o) const {
+                return i < o.i;
+            }
         };
 
         using map_t = flat_map<int, obj_t>;
