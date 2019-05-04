@@ -28,11 +28,11 @@
 [flat.hpp][flat] is a header only library. All you need to do is copy the header files (`flat_set.hpp` and `flat_map.hpp`) into your project and include them:
 
 ```cpp
-#include "flat_set.hpp" // for flat_set<K>
-#include "flat_map.hpp" // for flat_map<K,V>
+#include "flat_set.hpp"
+#include "flat_map.hpp"
 ```
 
-## API
+## flat_set
 
 ```cpp
 template < typename Key
@@ -42,26 +42,188 @@ template < typename Key
 class flat_set;
 ```
 
-#### Member types
+### Member types
 
-| Member type            | Definition                        |
-|------------------------|-----------------------------------|
-| key_type               | Key                               |
-| value_type             | Key                               |
-| size_type              | Container::size_type              |
-| difference_type        | Container::difference_type        |
-| key_compare            | Compare                           |
-| value_compare          | Compare                           |
-| allocator_type         | Allocator                         |
-| container_type         | Container                         |
-| reference              | Container::reference              |
-| const_reference        | Container::const_reference        |
-| pointer                | Container::pointer                |
-| const_pointer          | Container::const_pointer          |
-| iterator               | Container::iterator               |
-| const_iterator         | Container::const_iterator         |
-| reverse_iterator       | Container::reverse_iterator       |
-| const_reverse_iterator | Container::const_reverse_iterator |
+| Member type              | Definition                          |
+|--------------------------|-------------------------------------|
+| `key_type`               | `Key`                               |
+| `value_type`             | `Key`                               |
+| `size_type`              | `Container::size_type`              |
+| `difference_type`        | `Container::difference_type`        |
+| `key_compare`            | `Compare`                           |
+| `value_compare`          | `Compare`                           |
+| `allocator_type`         | `Allocator`                         |
+| `container_type`         | `Container`                         |
+| `reference`              | `Container::reference`              |
+| `const_reference`        | `Container::const_reference`        |
+| `pointer`                | `Container::pointer`                |
+| `const_pointer`          | `Container::const_pointer`          |
+| `iterator`               | `Container::iterator`               |
+| `const_iterator`         | `Container::const_iterator`         |
+| `reverse_iterator`       | `Container::reverse_iterator`       |
+| `const_reverse_iterator` | `Container::const_reverse_iterator` |
+
+### Member functions
+
+```cpp
+explicit flat_set(
+    const Allocator& a);
+
+explicit flat_set(
+    const Compare& c = Compare(),
+    const Allocator& a = Allocator());
+
+template < typename InputIter >
+flat_set(
+    InputIter first,
+    InputIter last,
+    const Allocator& a);
+
+template < typename InputIter >
+flat_set(
+    InputIter first,
+    InputIter last,
+    const Compare& c = Compare(),
+    const Allocator& a = Allocator());
+
+flat_set(
+    std::initializer_list<value_type> ilist,
+    const Allocator& a);
+
+flat_set(
+    std::initializer_list<value_type> ilist,
+    const Compare& c = Compare(),
+    const Allocator& a = Allocator());
+
+flat_set(flat_set&& other);
+flat_set(const flat_set& other)
+
+flat_set& operator=(flat_set&& other);
+flat_set& operator=(const flat_set& other);
+flat_set& operator=(std::initializer_list<value_type> ilist);
+
+allocator_type get_allocator() const;
+```
+
+### Iterators
+
+```cpp
+iterator begin() noexcept;
+const_iterator begin() const noexcept;
+const_iterator cbegin() const noexcept;
+
+iterator end() noexcept;
+const_iterator end() const noexcept;
+const_iterator cend() const noexcept;
+
+reverse_iterator rbegin() noexcept;
+const_reverse_iterator rbegin() const noexcept;
+const_reverse_iterator crbegin() const noexcept;
+
+reverse_iterator rend() noexcept;
+const_reverse_iterator rend() const noexcept;
+const_reverse_iterator crend() const noexcept;
+```
+
+### Capacity
+
+```cpp
+bool empty() const noexcept;
+size_type size() const noexcept;
+size_type max_size() const noexcept;
+```
+
+### Modifiers
+
+```cpp
+std::pair<iterator, bool> insert(value_type&& value);
+std::pair<iterator, bool> insert(const value_type& value);
+
+iterator insert(const_iterator hint, value_type&& value);
+iterator insert(const_iterator hint, const value_type& value);
+
+template < typename InputIter >
+void insert(InputIter first, InputIter last);
+void insert(std::initializer_list<value_type> ilist);
+
+template < typename... Args >
+std::pair<iterator, bool> emplace(Args&&... args);
+template < typename... Args >
+iterator emplace_hint(const_iterator hint, Args&&... args);
+
+void clear() noexcept;
+iterator erase(const_iterator iter);
+iterator erase(const_iterator first, const_iterator last);
+size_type erase(const key_type& key);
+
+void swap(flat_set& other);
+```
+
+### Lookup
+
+```cpp
+size_type count(const key_type& key) const;
+
+iterator find(const key_type& key);
+const_iterator find(const key_type& key) const;
+
+std::pair<iterator, iterator> equal_range(const key_type& key);
+std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
+
+iterator lower_bound(const key_type& key);
+const_iterator lower_bound(const key_type& key) const;
+
+iterator upper_bound(const key_type& key);
+const_iterator upper_bound(const key_type& key) const;
+```
+
+### Observers
+
+```cpp
+key_compare key_comp() const;
+value_compare value_comp() const;
+```
+
+### Non-member functions
+
+```cpp
+template < typename K, typename C, typename A >
+void swap(
+    flat_set<K, C, A>& l,
+    flat_set<K, C, A>& r);
+
+template < typename K, typename C, typename A >
+bool operator==(
+    const flat_set<K, C, A>& l,
+    const flat_set<K, C, A>& r);
+
+template < typename K, typename C, typename A >
+bool operator!=(
+    const flat_set<K, C, A>& l,
+    const flat_set<K, C, A>& r);
+
+template < typename K, typename C, typename A >
+bool operator<(
+    const flat_set<K, C, A>& l,
+    const flat_set<K, C, A>& r);
+
+template < typename K, typename C, typename A >
+bool operator>(
+    const flat_set<K, C, A>& l,
+    const flat_set<K, C, A>& r);
+
+template < typename K, typename C, typename A >
+bool operator<=(
+    const flat_set<K, C, A>& l,
+    const flat_set<K, C, A>& r);
+
+template < typename K, typename C, typename A >
+bool operator>=(
+    const flat_set<K, C, A>& l,
+    const flat_set<K, C, A>& r);
+```
+
+## flat_map
 
 ```cpp
 template < typename Key
@@ -72,23 +234,201 @@ template < typename Key
 class flat_map;
 ```
 
-| Member type            | Definition                        |
-|------------------------|-----------------------------------|
-| key_type               | Key                               |
-| mapped_type            | Value                             |
-| value_type             | Container::value_type             |
-| size_type              | Container::size_type              |
-| difference_type        | Container::difference_type        |
-| key_compare            | Compare                           |
-| allocator_type         | Allocator                         |
-| container_type         | Container                         |
-| reference              | Container::reference              |
-| const_reference        | Container::const_reference        |
-| pointer                | Container::pointer                |
-| const_pointer          | Container::const_pointer          |
-| iterator               | Container::iterator               |
-| const_iterator         | Container::const_iterator         |
-| reverse_iterator       | Container::reverse_iterator       |
-| const_reverse_iterator | Container::const_reverse_iterator |
+### Member types
+
+| Member type              | Definition                          |
+|--------------------------|-------------------------------------|
+| `key_type`               | `Key`                               |
+| `mapped_type`            | `Value`                             |
+| `value_type`             | `Container::value_type`             |
+| `size_type`              | `Container::size_type`              |
+| `difference_type`        | `Container::difference_type`        |
+| `key_compare`            | `Compare`                           |
+| `allocator_type`         | `Allocator`                         |
+| `container_type`         | `Container`                         |
+| `reference`              | `Container::reference`              |
+| `const_reference`        | `Container::const_reference`        |
+| `pointer`                | `Container::pointer`                |
+| `const_pointer`          | `Container::const_pointer`          |
+| `iterator`               | `Container::iterator`               |
+| `const_iterator`         | `Container::const_iterator`         |
+| `reverse_iterator`       | `Container::reverse_iterator`       |
+| `const_reverse_iterator` | `Container::const_reverse_iterator` |
+
+### Member classes
+
+```cpp
+class value_compare;
+```
+
+### Member functions
+
+```cpp
+explicit flat_map(
+    const Allocator& a);
+
+explicit flat_map(
+    const Compare& c = Compare(),
+    const Allocator& a = Allocator());
+
+template < typename InputIter >
+flat_map(
+    InputIter first,
+    InputIter last,
+    const Allocator& a);
+
+template < typename InputIter >
+flat_map(
+    InputIter first,
+    InputIter last,
+    const Compare& c = Compare(),
+    const Allocator& a = Allocator());
+
+flat_map(
+    std::initializer_list<value_type> ilist,
+    const Allocator& a);
+
+flat_map(
+    std::initializer_list<value_type> ilist,
+    const Compare& c = Compare(),
+    const Allocator& a = Allocator());
+
+flat_map(flat_map&& other);
+flat_map(const flat_map& other);
+
+flat_map& operator=(flat_map&& other);
+flat_map& operator=(const flat_map& other);
+flat_map& operator=(std::initializer_list<value_type> ilist);
+
+allocator_type get_allocator() const;
+```
+
+### Iterators
+
+```cpp
+iterator begin() noexcept;
+const_iterator begin() const noexcept;
+const_iterator cbegin() const noexcept;
+
+iterator end() noexcept;
+const_iterator end() const noexcept;
+const_iterator cend() const noexcept;
+
+reverse_iterator rbegin() noexcept;
+const_reverse_iterator rbegin() const noexcept;
+const_reverse_iterator crbegin() const noexcept;
+
+reverse_iterator rend() noexcept;
+const_reverse_iterator rend() const noexcept;
+const_reverse_iterator crend() const noexcept;
+```
+
+### Capacity
+
+```cpp
+bool empty() const noexcept;
+size_type size() const noexcept;
+size_type max_size() const noexcept;
+```
+
+### Element access
+
+```cpp
+mapped_type& operator[](key_type&& key);
+mapped_type& operator[](const key_type& key);
+
+mapped_type& at(const key_type& key);
+const mapped_type& at(const key_type& key) const;
+```
+
+### Modifiers
+
+```cpp
+std::pair<iterator, bool> insert(value_type&& value);
+std::pair<iterator, bool> insert(const value_type& value);
+
+iterator insert(const_iterator hint, value_type&& value);
+iterator insert(const_iterator hint, const value_type& value);
+
+template < typename InputIter >
+void insert(InputIter first, InputIter last);
+void insert(std::initializer_list<value_type> ilist);
+
+template < typename... Args >
+std::pair<iterator, bool> emplace(Args&&... args);
+template < typename... Args >
+iterator emplace_hint(const_iterator hint, Args&&... args);
+
+void clear() noexcept;
+iterator erase(const_iterator iter);
+iterator erase(const_iterator first, const_iterator last);
+size_type erase(const key_type& key);
+
+void swap(flat_map& other)
+```
+
+### Lookup
+
+```cpp
+size_type count(const key_type& key) const;
+
+iterator find(const key_type& key);
+const_iterator find(const key_type& key) const;
+
+std::pair<iterator, iterator> equal_range(const key_type& key);
+std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
+
+iterator lower_bound(const key_type& key);
+const_iterator lower_bound(const key_type& key) const;
+
+iterator upper_bound(const key_type& key);
+const_iterator upper_bound(const key_type& key) const;
+```
+
+### Observers
+
+```cpp
+key_compare key_comp() const;
+value_compare value_comp() const;
+```
+
+### Non-member functions
+
+```cpp
+template < typename K, typename V, typename C, typename A >
+void swap(
+    flat_map<K, V, C, A>& l,
+    flat_map<K, V, C, A>& r);
+
+template < typename K, typename V, typename C, typename A >
+bool operator==(
+    const flat_map<K, V, C, A>& l,
+    const flat_map<K, V, C, A>& r);
+
+template < typename K, typename V, typename C, typename A >
+bool operator!=(
+    const flat_map<K, V, C, A>& l,
+    const flat_map<K, V, C, A>& r);
+
+template < typename K, typename V, typename C, typename A >
+bool operator<(
+    const flat_map<K, V, C, A>& l,
+    const flat_map<K, V, C, A>& r);
+
+template < typename K, typename V, typename C, typename A >
+bool operator>(
+    const flat_map<K, V, C, A>& l,
+    const flat_map<K, V, C, A>& r);
+
+template < typename K, typename V, typename C, typename A >
+bool operator<=(
+    const flat_map<K, V, C, A>& l,
+    const flat_map<K, V, C, A>& r);
+
+template < typename K, typename V, typename C, typename A >
+bool operator>=(
+    const flat_map<K, V, C, A>& l,
+    const flat_map<K, V, C, A>& r);
+```
 
 ## [License (MIT)](./LICENSE.md)

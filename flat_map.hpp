@@ -62,7 +62,7 @@ namespace flat_hpp
         using reverse_iterator = typename Container::reverse_iterator;
         using const_reverse_iterator = typename Container::const_reverse_iterator;
 
-        class value_compare final {
+        class value_compare {
         public:
             bool operator()(const value_type& l, const value_type& r) const {
                 return compare_(l.first, r.first);
