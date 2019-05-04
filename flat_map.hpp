@@ -177,6 +177,51 @@ namespace flat_hpp
         void swap(flat_map& other) {
             //TODO(BlackMat): implme
         }
+
+        size_type count(const key_type& key) const {
+            const auto iter = find(key);
+            return iter != end() ? 1 : 0;
+        }
+
+        iterator find(const key_type& key) {
+            //TODO(BlackMat): implme
+            return end();
+        }
+
+        const_iterator find(const key_type& key) const {
+            //TODO(BlackMat): implme
+            return end();
+        }
+
+        std::pair<iterator, iterator> equal_range(const key_type& key) {
+            //TODO(BlackMat): implme
+            return {end(), end()};
+        }
+
+        std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
+            //TODO(BlackMat): implme
+            return {end(), end()};
+        }
+
+        iterator lower_bound(const key_type& key) {
+            //TODO(BlackMat): implme
+            return end();
+        }
+
+        const_iterator lower_bound(const key_type& key) const {
+            //TODO(BlackMat): implme
+            return end();
+        }
+
+        iterator upper_bound(const key_type& key) {
+            //TODO(BlackMat): implme
+            return end();
+        }
+
+        const_iterator upper_bound(const key_type& key) const {
+            //TODO(BlackMat): implme
+            return end();
+        }
     private:
         data_type data_;
         key_compare compare_;

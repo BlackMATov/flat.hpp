@@ -27,6 +27,11 @@ namespace
             (void)n;
         }
     };
+
+    template < typename T >
+    constexpr std::add_const_t<T>& my_as_const(T& t) noexcept {
+        return t;
+    }
 }
 
 TEST_CASE("flat_map") {
@@ -133,5 +138,18 @@ TEST_CASE("flat_map") {
         map_t s1;
         s0.swap(s1);
         swap(s0, s1);
+    }
+    SECTION("lookup") {
+        using map_t = flat_map<int, unsigned>;
+        map_t s0;
+        s0.count(10);
+        s0.find(10);
+        my_as_const(s0).find(10);
+        s0.equal_range(20);
+        my_as_const(s0).equal_range(20);
+        s0.lower_bound(30);
+        my_as_const(s0).lower_bound(30);
+        s0.upper_bound(30);
+        my_as_const(s0).upper_bound(30);
     }
 }
