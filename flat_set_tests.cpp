@@ -17,15 +17,31 @@ namespace
     public:
         using value_type = T;
 
-        T* allocate(std::size_t n) {
+        dummy_allocator() = default;
+
+        template < typename U >
+        dummy_allocator(const dummy_allocator<U>&) noexcept {
+        }
+
+        T* allocate(std::size_t n) noexcept {
             return static_cast<T*>(std::malloc(sizeof(T) * n));
         }
 
-        void deallocate(T* p, std::size_t n) {
+        void deallocate(T* p, std::size_t n) noexcept {
             (void)n;
             std::free(p);
         }
     };
+
+    template < typename T, typename U >
+    bool operator==(const dummy_allocator<T>&, const dummy_allocator<U>&) noexcept {
+        return true;
+    }
+
+    template < typename T, typename U >
+    bool operator!=(const dummy_allocator<T>& l, const dummy_allocator<U>& r) noexcept {
+        return !(l == r);
+    }
 
     template < typename T >
     constexpr std::add_const_t<T>& my_as_const(T& t) noexcept {
@@ -158,6 +174,10 @@ TEST_CASE("flat_set") {
             auto i2 = s0.insert(obj_t(2));
             REQUIRE(s0 == set_t{1,2});
             REQUIRE(i2 == std::make_pair(s0.begin() + 1, true));
+
+            auto o2 = obj_t(2);
+            auto i3 = s0.insert(o2);
+            REQUIRE(i3 == std::make_pair(s0.begin() + 1, false));
 
             s0.insert(s0.cbegin(), 1);
             s0.insert(s0.cbegin(), 2);

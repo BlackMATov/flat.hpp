@@ -17,15 +17,31 @@ namespace
     public:
         using value_type = T;
 
-        T* allocate(std::size_t n) {
+        dummy_allocator() = default;
+
+        template < typename U >
+        dummy_allocator(const dummy_allocator<U>&) noexcept {
+        }
+
+        T* allocate(std::size_t n) noexcept {
             return static_cast<T*>(std::malloc(sizeof(T) * n));
         }
 
-        void deallocate(T* p, std::size_t n) {
+        void deallocate(T* p, std::size_t n) noexcept {
             (void)n;
             std::free(p);
         }
     };
+
+    template < typename T, typename U >
+    bool operator==(const dummy_allocator<T>&, const dummy_allocator<U>&) noexcept {
+        return true;
+    }
+
+    template < typename T, typename U >
+    bool operator!=(const dummy_allocator<T>& l, const dummy_allocator<U>& r) noexcept {
+        return !(l == r);
+    }
 
     template < typename T >
     constexpr std::add_const_t<T>& my_as_const(T& t) noexcept {
@@ -150,6 +166,7 @@ TEST_CASE("flat_map") {
         REQUIRE(s0.at(1) == 84);
         REQUIRE(my_as_const(s0).at(1) == 84);
         REQUIRE_THROWS_AS(s0.at(0), std::out_of_range);
+        REQUIRE_THROWS_AS(my_as_const(s0).at(0), std::out_of_range);
     }
     SECTION("inserts") {
         struct obj_t {
@@ -186,13 +203,16 @@ TEST_CASE("flat_map") {
             REQUIRE(i3 == s0.begin() + 2);
 
             s0.insert(s0.cend(), std::make_pair(4, obj_t(84)));
+            auto i4 = s0.insert(s0.cend(), std::make_pair(0, obj_t(21)));
+            REQUIRE(i4 == s0.begin());
 
-            auto i4 = s0.emplace(5, 100500);
-            REQUIRE(i4 == std::make_pair(s0.end() - 1, true));
-            REQUIRE(s0 == map_t{{1,42},{2,42},{3,84},{4,84},{5,100500}});
+            auto i5 = s0.emplace(5, 100500);
+            REQUIRE(i5 == std::make_pair(s0.end() - 1, true));
+            REQUIRE(s0 == map_t{{0,21},{1,42},{2,42},{3,84},{4,84},{5,100500}});
 
-            auto i5 = s0.emplace_hint(s0.cend(), 6, 100500);
-            REQUIRE(s0 == map_t{{1,42},{2,42},{3,84},{4,84},{5,100500},{6,100500}});
+            auto i6 = s0.emplace_hint(s0.cend(), 6, 100500);
+            REQUIRE(i6 == s0.end() - 1);
+            REQUIRE(s0 == map_t{{0,21},{1,42},{2,42},{3,84},{4,84},{5,100500},{6,100500}});
         }
     }
     SECTION("erasers") {
