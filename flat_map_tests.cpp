@@ -96,6 +96,13 @@ TEST_CASE("flat_map") {
             auto s3 = map_t({{0,1}, {1,2}}, std::less<int>(), alloc_t());
         }
     }
+    SECTION("capacity") {
+        using map_t = flat_map<int, unsigned>;
+        map_t s0;
+        s0.empty();
+        s0.size();
+        s0.max_size();
+    }
     SECTION("inserts") {
         struct obj_t {
             obj_t(int i) : i(i) {}

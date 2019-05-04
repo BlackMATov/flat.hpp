@@ -87,6 +87,13 @@ TEST_CASE("flat_set") {
             auto s3 = set_t({0,1,2}, std::less<int>(), alloc_t());
         }
     }
+    SECTION("capacity") {
+        using set_t = flat_set<int>;
+        set_t s0;
+        s0.empty();
+        s0.size();
+        s0.max_size();
+    }
     SECTION("inserts") {
         struct obj_t {
             obj_t(int i) : i(i) {}

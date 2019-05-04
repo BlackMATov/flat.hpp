@@ -109,6 +109,18 @@ namespace flat_hpp
         const_reverse_iterator rend() const noexcept { return data_.rend(); }
         const_reverse_iterator crend() const noexcept { return data_.crend(); }
 
+        bool empty() const noexcept {
+            return data_.empty();
+        }
+
+        size_type size() const noexcept {
+            return data_.size();
+        }
+
+        size_type max_size() const noexcept {
+            return data_.max_size();
+        }
+
         template < typename P
                  , typename = std::enable_if_t<std::is_constructible<value_type, P>::value> >
         std::pair<iterator, bool> insert(P&& p) {
