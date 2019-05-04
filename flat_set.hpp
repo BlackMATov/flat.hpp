@@ -153,8 +153,41 @@ namespace flat_hpp
             //TODO(BlackMat): implme
             return insert(hint, value_type(std::forward<Args>(args)...));
         }
+
+        void clear() noexcept {
+            data_.clear();
+        }
+
+        iterator erase(const_iterator iter) {
+            //TODO(BlackMat): implme
+            return end();
+        }
+
+        iterator erase(const_iterator first, const_iterator last) {
+            //TODO(BlackMat): implme
+            return end();
+        }
+
+        iterator erase(const key_type& key) {
+            //TODO(BlackMat): implme
+            return end();
+        }
+
+        void swap(flat_set& other) {
+            //TODO(BlackMat): implme
+        }
     private:
         data_type data_;
         key_compare compare_;
     };
+
+    template < typename Key
+             , typename Compare
+             , typename Allocator >
+    void swap(
+        flat_set<Key, Compare, Allocator>& l,
+        flat_set<Key, Compare, Allocator>& r)
+    {
+        l.swap(r);
+    }
 }

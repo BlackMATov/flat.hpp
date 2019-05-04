@@ -112,4 +112,17 @@ TEST_CASE("flat_set") {
             s0.emplace_hint(s0.cend(), 100500);
         }
     }
+    SECTION("erasers") {
+        using set_t = flat_set<int>;
+        set_t s0;
+        s0.clear();
+        s0.erase(s0.begin());
+        s0.erase(s0.cbegin());
+        s0.erase(s0.begin(), s0.end());
+        s0.erase(s0.cbegin(), s0.cend());
+        s0.erase(42);
+        set_t s1;
+        s0.swap(s1);
+        swap(s0, s1);
+    }
 }

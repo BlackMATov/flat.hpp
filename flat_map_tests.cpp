@@ -40,7 +40,7 @@ TEST_CASE("flat_map") {
             std::is_same<map_t::mapped_type, unsigned>::value,
             "unit test static error");
         static_assert(
-            std::is_same<map_t::value_type, std::pair<const int, unsigned>>::value,
+            std::is_same<map_t::value_type, std::pair<int, unsigned>>::value,
             "unit test static error");
 
         static_assert(
@@ -51,22 +51,22 @@ TEST_CASE("flat_map") {
             "unit test static error");
 
         static_assert(
-            std::is_same<map_t::reference, std::pair<const int, unsigned>&>::value,
+            std::is_same<map_t::reference, std::pair<int, unsigned>&>::value,
             "unit test static error");
         static_assert(
-            std::is_same<map_t::const_reference, const std::pair<const int, unsigned>&>::value,
+            std::is_same<map_t::const_reference, const std::pair<int, unsigned>&>::value,
             "unit test static error");
 
         static_assert(
-            std::is_same<map_t::pointer, std::pair<const int, unsigned>*>::value,
+            std::is_same<map_t::pointer, std::pair<int, unsigned>*>::value,
             "unit test static error");
         static_assert(
-            std::is_same<map_t::const_pointer, const std::pair<const int, unsigned>*>::value,
+            std::is_same<map_t::const_pointer, const std::pair<int, unsigned>*>::value,
             "unit test static error");
     }
     SECTION("ctors") {
         using alloc_t = dummy_allocator<
-            std::pair<const int,unsigned>>;
+            std::pair<int,unsigned>>;
 
         using map_t = flat_map<
             int,
@@ -120,5 +120,18 @@ TEST_CASE("flat_map") {
             s0.emplace(5, 100500);
             s0.emplace_hint(s0.cend(), 6, 100500);
         }
+    }
+    SECTION("erasers") {
+        using map_t = flat_map<int, unsigned>;
+        map_t s0;
+        s0.clear();
+        s0.erase(s0.begin());
+        s0.erase(s0.cbegin());
+        s0.erase(s0.begin(), s0.end());
+        s0.erase(s0.cbegin(), s0.cend());
+        s0.erase(42);
+        map_t s1;
+        s0.swap(s1);
+        swap(s0, s1);
     }
 }

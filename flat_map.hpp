@@ -20,9 +20,9 @@ namespace flat_hpp
     template < typename Key
              , typename Value
              , typename Compare = std::less<Key>
-             , typename Allocator = std::allocator<std::pair<const Key, Value>> >
+             , typename Allocator = std::allocator<std::pair<Key, Value>> >
     class flat_map final {
-        using data_type = std::vector<std::pair<const Key, Value>, Allocator>;
+        using data_type = std::vector<std::pair<Key, Value>, Allocator>;
     public:
         using key_type = Key;
         using mapped_type = Value;
@@ -154,8 +154,42 @@ namespace flat_hpp
             //TODO(BlackMat): implme
             return insert(value_type(std::forward<Args>(args)...));
         }
+
+        void clear() noexcept {
+            data_.clear();
+        }
+
+        iterator erase(const_iterator iter) {
+            //TODO(BlackMat): implme
+            return end();
+        }
+
+        iterator erase(const_iterator first, const_iterator last) {
+            //TODO(BlackMat): implme
+            return end();
+        }
+
+        iterator erase(const key_type& key) {
+            //TODO(BlackMat): implme
+            return end();
+        }
+
+        void swap(flat_map& other) {
+            //TODO(BlackMat): implme
+        }
     private:
         data_type data_;
         key_compare compare_;
     };
+
+    template < typename Key
+             , typename Value
+             , typename Compare
+             , typename Allocator >
+    void swap(
+        flat_map<Key, Value, Compare, Allocator>& l,
+        flat_map<Key, Value, Compare, Allocator>& r)
+    {
+        l.swap(r);
+    }
 }
