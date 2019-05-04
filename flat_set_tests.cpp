@@ -149,4 +149,15 @@ TEST_CASE("flat_set") {
         my_as_const(s0).key_comp();
         my_as_const(s0).value_comp();
     }
+    SECTION("operators") {
+        using set_t = flat_set<int>;
+        set_t s0;
+        set_t s1;
+        REQUIRE(s0 == s1);
+        REQUIRE_FALSE(s0 != s1);
+        REQUIRE_FALSE(s0 < s1);
+        REQUIRE_FALSE(s0 > s1);
+        REQUIRE(s0 <= s1);
+        REQUIRE(s0 >= s1);
+    }
 }

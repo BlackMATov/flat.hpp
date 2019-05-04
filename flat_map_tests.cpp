@@ -158,4 +158,15 @@ TEST_CASE("flat_map") {
         my_as_const(s0).key_comp();
         my_as_const(s0).value_comp();
     }
+    SECTION("operators") {
+        using map_t = flat_map<int, unsigned>;
+        map_t s0;
+        map_t s1;
+        REQUIRE(s0 == s1);
+        REQUIRE_FALSE(s0 != s1);
+        REQUIRE_FALSE(s0 < s1);
+        REQUIRE_FALSE(s0 > s1);
+        REQUIRE(s0 <= s1);
+        REQUIRE(s0 >= s1);
+    }
 }

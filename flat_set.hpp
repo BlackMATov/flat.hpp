@@ -233,14 +233,43 @@ namespace flat_hpp
         data_type data_;
         key_compare compare_;
     };
+}
 
-    template < typename Key
-             , typename Compare
-             , typename Allocator >
-    void swap(
-        flat_set<Key, Compare, Allocator>& l,
-        flat_set<Key, Compare, Allocator>& r)
-    {
+namespace flat_hpp
+{
+    template < typename K, typename C, typename A >
+    void swap(flat_set<K, C, A>& l, flat_set<K, C, A>& r) {
         l.swap(r);
+    }
+
+    template < typename K, typename C, typename A >
+    bool operator==(const flat_set<K, C, A>& l, const flat_set<K, C, A>& r) {
+        return l.size() == r.size()
+            && std::equal(l.begin(), l.end(), r.begin(), r.end());
+    }
+
+    template < typename K, typename C, typename A >
+    bool operator!=(const flat_set<K, C, A>& l, const flat_set<K, C, A>& r) {
+        return !(l == r);
+    }
+
+    template < typename K, typename C, typename A >
+    bool operator<(const flat_set<K, C, A>& l, const flat_set<K, C, A>& r) {
+        return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
+    }
+
+    template < typename K, typename C, typename A >
+    bool operator>(const flat_set<K, C, A>& l, const flat_set<K, C, A>& r) {
+        return r < l;
+    }
+
+    template < typename K, typename C, typename A >
+    bool operator<=(const flat_set<K, C, A>& l, const flat_set<K, C, A>& r) {
+        return !(r < l);
+    }
+
+    template < typename K, typename C, typename A >
+    bool operator>=(const flat_set<K, C, A>& l, const flat_set<K, C, A>& r) {
+        return !(l < r);
     }
 }
