@@ -34,6 +34,61 @@
 
 ## API
 
-> coming soon!
+```cpp
+template < typename Key
+         , typename Compare = std::less<Key>
+         , typename Allocator = std::allocator<Key>
+         , typename Container = std::vector<Key, Allocator> >
+class flat_set;
+```
+
+#### Member types
+
+| Member type            | Definition                        |
+|------------------------|-----------------------------------|
+| key_type               | Key                               |
+| value_type             | Key                               |
+| size_type              | Container::size_type              |
+| difference_type        | Container::difference_type        |
+| key_compare            | Compare                           |
+| value_compare          | Compare                           |
+| allocator_type         | Allocator                         |
+| container_type         | Container                         |
+| reference              | Container::reference              |
+| const_reference        | Container::const_reference        |
+| pointer                | Container::pointer                |
+| const_pointer          | Container::const_pointer          |
+| iterator               | Container::iterator               |
+| const_iterator         | Container::const_iterator         |
+| reverse_iterator       | Container::reverse_iterator       |
+| const_reverse_iterator | Container::const_reverse_iterator |
+
+```cpp
+template < typename Key
+         , typename Value
+         , typename Compare = std::less<Key>
+         , typename Allocator = std::allocator<std::pair<Key, Value>>
+         , typename Container = std::vector<std::pair<Key, Value>, Allocator> >
+class flat_map;
+```
+
+| Member type            | Definition                        |
+|------------------------|-----------------------------------|
+| key_type               | Key                               |
+| mapped_type            | Value                             |
+| value_type             | Container::value_type             |
+| size_type              | Container::size_type              |
+| difference_type        | Container::difference_type        |
+| key_compare            | Compare                           |
+| allocator_type         | Allocator                         |
+| container_type         | Container                         |
+| reference              | Container::reference              |
+| const_reference        | Container::const_reference        |
+| pointer                | Container::pointer                |
+| const_pointer          | Container::const_pointer          |
+| iterator               | Container::iterator               |
+| const_iterator         | Container::const_iterator         |
+| reverse_iterator       | Container::reverse_iterator       |
+| const_reverse_iterator | Container::const_reverse_iterator |
 
 ## [License (MIT)](./LICENSE.md)

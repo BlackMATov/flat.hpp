@@ -20,12 +20,9 @@ namespace flat_hpp
     template < typename Key
              , typename Value
              , typename Compare = std::less<Key>
-             , typename Allocator = std::allocator<std::pair<Key, Value>> >
+             , typename Allocator = std::allocator<std::pair<Key, Value>>
+             , typename Container = std::vector<std::pair<Key, Value>, Allocator> >
     class flat_map final {
-        using data_type = std::vector<
-            std::pair<Key, Value>,
-            Allocator>;
-
         class uber_comparer_type : public Compare {
         public:
             uber_comparer_type() = default;
@@ -35,34 +32,35 @@ namespace flat_hpp
                 return Compare::operator()(l, r);
             }
 
-            bool operator()(const Key& l, typename data_type::const_reference r) const {
+            bool operator()(const Key& l, typename Container::const_reference r) const {
                 return Compare::operator()(l, r.first);
             }
 
-            bool operator()(typename data_type::const_reference l, const Key& r) const {
+            bool operator()(typename Container::const_reference l, const Key& r) const {
                 return Compare::operator()(l.first, r);
             }
         };
     public:
         using key_type = Key;
         using mapped_type = Value;
-        using value_type = typename data_type::value_type;
+        using value_type = typename Container::value_type;
 
-        using size_type = typename data_type::size_type;
-        using difference_type = typename data_type::difference_type;
+        using size_type = typename Container::size_type;
+        using difference_type = typename Container::difference_type;
 
         using key_compare = Compare;
         using allocator_type = Allocator;
+        using container_type = Container;
 
-        using reference = typename data_type::reference;
-        using const_reference = typename data_type::const_reference;
-        using pointer = typename data_type::pointer;
-        using const_pointer = typename data_type::const_pointer;
+        using reference = typename Container::reference;
+        using const_reference = typename Container::const_reference;
+        using pointer = typename Container::pointer;
+        using const_pointer = typename Container::const_pointer;
 
-        using iterator = typename data_type::iterator;
-        using const_iterator = typename data_type::const_iterator;
-        using reverse_iterator = typename data_type::reverse_iterator;
-        using const_reverse_iterator = typename data_type::const_reverse_iterator;
+        using iterator = typename Container::iterator;
+        using const_iterator = typename Container::const_iterator;
+        using reverse_iterator = typename Container::reverse_iterator;
+        using const_reverse_iterator = typename Container::const_reverse_iterator;
 
         class value_compare final {
         public:
@@ -80,6 +78,14 @@ namespace flat_hpp
         static_assert(
             std::is_same<typename allocator_type::value_type, value_type>::value,
             "Allocator::value_type must be same type as value_type");
+
+        static_assert(
+            std::is_same<typename container_type::value_type, value_type>::value,
+            "Container::value_type must be same type as value_type");
+
+        static_assert(
+            std::is_same<typename container_type::allocator_type, allocator_type>::value,
+            "Container::allocator_type must be same type as allocator_type");
     public:
         explicit flat_map(
             const Allocator& a)
@@ -290,7 +296,7 @@ namespace flat_hpp
             return value_compare(compare_);
         }
     private:
-        data_type data_;
+        container_type data_;
         uber_comparer_type compare_;
     };
 }
