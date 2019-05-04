@@ -22,7 +22,27 @@ namespace flat_hpp
              , typename Compare = std::less<Key>
              , typename Allocator = std::allocator<std::pair<Key, Value>> >
     class flat_map final {
-        using data_type = std::vector<std::pair<Key, Value>, Allocator>;
+        using data_type = std::vector<
+            std::pair<Key, Value>,
+            Allocator>;
+
+        class uber_comparer_type : public Compare {
+        public:
+            uber_comparer_type() = default;
+            uber_comparer_type(const Compare& c) : Compare(c) {}
+
+            bool operator()(const Key& l, const Key& r) const {
+                return Compare::operator()(l, r);
+            }
+
+            bool operator()(const Key& l, typename data_type::const_reference r) const {
+                return Compare::operator()(l, r.first);
+            }
+
+            bool operator()(typename data_type::const_reference l, const Key& r) const {
+                return Compare::operator()(l.first, r);
+            }
+        };
     public:
         using key_type = Key;
         using mapped_type = Value;
@@ -44,7 +64,7 @@ namespace flat_hpp
         using reverse_iterator = typename data_type::reverse_iterator;
         using const_reverse_iterator = typename data_type::const_reverse_iterator;
 
-        class value_compare final : public std::binary_function<value_type, value_type, bool> {
+        class value_compare final {
         public:
             bool operator()(const value_type& l, const value_type& r) const {
                 return compare_(l.first, r.first);
@@ -92,19 +112,19 @@ namespace flat_hpp
         }
 
         flat_map(
-            std::initializer_list<value_type> il,
+            std::initializer_list<value_type> ilist,
             const Allocator& a)
         : data_(a) {
-            insert(il.begin(), il.end());
+            insert(ilist);
         }
 
         flat_map(
-            std::initializer_list<value_type> il,
+            std::initializer_list<value_type> ilist,
             const Compare& c = Compare(),
             const Allocator& a = Allocator())
         : data_(a)
         , compare_(c) {
-            insert(il.begin(), il.end());
+            insert(ilist);
         }
 
         iterator begin() noexcept { return data_.begin(); }
@@ -160,36 +180,37 @@ namespace flat_hpp
         }
 
         std::pair<iterator, bool> insert(const value_type& value) {
-            bool found = true;
-            iterator iter = lower_bound(value.first);
-            if ( iter == end() || compare_(value.first, iter->first) ) {
-                iter = data_.insert(iter, value);
-                found = false;
-            }
-            return std::make_pair(iter, !found);
+            const iterator iter = lower_bound(value.first);
+            return iter == end() || compare_(value.first, iter->first)
+                ? std::make_pair(data_.insert(iter, value), true)
+                : std::make_pair(iter, false);
         }
 
-        std::pair<iterator, bool> insert(const_iterator hint, const value_type& value) {
-            //TODO(BlackMat): implme
-            return insert(value);
+        iterator insert(const_iterator hint, const value_type& value) {
+            return (hint == begin() || compare_((hint - 1)->first, value.first))
+                && (hint == end() || compare_(value.first, hint->first))
+                ? data_.insert(hint, std::move(value))
+                : insert(std::move(value)).first;
         }
 
         template < typename InputIter >
         void insert(InputIter first, InputIter last) {
-            for ( auto iter = first; iter != last; ++iter ) {
-                insert(*iter);
+            while ( first != last ) {
+                insert(*first++);
             }
+        }
+
+        void insert(std::initializer_list<value_type> ilist) {
+            insert(ilist.begin(), ilist.end());
         }
 
         template < typename... Args >
         std::pair<iterator, bool> emplace(Args&&... args) {
-            //TODO(BlackMat): implme
             return insert(value_type(std::forward<Args>(args)...));
         }
 
         template < typename... Args >
-        std::pair<iterator, bool> emplace_hint(const_iterator hint, Args&&... args) {
-            //TODO(BlackMat): implme
+        iterator emplace_hint(const_iterator hint, Args&&... args) {
             return insert(hint, value_type(std::forward<Args>(args)...));
         }
 
@@ -198,22 +219,24 @@ namespace flat_hpp
         }
 
         iterator erase(const_iterator iter) {
-            //TODO(BlackMat): implme
-            return end();
+            return data_.erase(iter);
         }
 
         iterator erase(const_iterator first, const_iterator last) {
-            //TODO(BlackMat): implme
-            return end();
+            return data_.erase(first, last);
         }
 
-        iterator erase(const key_type& key) {
-            //TODO(BlackMat): implme
-            return end();
+        size_type erase(const key_type& key) {
+            const iterator iter = find(key);
+            return iter != end()
+                ? (erase(iter), 1)
+                : 0;
         }
 
         void swap(flat_map& other) {
-            //TODO(BlackMat): implme
+            using std::swap;
+            swap(data_, other.data_);
+            swap(compare_, other.compare_);
         }
 
         size_type count(const key_type& key) const {
@@ -222,57 +245,41 @@ namespace flat_hpp
         }
 
         iterator find(const key_type& key) {
-            iterator iter = lower_bound(key);
-            if ( iter != end() && compare_(key, iter->first) ) {
-                iter = end();
-            }
-            return iter;
+            const iterator iter = lower_bound(key);
+            return iter != end() && !compare_(key, iter->first)
+                ? iter
+                : end();
         }
 
         const_iterator find(const key_type& key) const {
-            const_iterator iter = lower_bound(key);
-            if ( iter != end() && compare_(key, iter->first) ) {
-                iter = end();
-            }
-            return iter;
+            const const_iterator iter = lower_bound(key);
+            return iter != end() && !compare_(key, iter->first)
+                ? iter
+                : end();
         }
 
         std::pair<iterator, iterator> equal_range(const key_type& key) {
-            //TODO(BlackMat): implme
-            return {end(), end()};
+            return std::equal_range(begin(), end(), key, compare_);
         }
 
         std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
-            //TODO(BlackMat): implme
-            return {end(), end()};
+            return std::equal_range(begin(), end(), key, compare_);
         }
 
         iterator lower_bound(const key_type& key) {
-            //TODO(BlackMat): implme
-            return std::lower_bound(begin(), end(), key, [this](const value_type& l, const key_type& r){
-                return compare_(l.first, r);
-            });
+            return std::lower_bound(begin(), end(), key, compare_);
         }
 
         const_iterator lower_bound(const key_type& key) const {
-            //TODO(BlackMat): implme
-            return std::lower_bound(begin(), end(), key, [this](const value_type& l, const key_type& r){
-                return compare_(l.first, r);
-            });
+            return std::lower_bound(begin(), end(), key, compare_);
         }
 
         iterator upper_bound(const key_type& key) {
-            //TODO(BlackMat): implme
-            return std::upper_bound(begin(), end(), key, [this](const key_type& l, const value_type& r){
-                return compare_(l, r.first);
-            });
+            return std::upper_bound(begin(), end(), key, compare_);
         }
 
         const_iterator upper_bound(const key_type& key) const {
-            //TODO(BlackMat): implme
-            return std::upper_bound(begin(), end(), key, [this](const key_type& l, const value_type& r){
-                return compare_(l, r.first);
-            });
+            return std::upper_bound(begin(), end(), key, compare_);
         }
 
         key_compare key_comp() const {
@@ -284,7 +291,7 @@ namespace flat_hpp
         }
     private:
         data_type data_;
-        key_compare compare_;
+        uber_comparer_type compare_;
     };
 }
 
