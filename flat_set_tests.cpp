@@ -129,6 +129,32 @@ TEST_CASE("flat_set") {
             REQUIRE(s0.get_allocator().i == 0);
             REQUIRE(s1.get_allocator().i == 42);
         }
+
+        {
+            auto s0 = set_t{0,1,2};
+            auto s1 = s0;
+            REQUIRE(s0 == set_t{0,1,2});
+            REQUIRE(s1 == set_t{0,1,2});
+            auto s2 = std::move(s1);
+            REQUIRE(s1.empty());
+            REQUIRE(s2 == set_t{0,1,2});
+        }
+
+        {
+            auto s0 = set_t{0,1,2};
+            set_t s1;
+            s1 = s0;
+            REQUIRE(s0 == set_t{0,1,2});
+            REQUIRE(s1 == set_t{0,1,2});
+            set_t s2;
+            s2 = std::move(s1);
+            REQUIRE(s0 == set_t{0,1,2});
+            REQUIRE(s1.empty());
+            REQUIRE(s2 == set_t{0,1,2});
+            set_t s3;
+            s3 = {1,2,3};
+            REQUIRE(s3 == set_t{1,2,3});
+        }
     }
     SECTION("capacity") {
         using set_t = flat_set<int>;

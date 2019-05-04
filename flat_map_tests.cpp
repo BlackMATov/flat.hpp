@@ -145,6 +145,32 @@ TEST_CASE("flat_map") {
             REQUIRE(s0.get_allocator().i == 0);
             REQUIRE(s1.get_allocator().i == 42);
         }
+
+        {
+            auto s0 = map_t{{0,1}, {1,2}};
+            auto s1 = s0;
+            REQUIRE(s0 == map_t{{0,1}, {1,2}});
+            REQUIRE(s1 == map_t{{0,1}, {1,2}});
+            auto s2 = std::move(s1);
+            REQUIRE(s1.empty());
+            REQUIRE(s2 == map_t{{0,1}, {1,2}});
+        }
+
+        {
+            auto s0 = map_t{{0,1}, {1,2}};
+            map_t s1;
+            s1 = s0;
+            REQUIRE(s0 == map_t{{0,1}, {1,2}});
+            REQUIRE(s1 == map_t{{0,1}, {1,2}});
+            map_t s2;
+            s2 = std::move(s1);
+            REQUIRE(s0 == map_t{{0,1}, {1,2}});
+            REQUIRE(s1.empty());
+            REQUIRE(s2 == map_t{{0,1}, {1,2}});
+            map_t s3;
+            s3 = {{0,1}, {1,2}};
+            REQUIRE(s3 == map_t{{0,1}, {1,2}});
+        }
     }
     SECTION("capacity") {
         using map_t = flat_map<int, unsigned>;
@@ -173,15 +199,34 @@ TEST_CASE("flat_map") {
         REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
     }
     SECTION("access") {
-        using map_t = flat_map<int, unsigned>;
+        struct obj_t {
+            obj_t(int i) : i(i) {}
+            int i;
+
+            bool operator<(const obj_t& o) const {
+                return i < o.i;
+            }
+
+            bool operator==(const obj_t& o) const {
+                return i == o.i;
+            }
+        };
+
+        using map_t = flat_map<obj_t, unsigned>;
         map_t s0;
-        s0[1] = 42;
+
+        obj_t k1(1);
+
+        s0[k1] = 42;
+        REQUIRE(s0[k1] == 42);
         REQUIRE(s0 == map_t{{1,42}});
+
         s0[1] = 84;
+        REQUIRE(s0[1] == 84);
         REQUIRE(s0 == map_t{{1,84}});
 
         REQUIRE(s0.at(1) == 84);
-        REQUIRE(my_as_const(s0).at(1) == 84);
+        REQUIRE(my_as_const(s0).at(k1) == 84);
         REQUIRE_THROWS_AS(s0.at(0), std::out_of_range);
         REQUIRE_THROWS_AS(my_as_const(s0).at(0), std::out_of_range);
     }
@@ -199,12 +244,15 @@ TEST_CASE("flat_map") {
             }
         };
 
-        using map_t = flat_map<int, obj_t>;
+        using map_t = flat_map<obj_t, obj_t>;
 
         {
             map_t s0;
 
-            auto i0 = s0.insert(std::make_pair(1, 42));
+            auto k1_42 = std::make_pair(1, 42);
+            auto k3_84 = std::make_pair(3, 84);
+
+            auto i0 = s0.insert(k1_42);
             REQUIRE(s0 == map_t{{1,42}});
             REQUIRE(i0 == std::make_pair(s0.begin(), true));
 
@@ -216,7 +264,7 @@ TEST_CASE("flat_map") {
             REQUIRE(s0 == map_t{{1,42},{2,42}});
             REQUIRE(i2 == std::make_pair(s0.begin() + 1, true));
 
-            auto i3 = s0.insert(s0.cend(), std::make_pair(3, 84));
+            auto i3 = s0.insert(s0.cend(), k3_84);
             REQUIRE(i3 == s0.begin() + 2);
 
             s0.insert(s0.cend(), std::make_pair(4, obj_t(84)));
