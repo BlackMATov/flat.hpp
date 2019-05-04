@@ -25,10 +25,11 @@
 
 ## Installation
 
-[flat.hpp][flat] is a single header library. All you need to do is copy the header file into your project and include this file:
+[flat.hpp][flat] is a header only library. All you need to do is copy the header files (`flat_set.hpp` and `flat_map.hpp`) into your project and include them:
 
 ```cpp
-#include "flat.hpp"
+#include "flat_set.hpp" // for flat_set<K>
+#include "flat_map.hpp" // for flat_map<K,V>
 ```
 
 ## API
