@@ -20,12 +20,9 @@ namespace flat_hpp
     template < typename Key
              , typename Value
              , typename Compare = std::less<Key>
-             , typename Allocator = std::allocator<std::pair<Key, Value>> >
+             , typename Allocator = std::allocator<std::pair<Key, Value>>
+             , typename Container = std::vector<std::pair<Key, Value>, Allocator> >
     class flat_map final {
-        using data_type = std::vector<
-            std::pair<Key, Value>,
-            Allocator>;
-
         class uber_comparer_type : public Compare {
         public:
             uber_comparer_type() = default;
@@ -35,36 +32,37 @@ namespace flat_hpp
                 return Compare::operator()(l, r);
             }
 
-            bool operator()(const Key& l, typename data_type::const_reference r) const {
+            bool operator()(const Key& l, typename Container::const_reference r) const {
                 return Compare::operator()(l, r.first);
             }
 
-            bool operator()(typename data_type::const_reference l, const Key& r) const {
+            bool operator()(typename Container::const_reference l, const Key& r) const {
                 return Compare::operator()(l.first, r);
             }
         };
     public:
         using key_type = Key;
         using mapped_type = Value;
-        using value_type = typename data_type::value_type;
+        using value_type = typename Container::value_type;
 
-        using size_type = typename data_type::size_type;
-        using difference_type = typename data_type::difference_type;
+        using size_type = typename Container::size_type;
+        using difference_type = typename Container::difference_type;
 
         using key_compare = Compare;
         using allocator_type = Allocator;
+        using container_type = Container;
 
-        using reference = typename data_type::reference;
-        using const_reference = typename data_type::const_reference;
-        using pointer = typename data_type::pointer;
-        using const_pointer = typename data_type::const_pointer;
+        using reference = typename Container::reference;
+        using const_reference = typename Container::const_reference;
+        using pointer = typename Container::pointer;
+        using const_pointer = typename Container::const_pointer;
 
-        using iterator = typename data_type::iterator;
-        using const_iterator = typename data_type::const_iterator;
-        using reverse_iterator = typename data_type::reverse_iterator;
-        using const_reverse_iterator = typename data_type::const_reverse_iterator;
+        using iterator = typename Container::iterator;
+        using const_iterator = typename Container::const_iterator;
+        using reverse_iterator = typename Container::reverse_iterator;
+        using const_reverse_iterator = typename Container::const_reverse_iterator;
 
-        class value_compare final {
+        class value_compare {
         public:
             bool operator()(const value_type& l, const value_type& r) const {
                 return compare_(l.first, r.first);
@@ -80,6 +78,14 @@ namespace flat_hpp
         static_assert(
             std::is_same<typename allocator_type::value_type, value_type>::value,
             "Allocator::value_type must be same type as value_type");
+
+        static_assert(
+            std::is_same<typename container_type::value_type, value_type>::value,
+            "Container::value_type must be same type as value_type");
+
+        static_assert(
+            std::is_same<typename container_type::allocator_type, allocator_type>::value,
+            "Container::allocator_type must be same type as allocator_type");
     public:
         explicit flat_map(
             const Allocator& a)
@@ -127,6 +133,37 @@ namespace flat_hpp
             insert(ilist);
         }
 
+        flat_map(flat_map&& other)
+        : data_(std::move(other.data_))
+        , compare_(std::move(other.compare_)) {}
+
+        flat_map(const flat_map& other)
+        : data_(other.data_)
+        , compare_(other.compare_) {}
+
+        flat_map& operator=(flat_map&& other) {
+            if ( this != &other ) {
+                flat_map(std::move(other)).swap(*this);
+            }
+            return *this;
+        }
+
+        flat_map& operator=(const flat_map& other) {
+            if ( this != &other ) {
+                flat_map(other).swap(*this);
+            }
+            return *this;
+        }
+
+        flat_map& operator=(std::initializer_list<value_type> ilist) {
+            flat_map(ilist).swap(*this);
+            return *this;
+        }
+
+        allocator_type get_allocator() const {
+            return data_.get_allocator();
+        }
+
         iterator begin() noexcept { return data_.begin(); }
         const_iterator begin() const noexcept { return data_.begin(); }
         const_iterator cbegin() const noexcept { return data_.cbegin(); }
@@ -156,15 +193,21 @@ namespace flat_hpp
         }
 
         mapped_type& operator[](key_type&& key) {
-            return insert(value_type(std::move(key), mapped_type())).first->second;
+            const iterator iter = find(key);
+            return iter != end()
+                ? iter->second
+                : emplace(std::move(key), mapped_type()).first->second;
         }
 
         mapped_type& operator[](const key_type& key) {
-            return insert(value_type(key, mapped_type())).first->second;
+            const iterator iter = find(key);
+            return iter != end()
+                ? iter->second
+                : emplace(key, mapped_type()).first->second;
         }
 
         mapped_type& at(const key_type& key) {
-            const auto iter = find(key);
+            const iterator iter = find(key);
             if ( iter != end() ) {
                 return iter->second;
             }
@@ -172,11 +215,18 @@ namespace flat_hpp
         }
 
         const mapped_type& at(const key_type& key) const {
-            const auto iter = find(key);
+            const const_iterator iter = find(key);
             if ( iter != end() ) {
                 return iter->second;
             }
             throw std::out_of_range("flat_map::at: key not found");
+        }
+
+        std::pair<iterator, bool> insert(value_type&& value) {
+            const iterator iter = lower_bound(value.first);
+            return iter == end() || compare_(value.first, iter->first)
+                ? std::make_pair(data_.insert(iter, std::move(value)), true)
+                : std::make_pair(iter, false);
         }
 
         std::pair<iterator, bool> insert(const value_type& value) {
@@ -186,11 +236,18 @@ namespace flat_hpp
                 : std::make_pair(iter, false);
         }
 
-        iterator insert(const_iterator hint, const value_type& value) {
+        iterator insert(const_iterator hint, value_type&& value) {
             return (hint == begin() || compare_((hint - 1)->first, value.first))
                 && (hint == end() || compare_(value.first, hint->first))
                 ? data_.insert(hint, std::move(value))
                 : insert(std::move(value)).first;
+        }
+
+        iterator insert(const_iterator hint, const value_type& value) {
+            return (hint == begin() || compare_((hint - 1)->first, value.first))
+                && (hint == end() || compare_(value.first, hint->first))
+                ? data_.insert(hint, value)
+                : insert(value).first;
         }
 
         template < typename InputIter >
@@ -290,7 +347,7 @@ namespace flat_hpp
             return value_compare(compare_);
         }
     private:
-        data_type data_;
+        container_type data_;
         uber_comparer_type compare_;
     };
 }

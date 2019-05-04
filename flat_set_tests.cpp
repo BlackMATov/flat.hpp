@@ -18,9 +18,11 @@ namespace
         using value_type = T;
 
         dummy_allocator() = default;
+        dummy_allocator(int i) : i(i) {}
 
         template < typename U >
-        dummy_allocator(const dummy_allocator<U>&) noexcept {
+        dummy_allocator(const dummy_allocator<U>& o) noexcept {
+            i = o.i;
         }
 
         T* allocate(std::size_t n) noexcept {
@@ -31,6 +33,8 @@ namespace
             (void)n;
             std::free(p);
         }
+
+        int i = 0;
     };
 
     template < typename T, typename U >
@@ -85,6 +89,7 @@ TEST_CASE("flat_set") {
         using alloc_t = dummy_allocator<int>;
         using set_t = flat_set<int, std::less<int>, alloc_t>;
         using set2_t = flat_set<int, std::greater<int>, alloc_t>;
+        using vec_t = std::vector<int>;
 
         {
             auto s0 = set_t();
@@ -94,16 +99,16 @@ TEST_CASE("flat_set") {
         }
 
         {
-            std::vector<int> v{1,2,3};
+            vec_t v{1,2,3};
             auto s0 = set_t(v.cbegin(), v.cend());
             auto s1 = set2_t(v.cbegin(), v.cend(), alloc_t());
             auto s2 = set_t(v.cbegin(), v.cend(), std::less<int>());
             auto s3 = set2_t(v.cbegin(), v.cend(), std::greater<int>(), alloc_t());
 
-            REQUIRE(std::vector<int>(s0.begin(), s0.end()) == std::vector<int>({1,2,3}));
-            REQUIRE(std::vector<int>(s1.begin(), s1.end()) == std::vector<int>({3,2,1}));
-            REQUIRE(std::vector<int>(s2.begin(), s2.end()) == std::vector<int>({1,2,3}));
-            REQUIRE(std::vector<int>(s3.begin(), s3.end()) == std::vector<int>({3,2,1}));
+            REQUIRE(vec_t(s0.begin(), s0.end()) == vec_t({1,2,3}));
+            REQUIRE(vec_t(s1.begin(), s1.end()) == vec_t({3,2,1}));
+            REQUIRE(vec_t(s2.begin(), s2.end()) == vec_t({1,2,3}));
+            REQUIRE(vec_t(s3.begin(), s3.end()) == vec_t({3,2,1}));
         }
 
         {
@@ -112,10 +117,43 @@ TEST_CASE("flat_set") {
             auto s2 = set_t({0,1,2}, std::less<int>());
             auto s3 = set2_t({0,1,2}, std::greater<int>(), alloc_t());
 
-            REQUIRE(std::vector<int>(s0.begin(), s0.end()) == std::vector<int>({0,1,2}));
-            REQUIRE(std::vector<int>(s1.begin(), s1.end()) == std::vector<int>({2,1,0}));
-            REQUIRE(std::vector<int>(s2.begin(), s2.end()) == std::vector<int>({0,1,2}));
-            REQUIRE(std::vector<int>(s3.begin(), s3.end()) == std::vector<int>({2,1,0}));
+            REQUIRE(vec_t(s0.begin(), s0.end()) == vec_t({0,1,2}));
+            REQUIRE(vec_t(s1.begin(), s1.end()) == vec_t({2,1,0}));
+            REQUIRE(vec_t(s2.begin(), s2.end()) == vec_t({0,1,2}));
+            REQUIRE(vec_t(s3.begin(), s3.end()) == vec_t({2,1,0}));
+        }
+
+        {
+            auto s0 = set_t();
+            auto s1 = set_t(alloc_t(42));
+            REQUIRE(s0.get_allocator().i == 0);
+            REQUIRE(s1.get_allocator().i == 42);
+        }
+
+        {
+            auto s0 = set_t{0,1,2};
+            auto s1 = s0;
+            REQUIRE(s0 == set_t{0,1,2});
+            REQUIRE(s1 == set_t{0,1,2});
+            auto s2 = std::move(s1);
+            REQUIRE(s1.empty());
+            REQUIRE(s2 == set_t{0,1,2});
+        }
+
+        {
+            auto s0 = set_t{0,1,2};
+            set_t s1;
+            s1 = s0;
+            REQUIRE(s0 == set_t{0,1,2});
+            REQUIRE(s1 == set_t{0,1,2});
+            set_t s2;
+            s2 = std::move(s1);
+            REQUIRE(s0 == set_t{0,1,2});
+            REQUIRE(s1.empty());
+            REQUIRE(s2 == set_t{0,1,2});
+            set_t s3;
+            s3 = {1,2,3};
+            REQUIRE(s3 == set_t{1,2,3});
         }
     }
     SECTION("capacity") {

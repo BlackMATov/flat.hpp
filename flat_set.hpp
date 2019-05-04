@@ -19,33 +19,51 @@ namespace flat_hpp
 {
     template < typename Key
              , typename Compare = std::less<Key>
-             , typename Allocator = std::allocator<Key> >
+             , typename Allocator = std::allocator<Key>
+             , typename Container = std::vector<Key, Allocator> >
     class flat_set final {
-        using data_type = std::vector<Key, Allocator>;
+        class uber_comparer_type : public Compare {
+        public:
+            uber_comparer_type() = default;
+            uber_comparer_type(const Compare& c) : Compare(c) {}
+
+            bool operator()(const Key& l, const Key& r) const {
+                return Compare::operator()(l, r);
+            }
+        };
     public:
         using key_type = Key;
         using value_type = Key;
 
-        using size_type = typename data_type::size_type;
-        using difference_type = typename data_type::difference_type;
+        using size_type = typename Container::size_type;
+        using difference_type = typename Container::difference_type;
 
         using key_compare = Compare;
         using value_compare = Compare;
         using allocator_type = Allocator;
+        using container_type = Container;
 
-        using reference = typename data_type::reference;
-        using const_reference = typename data_type::const_reference;
-        using pointer = typename data_type::pointer;
-        using const_pointer = typename data_type::const_pointer;
+        using reference = typename Container::reference;
+        using const_reference = typename Container::const_reference;
+        using pointer = typename Container::pointer;
+        using const_pointer = typename Container::const_pointer;
 
-        using iterator = typename data_type::iterator;
-        using const_iterator = typename data_type::const_iterator;
-        using reverse_iterator = typename data_type::reverse_iterator;
-        using const_reverse_iterator = typename data_type::const_reverse_iterator;
+        using iterator = typename Container::iterator;
+        using const_iterator = typename Container::const_iterator;
+        using reverse_iterator = typename Container::reverse_iterator;
+        using const_reverse_iterator = typename Container::const_reverse_iterator;
 
         static_assert(
             std::is_same<typename allocator_type::value_type, value_type>::value,
             "Allocator::value_type must be same type as value_type");
+
+        static_assert(
+            std::is_same<typename container_type::value_type, value_type>::value,
+            "Container::value_type must be same type as value_type");
+
+        static_assert(
+            std::is_same<typename container_type::allocator_type, allocator_type>::value,
+            "Container::allocator_type must be same type as allocator_type");
     public:
         explicit flat_set(
             const Allocator& a)
@@ -91,6 +109,37 @@ namespace flat_hpp
         : data_(a)
         , compare_(c) {
             insert(ilist);
+        }
+
+        flat_set(flat_set&& other)
+        : data_(std::move(other.data_))
+        , compare_(std::move(other.compare_)) {}
+
+        flat_set(const flat_set& other)
+        : data_(other.data_)
+        , compare_(other.compare_) {}
+
+        flat_set& operator=(flat_set&& other) {
+            if ( this != &other ) {
+                flat_set(std::move(other)).swap(*this);
+            }
+            return *this;
+        }
+
+        flat_set& operator=(const flat_set& other) {
+            if ( this != &other ) {
+                flat_set(other).swap(*this);
+            }
+            return *this;
+        }
+
+        flat_set& operator=(std::initializer_list<value_type> ilist) {
+            flat_set(ilist).swap(*this);
+            return *this;
+        }
+
+        allocator_type get_allocator() const {
+            return data_.get_allocator();
         }
 
         iterator begin() noexcept { return data_.begin(); }
@@ -246,8 +295,8 @@ namespace flat_hpp
             return value_compare(compare_);
         }
     private:
-        data_type data_;
-        key_compare compare_;
+        container_type data_;
+        uber_comparer_type compare_;
     };
 }
 
