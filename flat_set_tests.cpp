@@ -30,7 +30,7 @@ namespace
 }
 
 TEST_CASE("flat_set") {
-    {
+    SECTION("types") {
         using set_t = flat_set<int>;
 
         static_assert(
@@ -61,7 +61,7 @@ TEST_CASE("flat_set") {
             std::is_same<set_t::const_pointer, const int*>::value,
             "unit test static error");
     }
-    {
+    SECTION("ctors") {
         using alloc_t = dummy_allocator<int>;
         using set_t = flat_set<int, std::less<int>, alloc_t>;
 
@@ -85,6 +85,24 @@ TEST_CASE("flat_set") {
             auto s1 = set_t({0,1,2}, alloc_t());
             auto s2 = set_t({0,1,2}, std::less<int>());
             auto s3 = set_t({0,1,2}, std::less<int>(), alloc_t());
+        }
+    }
+    SECTION("inserts") {
+        struct obj_t {
+            obj_t(int i) : i(i) {}
+            int i;
+        };
+
+        using set_t = flat_set<obj_t>;
+
+        {
+            set_t s0;
+            s0.insert(42);
+            s0.insert(obj_t(42));
+            s0.insert(s0.cend(), 84);
+            s0.insert(s0.cend(), obj_t(84));
+            s0.emplace(100500);
+            s0.emplace_hint(s0.cend(), 100500);
         }
     }
 }

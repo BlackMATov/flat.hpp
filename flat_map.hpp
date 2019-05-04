@@ -96,19 +96,30 @@ namespace flat_hpp
 
         iterator begin() noexcept { return data_.begin(); }
         const_iterator begin() const noexcept { return data_.begin(); }
+        const_iterator cbegin() const noexcept { return data_.cbegin(); }
+
         iterator end() noexcept { return data_.end(); }
         const_iterator end() const noexcept { return data_.end(); }
+        const_iterator cend() const noexcept { return data_.cend(); }
+
         reverse_iterator rbegin() noexcept { return data_.rbegin(); }
         const_reverse_iterator rbegin() const noexcept { return data_.rbegin(); }
+        const_reverse_iterator crbegin() const noexcept { return data_.crbegin(); }
+
         reverse_iterator rend() noexcept { return data_.rend(); }
         const_reverse_iterator rend() const noexcept { return data_.rend(); }
+        const_reverse_iterator crend() const noexcept { return data_.crend(); }
 
-        std::pair<iterator, bool> insert(value_type&& value) {
+        template < typename P
+                 , typename = std::enable_if_t<std::is_constructible<value_type, P>::value> >
+        std::pair<iterator, bool> insert(P&& p) {
             //TODO(BlackMat): implme
             return std::make_pair(end(), false);
         }
 
-        std::pair<iterator, bool> insert(const value_type& value) {
+        template < typename P
+                 , typename = std::enable_if_t<std::is_constructible<value_type, P>::value> >
+        std::pair<iterator, bool> insert(const_iterator hint, P&& p) {
             //TODO(BlackMat): implme
             return std::make_pair(end(), false);
         }
@@ -118,6 +129,18 @@ namespace flat_hpp
             for ( auto iter = first; iter != last; ++iter ) {
                 insert(*iter);
             }
+        }
+
+        template < typename... Args >
+        std::pair<iterator, bool> emplace(Args&&... args) {
+            //TODO(BlackMat): implme
+            return insert(value_type(std::forward<Args>(args)...));
+        }
+
+        template < typename... Args >
+        std::pair<iterator, bool> emplace_hint(const_iterator hint, Args&&... args) {
+            //TODO(BlackMat): implme
+            return insert(value_type(std::forward<Args>(args)...));
         }
     private:
         data_type data_;

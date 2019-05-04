@@ -30,7 +30,7 @@ namespace
 }
 
 TEST_CASE("flat_map") {
-    {
+    SECTION("types") {
         using map_t = flat_map<int, unsigned>;
 
         static_assert(
@@ -64,7 +64,7 @@ TEST_CASE("flat_map") {
             std::is_same<map_t::const_pointer, const std::pair<const int, unsigned>*>::value,
             "unit test static error");
     }
-    {
+    SECTION("ctors") {
         using alloc_t = dummy_allocator<
             std::pair<const int,unsigned>>;
 
@@ -94,6 +94,24 @@ TEST_CASE("flat_map") {
             auto s1 = map_t({{0,1}, {1,2}}, alloc_t());
             auto s2 = map_t({{0,1}, {1,2}}, std::less<int>());
             auto s3 = map_t({{0,1}, {1,2}}, std::less<int>(), alloc_t());
+        }
+    }
+    SECTION("inserts") {
+        struct obj_t {
+            obj_t(int i) : i(i) {}
+            int i;
+        };
+
+        using map_t = flat_map<int, obj_t>;
+
+        {
+            map_t s0;
+            s0.insert(std::make_pair(1, 42));
+            s0.insert(std::make_pair(2, obj_t(42)));
+            s0.insert(s0.cend(), std::make_pair(3, 84));
+            s0.insert(s0.cend(), std::make_pair(4, obj_t(84)));
+            s0.emplace(5, 100500);
+            s0.emplace_hint(s0.cend(), 6, 100500);
         }
     }
 }
