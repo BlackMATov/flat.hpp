@@ -44,6 +44,19 @@ namespace flat_hpp
         using reverse_iterator = typename data_type::reverse_iterator;
         using const_reverse_iterator = typename data_type::const_reverse_iterator;
 
+        class value_compare final : public std::binary_function<value_type, value_type, bool> {
+        public:
+            bool operator()(const value_type& l, const value_type& r) const {
+                return compare_(l.first, r.first);
+            }
+        private:
+            friend class flat_map;
+            explicit value_compare(const key_compare& compare)
+            : compare_(compare) {}
+        private:
+            key_compare compare_;
+        };
+
         static_assert(
             std::is_same<typename allocator_type::value_type, value_type>::value,
             "Allocator::value_type must be same type as value_type");
@@ -221,6 +234,14 @@ namespace flat_hpp
         const_iterator upper_bound(const key_type& key) const {
             //TODO(BlackMat): implme
             return end();
+        }
+
+        key_compare key_comp() const {
+            return compare_;
+        }
+
+        value_compare value_comp() const {
+            return value_compare(compare_);
         }
     private:
         data_type data_;

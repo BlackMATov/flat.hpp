@@ -152,4 +152,10 @@ TEST_CASE("flat_map") {
         s0.upper_bound(30);
         my_as_const(s0).upper_bound(30);
     }
+    SECTION("observers") {
+        using map_t = flat_map<int, unsigned>;
+        map_t s0;
+        my_as_const(s0).key_comp();
+        my_as_const(s0).value_comp();
+    }
 }

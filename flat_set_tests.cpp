@@ -143,4 +143,10 @@ TEST_CASE("flat_set") {
         s0.upper_bound(30);
         my_as_const(s0).upper_bound(30);
     }
+    SECTION("observers") {
+        using set_t = flat_set<int>;
+        set_t s0;
+        my_as_const(s0).key_comp();
+        my_as_const(s0).value_comp();
+    }
 }

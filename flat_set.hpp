@@ -221,6 +221,14 @@ namespace flat_hpp
             //TODO(BlackMat): implme
             return end();
         }
+
+        key_compare key_comp() const {
+            return compare_;
+        }
+
+        value_compare value_comp() const {
+            return value_compare(compare_);
+        }
     private:
         data_type data_;
         key_compare compare_;
