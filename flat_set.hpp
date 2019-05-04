@@ -111,6 +111,10 @@ namespace flat_hpp
             insert(ilist);
         }
 
+        allocator_type get_allocator() const {
+            return data_.get_allocator();
+        }
+
         iterator begin() noexcept { return data_.begin(); }
         const_iterator begin() const noexcept { return data_.begin(); }
         const_iterator cbegin() const noexcept { return data_.cbegin(); }

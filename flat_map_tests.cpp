@@ -18,9 +18,11 @@ namespace
         using value_type = T;
 
         dummy_allocator() = default;
+        dummy_allocator(int i) : i(i) {}
 
         template < typename U >
-        dummy_allocator(const dummy_allocator<U>&) noexcept {
+        dummy_allocator(const dummy_allocator<U>& o) noexcept {
+            i = o.i;
         }
 
         T* allocate(std::size_t n) noexcept {
@@ -31,6 +33,8 @@ namespace
             (void)n;
             std::free(p);
         }
+
+        int i = 0;
     };
 
     template < typename T, typename U >
@@ -100,6 +104,9 @@ TEST_CASE("flat_map") {
             std::greater<int>,
             alloc_t>;
 
+        using vec_t = std::vector<
+            std::pair<int,unsigned>>;
+
         {
             auto s0 = map_t();
             auto s1 = map2_t(alloc_t());
@@ -108,8 +115,6 @@ TEST_CASE("flat_map") {
         }
 
         {
-            using vec_t = std::vector<std::pair<int,unsigned>>;
-
             vec_t v{{1,30},{2,20},{3,10}};
             auto s0 = map_t(v.cbegin(), v.cend());
             auto s1 = map2_t(v.cbegin(), v.cend(), alloc_t());
@@ -127,6 +132,18 @@ TEST_CASE("flat_map") {
             auto s1 = map_t({{0,1}, {1,2}}, alloc_t());
             auto s2 = map_t({{0,1}, {1,2}}, std::less<int>());
             auto s3 = map_t({{0,1}, {1,2}}, std::less<int>(), alloc_t());
+
+            REQUIRE(vec_t(s0.begin(), s0.end()) == vec_t({{0,1},{1,2}}));
+            REQUIRE(vec_t(s1.begin(), s1.end()) == vec_t({{0,1},{1,2}}));
+            REQUIRE(vec_t(s2.begin(), s2.end()) == vec_t({{0,1},{1,2}}));
+            REQUIRE(vec_t(s3.begin(), s3.end()) == vec_t({{0,1},{1,2}}));
+        }
+
+        {
+            auto s0 = map_t();
+            auto s1 = map_t(alloc_t(42));
+            REQUIRE(s0.get_allocator().i == 0);
+            REQUIRE(s1.get_allocator().i == 42);
         }
     }
     SECTION("capacity") {
