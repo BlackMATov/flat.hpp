@@ -8,15 +8,30 @@
 #include "catch.hpp"
 
 #include "flat_map.hpp"
-namespace flat = flat_hpp;
+using namespace flat_hpp;
 
 namespace
 {
+    template < typename T >
+    class dummy_allocator {
+    public:
+        using value_type = T;
+
+        T* allocate(std::size_t n) {
+            (void)n;
+            return nullptr;
+        }
+
+        void deallocate(T* p, std::size_t n) {
+            (void)p;
+            (void)n;
+        }
+    };
 }
 
 TEST_CASE("flat_map") {
     {
-        using map_t = flat::flat_map<int, unsigned>;
+        using map_t = flat_map<int, unsigned>;
 
         static_assert(
             std::is_same<map_t::key_type, int>::value,
@@ -48,5 +63,37 @@ TEST_CASE("flat_map") {
         static_assert(
             std::is_same<map_t::const_pointer, const std::pair<const int, unsigned>*>::value,
             "unit test static error");
+    }
+    {
+        using alloc_t = dummy_allocator<
+            std::pair<const int,unsigned>>;
+
+        using map_t = flat_map<
+            int,
+            unsigned,
+            std::less<int>,
+            alloc_t>;
+
+        {
+            auto s0 = map_t();
+            auto s1 = map_t(alloc_t());
+            auto s2 = map_t(std::less<int>());
+            auto s3 = map_t(std::less<int>(), alloc_t());
+        }
+
+        {
+            std::vector<std::pair<const int,unsigned>> v;
+            auto s0 = map_t(v.cbegin(), v.cend());
+            auto s1 = map_t(v.cbegin(), v.cend(), alloc_t());
+            auto s2 = map_t(v.cbegin(), v.cend(), std::less<int>());
+            auto s3 = map_t(v.cbegin(), v.cend(), std::less<int>(), alloc_t());
+        }
+
+        {
+            auto s0 = map_t({{0,1}, {1,2}});
+            auto s1 = map_t({{0,1}, {1,2}}, alloc_t());
+            auto s2 = map_t({{0,1}, {1,2}}, std::less<int>());
+            auto s3 = map_t({{0,1}, {1,2}}, std::less<int>(), alloc_t());
+        }
     }
 }

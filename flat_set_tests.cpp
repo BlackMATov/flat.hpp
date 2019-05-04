@@ -8,15 +8,30 @@
 #include "catch.hpp"
 
 #include "flat_set.hpp"
-namespace flat = flat_hpp;
+using namespace flat_hpp;
 
 namespace
 {
+    template < typename T >
+    class dummy_allocator {
+    public:
+        using value_type = T;
+
+        T* allocate(std::size_t n) {
+            (void)n;
+            return nullptr;
+        }
+
+        void deallocate(T* p, std::size_t n) {
+            (void)p;
+            (void)n;
+        }
+    };
 }
 
 TEST_CASE("flat_set") {
     {
-        using set_t = flat::flat_set<int>;
+        using set_t = flat_set<int>;
 
         static_assert(
             std::is_same<set_t::key_type, int>::value,
@@ -45,5 +60,31 @@ TEST_CASE("flat_set") {
         static_assert(
             std::is_same<set_t::const_pointer, const int*>::value,
             "unit test static error");
+    }
+    {
+        using alloc_t = dummy_allocator<int>;
+        using set_t = flat_set<int, std::less<int>, alloc_t>;
+
+        {
+            auto s0 = set_t();
+            auto s1 = set_t(alloc_t());
+            auto s2 = set_t(std::less<int>());
+            auto s3 = set_t(std::less<int>(), alloc_t());
+        }
+
+        {
+            std::vector<int> v;
+            auto s0 = set_t(v.cbegin(), v.cend());
+            auto s1 = set_t(v.cbegin(), v.cend(), alloc_t());
+            auto s2 = set_t(v.cbegin(), v.cend(), std::less<int>());
+            auto s3 = set_t(v.cbegin(), v.cend(), std::less<int>(), alloc_t());
+        }
+
+        {
+            auto s0 = set_t({0,1,2});
+            auto s1 = set_t({0,1,2}, alloc_t());
+            auto s2 = set_t({0,1,2}, std::less<int>());
+            auto s3 = set_t({0,1,2}, std::less<int>(), alloc_t());
+        }
     }
 }

@@ -9,8 +9,11 @@
 #include <vector>
 #include <memory>
 #include <utility>
+#include <iterator>
+#include <algorithm>
 #include <functional>
 #include <type_traits>
+#include <initializer_list>
 
 namespace flat_hpp
 {
@@ -39,5 +42,84 @@ namespace flat_hpp
         using const_iterator = typename data_type::const_iterator;
         using reverse_iterator = typename data_type::reverse_iterator;
         using const_reverse_iterator = typename data_type::const_reverse_iterator;
+
+        static_assert(
+            std::is_same<typename allocator_type::value_type, value_type>::value,
+            "Allocator::value_type must be same type as value_type");
+    public:
+        explicit flat_set(
+            const Allocator& a)
+        : data_(a) {}
+
+        explicit flat_set(
+            const Compare& c = Compare(),
+            const Allocator& a = Allocator())
+        : data_(a)
+        , compare_(c) {}
+
+        template < typename InputIter >
+        flat_set(
+            InputIter first,
+            InputIter last,
+            const Allocator& a)
+        : data_(a) {
+            insert(first, last);
+        }
+
+        template < typename InputIter >
+        flat_set(
+            InputIter first,
+            InputIter last,
+            const Compare& c = Compare(),
+            const Allocator& a = Allocator())
+        : data_(a)
+        , compare_(c) {
+            insert(first, last);
+        }
+
+        flat_set(
+            std::initializer_list<value_type> il,
+            const Allocator& a)
+        : data_(a) {
+            insert(il.begin(), il.end());
+        }
+
+        flat_set(
+            std::initializer_list<value_type> il,
+            const Compare& c = Compare(),
+            const Allocator& a = Allocator())
+        : data_(a)
+        , compare_(c) {
+            insert(il.begin(), il.end());
+        }
+
+        iterator begin() noexcept { return data_.begin(); }
+        const_iterator begin() const noexcept { return data_.begin(); }
+        iterator end() noexcept { return data_.end(); }
+        const_iterator end() const noexcept { return data_.end(); }
+        reverse_iterator rbegin() noexcept { return data_.rbegin(); }
+        const_reverse_iterator rbegin() const noexcept { return data_.rbegin(); }
+        reverse_iterator rend() noexcept { return data_.rend(); }
+        const_reverse_iterator rend() const noexcept { return data_.rend(); }
+
+        std::pair<iterator, bool> insert(value_type&& value) {
+            //TODO(BlackMat): implme
+            return std::make_pair(end(), false);
+        }
+
+        std::pair<iterator, bool> insert(const value_type& value) {
+            //TODO(BlackMat): implme
+            return std::make_pair(end(), false);
+        }
+
+        template < typename InputIter >
+        void insert(InputIter first, InputIter last) {
+            for ( auto iter = first; iter != last; ++iter ) {
+                insert(*iter);
+            }
+        }
+    private:
+        data_type data_;
+        key_compare compare_;
     };
 }
