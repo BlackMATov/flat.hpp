@@ -132,6 +132,9 @@ const_reverse_iterator crend() const noexcept;
 bool empty() const noexcept;
 size_type size() const noexcept;
 size_type max_size() const noexcept;
+size_type capacity() const noexcept;
+void reserve(size_type ncapacity);
+void shrink_to_fit();
 ```
 
 ### Modifiers
@@ -330,6 +333,9 @@ const_reverse_iterator crend() const noexcept;
 bool empty() const noexcept;
 size_type size() const noexcept;
 size_type max_size() const noexcept;
+size_type capacity() const noexcept;
+void reserve(size_type ncapacity);
+void shrink_to_fit();
 ```
 
 ### Element access

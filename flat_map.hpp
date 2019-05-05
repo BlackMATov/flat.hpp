@@ -192,6 +192,18 @@ namespace flat_hpp
             return data_.max_size();
         }
 
+        size_type capacity() const noexcept {
+            return data_.capacity();
+        }
+
+        void reserve(size_type ncapacity) {
+            data_.reserve(ncapacity);
+        }
+
+        void shrink_to_fit() {
+            data_.shrink_to_fit();
+        }
+
         mapped_type& operator[](key_type&& key) {
             const iterator iter = find(key);
             return iter != end()
@@ -354,39 +366,88 @@ namespace flat_hpp
 
 namespace flat_hpp
 {
-    template < typename K, typename V, typename C, typename A >
-    void swap(flat_map<K, V, C, A>& l, flat_map<K, V, C, A>& r) {
+    template < typename Key
+             , typename Value
+             , typename Compare
+             , typename Allocator
+             , typename Container >
+    void swap(
+        flat_map<Key, Value, Compare, Allocator, Container>& l,
+        flat_map<Key, Value, Compare, Allocator, Container>& r)
+    {
         l.swap(r);
     }
 
-    template < typename K, typename V, typename C, typename A >
-    bool operator==(const flat_map<K, V, C, A>& l, const flat_map<K, V, C, A>& r) {
+    template < typename Key
+             , typename Value
+             , typename Compare
+             , typename Allocator
+             , typename Container >
+    bool operator==(
+        const flat_map<Key, Value, Compare, Allocator, Container>& l,
+        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+    {
         return l.size() == r.size()
             && std::equal(l.begin(), l.end(), r.begin(), r.end());
     }
 
-    template < typename K, typename V, typename C, typename A >
-    bool operator!=(const flat_map<K, V, C, A>& l, const flat_map<K, V, C, A>& r) {
+    template < typename Key
+             , typename Value
+             , typename Compare
+             , typename Allocator
+             , typename Container >
+    bool operator!=(
+        const flat_map<Key, Value, Compare, Allocator, Container>& l,
+        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+    {
         return !(l == r);
     }
 
-    template < typename K, typename V, typename C, typename A >
-    bool operator<(const flat_map<K, V, C, A>& l, const flat_map<K, V, C, A>& r) {
+    template < typename Key
+             , typename Value
+             , typename Compare
+             , typename Allocator
+             , typename Container >
+    bool operator<(
+        const flat_map<Key, Value, Compare, Allocator, Container>& l,
+        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+    {
         return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
     }
 
-    template < typename K, typename V, typename C, typename A >
-    bool operator>(const flat_map<K, V, C, A>& l, const flat_map<K, V, C, A>& r) {
+    template < typename Key
+             , typename Value
+             , typename Compare
+             , typename Allocator
+             , typename Container >
+    bool operator>(
+        const flat_map<Key, Value, Compare, Allocator, Container>& l,
+        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+    {
         return r < l;
     }
 
-    template < typename K, typename V, typename C, typename A >
-    bool operator<=(const flat_map<K, V, C, A>& l, const flat_map<K, V, C, A>& r) {
+    template < typename Key
+             , typename Value
+             , typename Compare
+             , typename Allocator
+             , typename Container >
+    bool operator<=(
+        const flat_map<Key, Value, Compare, Allocator, Container>& l,
+        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+    {
         return !(r < l);
     }
 
-    template < typename K, typename V, typename C, typename A >
-    bool operator>=(const flat_map<K, V, C, A>& l, const flat_map<K, V, C, A>& r) {
+    template < typename Key
+             , typename Value
+             , typename Compare
+             , typename Allocator
+             , typename Container >
+    bool operator>=(
+        const flat_map<Key, Value, Compare, Allocator, Container>& l,
+        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+    {
         return !(l < r);
     }
 }

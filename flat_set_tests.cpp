@@ -7,6 +7,8 @@
 #define CATCH_CONFIG_FAST_COMPILE
 #include "catch.hpp"
 
+#include <deque>
+
 #include "flat_set.hpp"
 using namespace flat_hpp;
 
@@ -158,29 +160,58 @@ TEST_CASE("flat_set") {
     }
     SECTION("capacity") {
         using set_t = flat_set<int>;
-        set_t s0;
 
-        REQUIRE(s0.empty());
-        REQUIRE_FALSE(s0.size());
-        REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+        {
+            set_t s0;
 
-        s0.insert(42);
+            REQUIRE(s0.empty());
+            REQUIRE_FALSE(s0.size());
+            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
 
-        REQUIRE_FALSE(s0.empty());
-        REQUIRE(s0.size() == 1u);
-        REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+            s0.insert(42);
 
-        s0.insert(42);
-        REQUIRE(s0.size() == 1u);
+            REQUIRE_FALSE(s0.empty());
+            REQUIRE(s0.size() == 1u);
+            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
 
-        s0.insert(84);
-        REQUIRE(s0.size() == 2u);
+            s0.insert(42);
+            REQUIRE(s0.size() == 1u);
 
-        s0.clear();
+            s0.insert(84);
+            REQUIRE(s0.size() == 2u);
 
-        REQUIRE(s0.empty());
-        REQUIRE_FALSE(s0.size());
-        REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+            s0.clear();
+
+            REQUIRE(s0.empty());
+            REQUIRE_FALSE(s0.size());
+            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+        }
+
+        {
+            set_t s0;
+
+            REQUIRE(s0.capacity() == 0);
+            s0.reserve(42);
+            REQUIRE(s0.capacity() == 42);
+            s0.insert({1,2,3});
+            REQUIRE(s0.capacity() == 42);
+            s0.shrink_to_fit();
+            REQUIRE(s0.size() == 3);
+            REQUIRE(s0.capacity() == 3);
+            REQUIRE(s0 == set_t{1,2,3});
+
+            using alloc2_t = dummy_allocator<int>;
+
+            using set2_t = flat_set<
+                int,
+                std::less<int>,
+                alloc2_t,
+                std::deque<int, alloc2_t>>;
+
+            set2_t s1;
+            s1.insert({1,2,3});
+            REQUIRE(s1 == set2_t{1,2,3});
+        }
     }
     SECTION("inserts") {
         struct obj_t {
@@ -365,5 +396,13 @@ TEST_CASE("flat_set") {
         REQUIRE(set_t{1,2,3} <= set_t{1,2,3});
         REQUIRE_FALSE(set_t{1,2,3} > set_t{1,2,3});
         REQUIRE(set_t{1,2,3} >= set_t{1,2,3});
+
+        const set_t s0;
+        REQUIRE(s0 == s0);
+        REQUIRE_FALSE(s0 != s0);
+        REQUIRE_FALSE(s0 < s0);
+        REQUIRE_FALSE(s0 > s0);
+        REQUIRE(s0 <= s0);
+        REQUIRE(s0 >= s0);
     }
 }

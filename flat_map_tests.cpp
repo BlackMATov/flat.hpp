@@ -7,6 +7,8 @@
 #define CATCH_CONFIG_FAST_COMPILE
 #include "catch.hpp"
 
+#include <deque>
+
 #include "flat_map.hpp"
 using namespace flat_hpp;
 
@@ -174,29 +176,60 @@ TEST_CASE("flat_map") {
     }
     SECTION("capacity") {
         using map_t = flat_map<int, unsigned>;
-        map_t s0;
 
-        REQUIRE(s0.empty());
-        REQUIRE_FALSE(s0.size());
-        REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
+        {
+            map_t s0;
 
-        s0.insert({2,42});
+            REQUIRE(s0.empty());
+            REQUIRE_FALSE(s0.size());
+            REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
 
-        REQUIRE_FALSE(s0.empty());
-        REQUIRE(s0.size() == 1u);
-        REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
+            s0.insert({2,42});
 
-        s0.insert({2,84});
-        REQUIRE(s0.size() == 1u);
+            REQUIRE_FALSE(s0.empty());
+            REQUIRE(s0.size() == 1u);
+            REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
 
-        s0.insert({3,84});
-        REQUIRE(s0.size() == 2u);
+            s0.insert({2,84});
+            REQUIRE(s0.size() == 1u);
 
-        s0.clear();
+            s0.insert({3,84});
+            REQUIRE(s0.size() == 2u);
 
-        REQUIRE(s0.empty());
-        REQUIRE_FALSE(s0.size());
-        REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
+            s0.clear();
+
+            REQUIRE(s0.empty());
+            REQUIRE_FALSE(s0.size());
+            REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
+        }
+
+        {
+            map_t s0;
+
+            REQUIRE(s0.capacity() == 0);
+            s0.reserve(42);
+            REQUIRE(s0.capacity() == 42);
+            s0.insert({{1,2},{2,3},{3,4}});
+            REQUIRE(s0.capacity() == 42);
+            s0.shrink_to_fit();
+            REQUIRE(s0.size() == 3);
+            REQUIRE(s0.capacity() == 3);
+            REQUIRE(s0 == map_t{{1,2},{2,3},{3,4}});
+
+            using alloc2_t = dummy_allocator<
+                std::pair<int, unsigned>>;
+
+            using map2_t = flat_map<
+                int,
+                unsigned,
+                std::less<int>,
+                alloc2_t,
+                std::deque<std::pair<int, unsigned>, alloc2_t>>;
+
+            map2_t s1;
+            s1.insert({{1,2},{2,3},{3,4}});
+            REQUIRE(s1 == map2_t{{1,2},{2,3},{3,4}});
+        }
     }
     SECTION("access") {
         struct obj_t {
@@ -224,6 +257,10 @@ TEST_CASE("flat_map") {
         s0[1] = 84;
         REQUIRE(s0[1] == 84);
         REQUIRE(s0 == map_t{{1,84}});
+
+        s0[2] = 21;
+        REQUIRE(s0[2] == 21);
+        REQUIRE(s0 == map_t{{1,84},{2,21}});
 
         REQUIRE(s0.at(1) == 84);
         REQUIRE(my_as_const(s0).at(k1) == 84);
@@ -394,5 +431,13 @@ TEST_CASE("flat_map") {
         REQUIRE(map_t{{1,2},{3,4}} <= map_t{{1,2},{3,4}});
         REQUIRE_FALSE(map_t{{1,2},{3,4}} > map_t{{1,2},{3,4}});
         REQUIRE(map_t{{1,2},{3,4}} >= map_t{{1,2},{3,4}});
+
+        const map_t s0;
+        REQUIRE(s0 == s0);
+        REQUIRE_FALSE(s0 != s0);
+        REQUIRE_FALSE(s0 < s0);
+        REQUIRE_FALSE(s0 > s0);
+        REQUIRE(s0 <= s0);
+        REQUIRE(s0 >= s0);
     }
 }
