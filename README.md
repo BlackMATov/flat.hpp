@@ -191,40 +191,61 @@ value_compare value_comp() const;
 ### Non-member functions
 
 ```cpp
-template < typename K, typename C, typename A >
+template < typename Key
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 void swap(
-    flat_set<K, C, A>& l,
-    flat_set<K, C, A>& r);
+    flat_set<Key, Compare, Allocator, Container>& l,
+    flat_set<Key, Compare, Allocator, Container>& r);
 
-template < typename K, typename C, typename A >
+template < typename Key
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator==(
-    const flat_set<K, C, A>& l,
-    const flat_set<K, C, A>& r);
+    const flat_set<Key, Compare, Allocator, Container>& l,
+    const flat_set<Key, Compare, Allocator, Container>& r);
 
-template < typename K, typename C, typename A >
+template < typename Key
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator!=(
-    const flat_set<K, C, A>& l,
-    const flat_set<K, C, A>& r);
+    const flat_set<Key, Compare, Allocator, Container>& l,
+    const flat_set<Key, Compare, Allocator, Container>& r);
 
-template < typename K, typename C, typename A >
+template < typename Key
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator<(
-    const flat_set<K, C, A>& l,
-    const flat_set<K, C, A>& r);
+    const flat_set<Key, Compare, Allocator, Container>& l,
+    const flat_set<Key, Compare, Allocator, Container>& r);
 
-template < typename K, typename C, typename A >
+template < typename Key
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator>(
-    const flat_set<K, C, A>& l,
-    const flat_set<K, C, A>& r);
+    const flat_set<Key, Compare, Allocator, Container>& l,
+    const flat_set<Key, Compare, Allocator, Container>& r);
 
-template < typename K, typename C, typename A >
+template < typename Key
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator<=(
-    const flat_set<K, C, A>& l,
-    const flat_set<K, C, A>& r);
+    const flat_set<Key, Compare, Allocator, Container>& l,
+    const flat_set<Key, Compare, Allocator, Container>& r);
 
-template < typename K, typename C, typename A >
+template < typename Key
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator>=(
-    const flat_set<K, C, A>& l,
-    const flat_set<K, C, A>& r);
+    const flat_set<Key, Compare, Allocator, Container>& l,
+    const flat_set<Key, Compare, Allocator, Container>& r);
 ```
 
 ## Flat Map
@@ -402,40 +423,68 @@ value_compare value_comp() const;
 ### Non-member functions
 
 ```cpp
-template < typename K, typename V, typename C, typename A >
+template < typename Key
+         , typename Value
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 void swap(
-    flat_map<K, V, C, A>& l,
-    flat_map<K, V, C, A>& r);
+    flat_map<Key, Value, Compare, Allocator, Container>& l,
+    flat_map<Key, Value, Compare, Allocator, Container>& r);
 
-template < typename K, typename V, typename C, typename A >
+template < typename Key
+         , typename Value
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator==(
-    const flat_map<K, V, C, A>& l,
-    const flat_map<K, V, C, A>& r);
+    const flat_map<Key, Value, Compare, Allocator, Container>& l,
+    const flat_map<Key, Value, Compare, Allocator, Container>& r);
 
-template < typename K, typename V, typename C, typename A >
+template < typename Key
+         , typename Value
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator!=(
-    const flat_map<K, V, C, A>& l,
-    const flat_map<K, V, C, A>& r);
+    const flat_map<Key, Value, Compare, Allocator, Container>& l,
+    const flat_map<Key, Value, Compare, Allocator, Container>& r);
 
-template < typename K, typename V, typename C, typename A >
+template < typename Key
+         , typename Value
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator<(
-    const flat_map<K, V, C, A>& l,
-    const flat_map<K, V, C, A>& r);
+    const flat_map<Key, Value, Compare, Allocator, Container>& l,
+    const flat_map<Key, Value, Compare, Allocator, Container>& r);
 
-template < typename K, typename V, typename C, typename A >
+template < typename Key
+         , typename Value
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator>(
-    const flat_map<K, V, C, A>& l,
-    const flat_map<K, V, C, A>& r);
+    const flat_map<Key, Value, Compare, Allocator, Container>& l,
+    const flat_map<Key, Value, Compare, Allocator, Container>& r);
 
-template < typename K, typename V, typename C, typename A >
+template < typename Key
+         , typename Value
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator<=(
-    const flat_map<K, V, C, A>& l,
-    const flat_map<K, V, C, A>& r);
+    const flat_map<Key, Value, Compare, Allocator, Container>& l,
+    const flat_map<Key, Value, Compare, Allocator, Container>& r);
 
-template < typename K, typename V, typename C, typename A >
+template < typename Key
+         , typename Value
+         , typename Compare
+         , typename Allocator
+         , typename Container >
 bool operator>=(
-    const flat_map<K, V, C, A>& l,
-    const flat_map<K, V, C, A>& r);
+    const flat_map<Key, Value, Compare, Allocator, Container>& l,
+    const flat_map<Key, Value, Compare, Allocator, Container>& r);
 ```
 
 ## Flat Multiset
