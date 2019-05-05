@@ -388,7 +388,7 @@ namespace flat_hpp
         const flat_map<Key, Value, Compare, Allocator, Container>& r)
     {
         return l.size() == r.size()
-            && std::equal(l.begin(), l.end(), r.begin(), r.end());
+            && std::equal(l.begin(), l.end(), r.begin());
     }
 
     template < typename Key
