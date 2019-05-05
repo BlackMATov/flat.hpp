@@ -111,27 +111,11 @@ namespace flat_hpp
             insert(ilist);
         }
 
-        flat_set(flat_set&& other)
-        : data_(std::move(other.data_))
-        , compare_(std::move(other.compare_)) {}
+        flat_set(flat_set&& other) = default;
+        flat_set(const flat_set& other) = default;
 
-        flat_set(const flat_set& other)
-        : data_(other.data_)
-        , compare_(other.compare_) {}
-
-        flat_set& operator=(flat_set&& other) {
-            if ( this != &other ) {
-                flat_set(std::move(other)).swap(*this);
-            }
-            return *this;
-        }
-
-        flat_set& operator=(const flat_set& other) {
-            if ( this != &other ) {
-                flat_set(other).swap(*this);
-            }
-            return *this;
-        }
+        flat_set& operator=(flat_set&& other) = default;
+        flat_set& operator=(const flat_set& other) = default;
 
         flat_set& operator=(std::initializer_list<value_type> ilist) {
             flat_set(ilist).swap(*this);
