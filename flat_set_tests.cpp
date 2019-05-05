@@ -7,6 +7,8 @@
 #define CATCH_CONFIG_FAST_COMPILE
 #include "catch.hpp"
 
+#include <deque>
+
 #include "flat_set.hpp"
 using namespace flat_hpp;
 
@@ -15,7 +17,19 @@ namespace
     template < typename T >
     class dummy_allocator {
     public:
+        using size_type = std::size_t;
+        using difference_type = std::ptrdiff_t;
+        using pointer = T*;
+        using const_pointer = const T*;
+        using reference = T&;
+        using const_reference = const T&;
         using value_type = T;
+
+        using propagate_on_container_move_assignment = std::true_type;
+        using is_always_equal = std::true_type;
+
+        template < typename U >
+        struct rebind { using other = dummy_allocator<U>; };
 
         dummy_allocator() = default;
         dummy_allocator(int i) : i(i) {}
@@ -32,6 +46,15 @@ namespace
         void deallocate(T* p, std::size_t n) noexcept {
             (void)n;
             std::free(p);
+        }
+
+        template < typename U, typename... Args >
+        void construct(U* p, Args&&... args) {
+            ::new((void*)p) U(std::forward<Args>(args)...);
+        }
+
+        void destroy(pointer p) {
+            p->~T();
         }
 
         int i = 0;
@@ -158,29 +181,58 @@ TEST_CASE("flat_set") {
     }
     SECTION("capacity") {
         using set_t = flat_set<int>;
-        set_t s0;
 
-        REQUIRE(s0.empty());
-        REQUIRE_FALSE(s0.size());
-        REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+        {
+            set_t s0;
 
-        s0.insert(42);
+            REQUIRE(s0.empty());
+            REQUIRE_FALSE(s0.size());
+            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
 
-        REQUIRE_FALSE(s0.empty());
-        REQUIRE(s0.size() == 1u);
-        REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+            s0.insert(42);
 
-        s0.insert(42);
-        REQUIRE(s0.size() == 1u);
+            REQUIRE_FALSE(s0.empty());
+            REQUIRE(s0.size() == 1u);
+            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
 
-        s0.insert(84);
-        REQUIRE(s0.size() == 2u);
+            s0.insert(42);
+            REQUIRE(s0.size() == 1u);
 
-        s0.clear();
+            s0.insert(84);
+            REQUIRE(s0.size() == 2u);
 
-        REQUIRE(s0.empty());
-        REQUIRE_FALSE(s0.size());
-        REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+            s0.clear();
+
+            REQUIRE(s0.empty());
+            REQUIRE_FALSE(s0.size());
+            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+        }
+
+        {
+            set_t s0;
+
+            REQUIRE(s0.capacity() == 0);
+            s0.reserve(42);
+            REQUIRE(s0.capacity() == 42);
+            s0.insert({1,2,3});
+            REQUIRE(s0.capacity() == 42);
+            s0.shrink_to_fit();
+            REQUIRE(s0.size() == 3);
+            REQUIRE(s0.capacity() == 3);
+            REQUIRE(s0 == set_t{1,2,3});
+
+            using alloc2_t = dummy_allocator<int>;
+
+            using set2_t = flat_set<
+                int,
+                std::less<int>,
+                alloc2_t,
+                std::deque<int, alloc2_t>>;
+
+            set2_t s1;
+            s1.insert({1,2,3});
+            REQUIRE(s1 == set2_t{1,2,3});
+        }
     }
     SECTION("inserts") {
         struct obj_t {
@@ -365,5 +417,13 @@ TEST_CASE("flat_set") {
         REQUIRE(set_t{1,2,3} <= set_t{1,2,3});
         REQUIRE_FALSE(set_t{1,2,3} > set_t{1,2,3});
         REQUIRE(set_t{1,2,3} >= set_t{1,2,3});
+
+        const set_t s0;
+        REQUIRE(s0 == s0);
+        REQUIRE_FALSE(s0 != s0);
+        REQUIRE_FALSE(s0 < s0);
+        REQUIRE_FALSE(s0 > s0);
+        REQUIRE(s0 <= s0);
+        REQUIRE(s0 >= s0);
     }
 }
