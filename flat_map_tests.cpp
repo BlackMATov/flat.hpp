@@ -17,7 +17,19 @@ namespace
     template < typename T >
     class dummy_allocator {
     public:
+        using size_type = std::size_t;
+        using difference_type = std::ptrdiff_t;
+        using pointer = T*;
+        using const_pointer = const T*;
+        using reference = T&;
+        using const_reference = const T&;
         using value_type = T;
+
+        using propagate_on_container_move_assignment = std::true_type;
+        using is_always_equal = std::true_type;
+
+        template < typename U >
+        struct rebind { using other = dummy_allocator<U>; };
 
         dummy_allocator() = default;
         dummy_allocator(int i) : i(i) {}
@@ -34,6 +46,15 @@ namespace
         void deallocate(T* p, std::size_t n) noexcept {
             (void)n;
             std::free(p);
+        }
+
+        template < typename U, typename... Args >
+        void construct(U* p, Args&&... args) {
+            ::new((void*)p) U(std::forward<Args>(args)...);
+        }
+
+        void destroy(pointer p) {
+            p->~T();
         }
 
         int i = 0;
