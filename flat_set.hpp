@@ -22,15 +22,6 @@ namespace flat_hpp
              , typename Allocator = std::allocator<Key>
              , typename Container = std::vector<Key, Allocator> >
     class flat_set final {
-        class uber_comparer_type : public Compare {
-        public:
-            uber_comparer_type() = default;
-            uber_comparer_type(const Compare& c) : Compare(c) {}
-
-            bool operator()(const Key& l, const Key& r) const {
-                return Compare::operator()(l, r);
-            }
-        };
     public:
         using key_type = Key;
         using value_type = Key;
@@ -292,7 +283,7 @@ namespace flat_hpp
         }
     private:
         container_type data_;
-        uber_comparer_type compare_;
+        Compare compare_;
     };
 }
 
