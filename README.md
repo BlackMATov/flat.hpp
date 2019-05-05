@@ -25,14 +25,15 @@
 
 ## Installation
 
-[flat.hpp][flat] is a header only library. All you need to do is copy the header files (`flat_set.hpp` and `flat_map.hpp`) into your project and include them:
+[flat.hpp][flat] is a header only library. All you need to do is copy the header files (`flat_set.hpp` and `flat_map.hpp`) into your project and include them.
 
-```cpp
-#include "flat_set.hpp"
-#include "flat_map.hpp"
-```
+## API
+- [Flat Set](#flat-set)
+- [Flat Map](#flat-map)
+- [Flat Multiset](#flat-multiset)
+- [Flat Multimap](#flat-multimap)
 
-## flat_set
+## Flat Set
 
 ```cpp
 template < typename Key
@@ -223,7 +224,7 @@ bool operator>=(
     const flat_set<K, C, A>& r);
 ```
 
-## flat_map
+## Flat Map
 
 ```cpp
 template < typename Key
@@ -430,5 +431,13 @@ bool operator>=(
     const flat_map<K, V, C, A>& l,
     const flat_map<K, V, C, A>& r);
 ```
+
+## Flat Multiset
+
+> coming soon!
+
+## Flat Multimap
+
+> coming soon!
 
 ## [License (MIT)](./LICENSE.md)
