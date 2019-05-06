@@ -87,7 +87,7 @@ namespace flat_hpp
             std::is_same<typename container_type::allocator_type, allocator_type>::value,
             "Container::allocator_type must be same type as allocator_type");
     public:
-        flat_map() = default;
+        flat_map() {}
 
         explicit flat_map(
             const Allocator& a)
