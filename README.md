@@ -25,7 +25,25 @@
 
 ## Installation
 
-[flat.hpp][flat] is a header only library. All you need to do is copy the header files (`flat_set.hpp` and `flat_map.hpp`) into your project and include them.
+[flat.hpp][flat] is a header-only library. All you need to do is copy the headers files from `headers` directory into your project and include them:
+
+```cpp
+#include "flat_hpp/flat_set.hpp"
+using namespace flat_hpp;
+
+int main() {
+    flat_set<int> s;
+    s.insert(42);
+    return 0;
+}
+```
+
+Also, you can add the root repository directory to your [cmake](https://cmake.org) project:
+
+```cmake
+add_subdirectory(external/flat.hpp)
+target_link_libraries(your_project_target flat.hpp)
+```
 
 ## API
 - [Flat Set](#flat-set)
