@@ -22,15 +22,6 @@ namespace flat_hpp
              , typename Allocator = std::allocator<Key>
              , typename Container = std::vector<Key, Allocator> >
     class flat_set final {
-        class uber_comparer_type : public Compare {
-        public:
-            uber_comparer_type() = default;
-            uber_comparer_type(const Compare& c) : Compare(c) {}
-
-            bool operator()(const Key& l, const Key& r) const {
-                return Compare::operator()(l, r);
-            }
-        };
     public:
         using key_type = Key;
         using value_type = Key;
@@ -111,27 +102,11 @@ namespace flat_hpp
             insert(ilist);
         }
 
-        flat_set(flat_set&& other)
-        : data_(std::move(other.data_))
-        , compare_(std::move(other.compare_)) {}
+        flat_set(flat_set&& other) = default;
+        flat_set(const flat_set& other) = default;
 
-        flat_set(const flat_set& other)
-        : data_(other.data_)
-        , compare_(other.compare_) {}
-
-        flat_set& operator=(flat_set&& other) {
-            if ( this != &other ) {
-                flat_set(std::move(other)).swap(*this);
-            }
-            return *this;
-        }
-
-        flat_set& operator=(const flat_set& other) {
-            if ( this != &other ) {
-                flat_set(other).swap(*this);
-            }
-            return *this;
-        }
+        flat_set& operator=(flat_set&& other) = default;
+        flat_set& operator=(const flat_set& other) = default;
 
         flat_set& operator=(std::initializer_list<value_type> ilist) {
             flat_set(ilist).swap(*this);
@@ -308,7 +283,7 @@ namespace flat_hpp
         }
     private:
         container_type data_;
-        uber_comparer_type compare_;
+        Compare compare_;
     };
 }
 
@@ -334,7 +309,7 @@ namespace flat_hpp
         const flat_set<Key, Compare, Allocator, Container>& r)
     {
         return l.size() == r.size()
-            && std::equal(l.begin(), l.end(), r.begin(), r.end());
+            && std::equal(l.begin(), l.end(), r.begin());
     }
 
     template < typename Key
