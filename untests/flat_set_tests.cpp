@@ -161,6 +161,13 @@ TEST_CASE("flat_set") {
             auto s2 = std::move(s1);
             REQUIRE(s1.empty());
             REQUIRE(s2 == set_t{0,1,2});
+            auto s3 = set_t(s2, alloc_t(42));
+            REQUIRE(s2 == s3);
+            REQUIRE(s2.get_allocator().i == 0);
+            REQUIRE(s3.get_allocator().i == 42);
+            auto s4 = set_t(std::move(s3), alloc_t(21));
+            REQUIRE(s3.empty());
+            REQUIRE(s4 == set_t{0,1,2});
         }
 
         {

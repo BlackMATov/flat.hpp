@@ -135,6 +135,14 @@ namespace flat_hpp
             insert(ilist);
         }
 
+        flat_map(flat_map&& other, const Allocator& a)
+        : data_(std::move(other.data_), a)
+        , compare_(std::move(other.compare_)) {}
+
+        flat_map(const flat_map& other, const Allocator& a)
+        : data_(other.data_, a)
+        , compare_(other.compare_) {}
+
         flat_map(flat_map&& other) = default;
         flat_map(const flat_map& other) = default;
 
