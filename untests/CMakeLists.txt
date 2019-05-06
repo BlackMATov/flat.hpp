@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
 project(flat.hpp.untests)
 
+set(CATCH_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+
 include(FetchContent)
 FetchContent_Declare(
     catch2
@@ -17,6 +19,6 @@ endif()
 file(GLOB UNTESTS_SOURCES "*.cpp" "*.hpp")
 add_executable(${PROJECT_NAME} ${UNTESTS_SOURCES})
 target_link_libraries(${PROJECT_NAME}
-    Catch2::Catch2
-    flat.hpp::flat.hpp)
+    Catch2
+    flat.hpp)
 add_test(${PROJECT_NAME} ${PROJECT_NAME})
