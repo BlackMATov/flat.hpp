@@ -1,43 +1,29 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(flat)
+# 3.8 version is required for `cxx_std_14`
+cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
-#
-# coverage mode
-#
-
-option(FLAT_BUILD_WITH_COVERAGE "Build with coverage" OFF)
-if(FLAT_BUILD_WITH_COVERAGE AND (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang"))
-    add_definitions(-DFLAT_BUILD_WITH_COVERAGE)
-    set(FLAT_COVERAGE_FLAGS "--coverage")
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${FLAT_COVERAGE_FLAGS}")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${FLAT_COVERAGE_FLAGS}")
-    set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} ${FLAT_COVERAGE_FLAGS}")
+if(NOT DEFINED PROJECT_NAME)
+    set(BUILD_AS_STANDALONE ON)
 endif()
 
-#
-# sanitizer mode
-#
+project(flat.hpp)
 
-option(FLAT_BUILD_WITH_SANITIZER "Build with sanitizer" OFF)
-if(FLAT_BUILD_WITH_SANITIZER AND (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang"))
-    add_definitions(-DFLAT_BUILD_WITH_SANITIZER)
-    set(FLAT_SANITIZER_FLAGS "-fno-omit-frame-pointer -fsanitize=address")
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${FLAT_SANITIZER_FLAGS}")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${FLAT_SANITIZER_FLAGS}")
-    set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} ${FLAT_SANITIZER_FLAGS}")
+add_library(${PROJECT_NAME} INTERFACE)
+target_include_directories(${PROJECT_NAME} INTERFACE headers)
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
+if(BUILD_AS_STANDALONE)
+    option(BUILD_WITH_UNTESTS "Build with unit tests" ON)
+    if(BUILD_WITH_UNTESTS)
+        enable_testing()
+        add_subdirectory(untests)
+    endif()
+
+    option(BUILD_WITH_COVERAGE "Build with coverage" OFF)
+    if(BUILD_WITH_COVERAGE AND (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang"))
+        set(COVERAGE_FLAGS "--coverage")
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${COVERAGE_FLAGS}")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${COVERAGE_FLAGS}")
+        set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} ${COVERAGE_FLAGS}")
+    endif()
 endif()
-
-#
-# tests executable
-#
-
-file(GLOB test_sources "*.cpp" "*.hpp")
-add_executable(${PROJECT_NAME} ${test_sources})
-
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 14
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO)
-
-enable_testing()
-add_test(${PROJECT_NAME} ${PROJECT_NAME})

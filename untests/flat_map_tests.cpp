@@ -5,11 +5,11 @@
  ******************************************************************************/
 
 #define CATCH_CONFIG_FAST_COMPILE
-#include "catch.hpp"
+#include <catch2/catch.hpp>
 
 #include <deque>
 
-#include "flat_map.hpp"
+#include <flat_hpp/flat_map.hpp>
 using namespace flat_hpp;
 
 namespace
