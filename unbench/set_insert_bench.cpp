@@ -10,7 +10,9 @@ using namespace flat_hpp_unbench;
 #include <flat_hpp/flat_set.hpp>
 using namespace flat_hpp;
 
-#include <boost/container/flat_set.hpp>
+#ifdef BOOST_CONTAINER_FOUND
+#  include <boost/container/flat_set.hpp>
+#endif
 
 namespace
 {
@@ -26,6 +28,7 @@ namespace
         }
     }
 
+#ifdef BOOST_CONTAINER_FOUND
     template < typename Key >
     void boost_flat_set_insert(benchmark::State& state) {
         std::vector<int> v;
@@ -37,6 +40,7 @@ namespace
             }
         }
     }
+#endif
 
     template < typename Key >
     void std_set_insert(benchmark::State& state) {
@@ -67,9 +71,11 @@ BENCHMARK_TEMPLATE(flat_set_insert, vec4)
     ->ComputeStatistics("min", min_bench_statistics)
     ->DenseRange(1,401,50);
 
-BENCHMARK_TEMPLATE(boost_flat_set_insert, vec4)
-    ->ComputeStatistics("min", min_bench_statistics)
-    ->DenseRange(1,401,50);
+#ifdef BOOST_CONTAINER_FOUND
+    BENCHMARK_TEMPLATE(boost_flat_set_insert, vec4)
+        ->ComputeStatistics("min", min_bench_statistics)
+        ->DenseRange(1,401,50);
+#endif
 
 BENCHMARK_TEMPLATE(std_set_insert, vec4)
     ->ComputeStatistics("min", min_bench_statistics)

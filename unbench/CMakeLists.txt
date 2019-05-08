@@ -7,8 +7,8 @@ project(flat.hpp.unbench)
 # boost
 #
 
-find_package(Boost REQUIRED
-    COMPONENTS container)
+find_package(Boost
+    OPTIONAL_COMPONENTS container)
 
 #
 # google benchmark
@@ -33,8 +33,16 @@ endif()
 
 file(GLOB UNBENCH_SOURCES "*.cpp" "*.hpp")
 add_executable(${PROJECT_NAME} ${UNBENCH_SOURCES})
+
 target_link_libraries(${PROJECT_NAME}
-    Boost::container
     benchmark_main
     flat.hpp)
+
+if(Boost_CONTAINER_FOUND)
+    target_link_libraries(${PROJECT_NAME}
+        Boost::container)
+    target_compile_definitions(${PROJECT_NAME}
+        PRIVATE BOOST_CONTAINER_FOUND)
+endif()
+
 add_test(${PROJECT_NAME} ${PROJECT_NAME})
