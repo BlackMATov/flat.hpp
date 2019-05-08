@@ -20,8 +20,7 @@ namespace flat_hpp
     template < typename Key
              , typename Value
              , typename Compare = std::less<Key>
-             , typename Allocator = std::allocator<std::pair<Key, Value>>
-             , typename Container = std::vector<std::pair<Key, Value>, Allocator> >
+             , typename Container = std::vector<std::pair<Key, Value>> >
     class flat_map final {
         class uber_comparer_type : public Compare {
         public:
@@ -39,6 +38,10 @@ namespace flat_hpp
             bool operator()(typename Container::const_reference l, const Key& r) const {
                 return Compare::operator()(l.first, r);
             }
+
+            bool operator()(typename Container::const_reference l, typename Container::const_reference r) const {
+                return Compare::operator()(l.first, r.first);
+            }
         };
     public:
         using key_type = Key;
@@ -49,7 +52,6 @@ namespace flat_hpp
         using difference_type = typename Container::difference_type;
 
         using key_compare = Compare;
-        using allocator_type = Allocator;
         using container_type = Container;
 
         using reference = typename Container::reference;
@@ -67,78 +69,80 @@ namespace flat_hpp
             bool operator()(const value_type& l, const value_type& r) const {
                 return compare_(l.first, r.first);
             }
-        private:
+        protected:
             friend class flat_map;
-            explicit value_compare(const key_compare& compare)
-            : compare_(compare) {}
+            explicit value_compare(key_compare compare)
+            : compare_(std::move(compare)) {}
         private:
             key_compare compare_;
         };
-
-        static_assert(
-            std::is_same<typename allocator_type::value_type, value_type>::value,
-            "Allocator::value_type must be same type as value_type");
-
-        static_assert(
-            std::is_same<typename container_type::value_type, value_type>::value,
-            "Container::value_type must be same type as value_type");
-
-        static_assert(
-            std::is_same<typename container_type::allocator_type, allocator_type>::value,
-            "Container::allocator_type must be same type as allocator_type");
     public:
         flat_map() {}
 
-        explicit flat_map(
-            const Allocator& a)
+        explicit flat_map(const Compare& c)
+        : compare_(c) {}
+
+        template < typename Allocator >
+        explicit flat_map(const Allocator& a)
         : data_(a) {}
 
-        explicit flat_map(
-            const Compare& c,
-            const Allocator& a = Allocator())
+        template < typename Allocator >
+        flat_map(const Compare& c, const Allocator& a)
         : data_(a)
         , compare_(c) {}
 
         template < typename InputIter >
-        flat_map(
-            InputIter first,
-            InputIter last,
-            const Allocator& a)
-        : data_(a) {
+        flat_map(InputIter first, InputIter last) {
             insert(first, last);
         }
 
         template < typename InputIter >
-        flat_map(
-            InputIter first,
-            InputIter last,
-            const Compare& c = Compare(),
-            const Allocator& a = Allocator())
+        flat_map(InputIter first, InputIter last, const Compare& c)
+        : compare_(c) {
+            insert(first, last);
+        }
+
+        template < typename InputIter, typename Allocator >
+        flat_map(InputIter first, InputIter last, const Allocator& a)
+        : data_(a) {
+            insert(first, last);
+        }
+
+        template < typename InputIter , typename Allocator >
+        flat_map(InputIter first, InputIter last, const Compare& c, const Allocator& a)
         : data_(a)
         , compare_(c) {
             insert(first, last);
         }
 
-        flat_map(
-            std::initializer_list<value_type> ilist,
-            const Allocator& a)
+        flat_map(std::initializer_list<value_type> ilist) {
+            insert(ilist);
+        }
+
+        flat_map(std::initializer_list<value_type> ilist, const Compare& c)
+        : compare_(c) {
+            insert(ilist);
+        }
+
+        template < typename Allocator >
+        flat_map(std::initializer_list<value_type> ilist, const Allocator& a)
         : data_(a) {
             insert(ilist);
         }
 
-        flat_map(
-            std::initializer_list<value_type> ilist,
-            const Compare& c = Compare(),
-            const Allocator& a = Allocator())
+        template < typename Allocator >
+        flat_map(std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a)
         : data_(a)
         , compare_(c) {
             insert(ilist);
         }
 
+        template < typename Allocator >
         flat_map(flat_map&& other, const Allocator& a)
         : data_(std::move(other.data_), a)
         , compare_(std::move(other.compare_)) {}
 
+        template < typename Allocator >
         flat_map(const flat_map& other, const Allocator& a)
         : data_(other.data_, a)
         , compare_(other.compare_) {}
@@ -152,10 +156,6 @@ namespace flat_hpp
         flat_map& operator=(std::initializer_list<value_type> ilist) {
             flat_map(ilist).swap(*this);
             return *this;
-        }
-
-        allocator_type get_allocator() const {
-            return data_.get_allocator();
         }
 
         iterator begin() noexcept { return data_.begin(); }
@@ -230,28 +230,28 @@ namespace flat_hpp
 
         std::pair<iterator, bool> insert(value_type&& value) {
             const iterator iter = lower_bound(value.first);
-            return iter == end() || compare_(value.first, iter->first)
+            return iter == end() || compare_(value, *iter)
                 ? std::make_pair(data_.insert(iter, std::move(value)), true)
                 : std::make_pair(iter, false);
         }
 
         std::pair<iterator, bool> insert(const value_type& value) {
             const iterator iter = lower_bound(value.first);
-            return iter == end() || compare_(value.first, iter->first)
+            return iter == end() || compare_(value, *iter)
                 ? std::make_pair(data_.insert(iter, value), true)
                 : std::make_pair(iter, false);
         }
 
         iterator insert(const_iterator hint, value_type&& value) {
-            return (hint == begin() || compare_((hint - 1)->first, value.first))
-                && (hint == end() || compare_(value.first, hint->first))
+            return (hint == begin() || compare_(*(hint - 1), value))
+                && (hint == end() || compare_(value, *hint))
                 ? data_.insert(hint, std::move(value))
                 : insert(std::move(value)).first;
         }
 
         iterator insert(const_iterator hint, const value_type& value) {
-            return (hint == begin() || compare_((hint - 1)->first, value.first))
-                && (hint == end() || compare_(value.first, hint->first))
+            return (hint == begin() || compare_(*(hint - 1), value))
+                && (hint == end() || compare_(value, *hint))
                 ? data_.insert(hint, value)
                 : insert(value).first;
         }
@@ -303,7 +303,7 @@ namespace flat_hpp
         }
 
         size_type count(const key_type& key) const {
-            const auto iter = find(key);
+            const const_iterator iter = find(key);
             return iter != end() ? 1 : 0;
         }
 
@@ -363,11 +363,10 @@ namespace flat_hpp
     template < typename Key
              , typename Value
              , typename Compare
-             , typename Allocator
              , typename Container >
     void swap(
-        flat_map<Key, Value, Compare, Allocator, Container>& l,
-        flat_map<Key, Value, Compare, Allocator, Container>& r)
+        flat_map<Key, Value, Compare, Container>& l,
+        flat_map<Key, Value, Compare, Container>& r)
     {
         l.swap(r);
     }
@@ -375,11 +374,10 @@ namespace flat_hpp
     template < typename Key
              , typename Value
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator==(
-        const flat_map<Key, Value, Compare, Allocator, Container>& l,
-        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+        const flat_map<Key, Value, Compare, Container>& l,
+        const flat_map<Key, Value, Compare, Container>& r)
     {
         return l.size() == r.size()
             && std::equal(l.begin(), l.end(), r.begin());
@@ -388,11 +386,10 @@ namespace flat_hpp
     template < typename Key
              , typename Value
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator!=(
-        const flat_map<Key, Value, Compare, Allocator, Container>& l,
-        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+        const flat_map<Key, Value, Compare, Container>& l,
+        const flat_map<Key, Value, Compare, Container>& r)
     {
         return !(l == r);
     }
@@ -400,11 +397,10 @@ namespace flat_hpp
     template < typename Key
              , typename Value
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator<(
-        const flat_map<Key, Value, Compare, Allocator, Container>& l,
-        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+        const flat_map<Key, Value, Compare, Container>& l,
+        const flat_map<Key, Value, Compare, Container>& r)
     {
         return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
     }
@@ -412,11 +408,10 @@ namespace flat_hpp
     template < typename Key
              , typename Value
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator>(
-        const flat_map<Key, Value, Compare, Allocator, Container>& l,
-        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+        const flat_map<Key, Value, Compare, Container>& l,
+        const flat_map<Key, Value, Compare, Container>& r)
     {
         return r < l;
     }
@@ -424,11 +419,10 @@ namespace flat_hpp
     template < typename Key
              , typename Value
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator<=(
-        const flat_map<Key, Value, Compare, Allocator, Container>& l,
-        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+        const flat_map<Key, Value, Compare, Container>& l,
+        const flat_map<Key, Value, Compare, Container>& r)
     {
         return !(r < l);
     }
@@ -436,11 +430,10 @@ namespace flat_hpp
     template < typename Key
              , typename Value
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator>=(
-        const flat_map<Key, Value, Compare, Allocator, Container>& l,
-        const flat_map<Key, Value, Compare, Allocator, Container>& r)
+        const flat_map<Key, Value, Compare, Container>& l,
+        const flat_map<Key, Value, Compare, Container>& r)
     {
         return !(l < r);
     }

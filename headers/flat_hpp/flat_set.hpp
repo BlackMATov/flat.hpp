@@ -19,8 +19,7 @@ namespace flat_hpp
 {
     template < typename Key
              , typename Compare = std::less<Key>
-             , typename Allocator = std::allocator<Key>
-             , typename Container = std::vector<Key, Allocator> >
+             , typename Container = std::vector<Key> >
     class flat_set final {
     public:
         using key_type = Key;
@@ -31,7 +30,6 @@ namespace flat_hpp
 
         using key_compare = Compare;
         using value_compare = Compare;
-        using allocator_type = Allocator;
         using container_type = Container;
 
         using reference = typename Container::reference;
@@ -43,71 +41,73 @@ namespace flat_hpp
         using const_iterator = typename Container::const_iterator;
         using reverse_iterator = typename Container::reverse_iterator;
         using const_reverse_iterator = typename Container::const_reverse_iterator;
-
-        static_assert(
-            std::is_same<typename allocator_type::value_type, value_type>::value,
-            "Allocator::value_type must be same type as value_type");
-
-        static_assert(
-            std::is_same<typename container_type::value_type, value_type>::value,
-            "Container::value_type must be same type as value_type");
-
-        static_assert(
-            std::is_same<typename container_type::allocator_type, allocator_type>::value,
-            "Container::allocator_type must be same type as allocator_type");
     public:
         flat_set() {}
 
-        explicit flat_set(
-            const Allocator& a)
+        explicit flat_set(const Compare& c)
+        : compare_(c) {}
+
+        template < typename Allocator >
+        explicit flat_set(const Allocator& a)
         : data_(a) {}
 
-        explicit flat_set(
-            const Compare& c,
-            const Allocator& a = Allocator())
+        template < typename Allocator >
+        flat_set(const Compare& c, const Allocator& a)
         : data_(a)
         , compare_(c) {}
 
         template < typename InputIter >
-        flat_set(
-            InputIter first,
-            InputIter last,
-            const Allocator& a)
-        : data_(a) {
+        flat_set(InputIter first, InputIter last) {
             insert(first, last);
         }
 
         template < typename InputIter >
-        flat_set(
-            InputIter first,
-            InputIter last,
-            const Compare& c = Compare(),
-            const Allocator& a = Allocator())
+        flat_set(InputIter first, InputIter last, const Compare& c)
+        : compare_(c) {
+            insert(first, last);
+        }
+
+        template < typename InputIter, typename Allocator >
+        flat_set(InputIter first, InputIter last, const Allocator& a)
+        : data_(a) {
+            insert(first, last);
+        }
+
+        template < typename InputIter, typename Allocator >
+        flat_set(InputIter first, InputIter last, const Compare& c, const Allocator& a)
         : data_(a)
         , compare_(c) {
             insert(first, last);
         }
 
-        flat_set(
-            std::initializer_list<value_type> ilist,
-            const Allocator& a)
+        flat_set(std::initializer_list<value_type> ilist) {
+            insert(ilist);
+        }
+
+        flat_set(std::initializer_list<value_type> ilist, const Compare& c)
+        : compare_(c) {
+            insert(ilist);
+        }
+
+        template < typename Allocator >
+        flat_set(std::initializer_list<value_type> ilist, const Allocator& a)
         : data_(a) {
             insert(ilist);
         }
 
-        flat_set(
-            std::initializer_list<value_type> ilist,
-            const Compare& c = Compare(),
-            const Allocator& a = Allocator())
+        template < typename Allocator >
+        flat_set(std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a)
         : data_(a)
         , compare_(c) {
             insert(ilist);
         }
 
+        template < typename Allocator >
         flat_set(flat_set&& other, const Allocator& a)
         : data_(std::move(other.data_), a)
         , compare_(std::move(other.compare_)) {}
 
+        template < typename Allocator >
         flat_set(const flat_set& other, const Allocator& a)
         : data_(other.data_, a)
         , compare_(other.compare_) {}
@@ -121,10 +121,6 @@ namespace flat_hpp
         flat_set& operator=(std::initializer_list<value_type> ilist) {
             flat_set(ilist).swap(*this);
             return *this;
-        }
-
-        allocator_type get_allocator() const {
-            return data_.get_allocator();
         }
 
         iterator begin() noexcept { return data_.begin(); }
@@ -301,22 +297,20 @@ namespace flat_hpp
 {
     template < typename Key
              , typename Compare
-             , typename Allocator
              , typename Container >
     void swap(
-        flat_set<Key, Compare, Allocator, Container>& l,
-        flat_set<Key, Compare, Allocator, Container>& r)
+        flat_set<Key, Compare, Container>& l,
+        flat_set<Key, Compare, Container>& r)
     {
         l.swap(r);
     }
 
     template < typename Key
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator==(
-        const flat_set<Key, Compare, Allocator, Container>& l,
-        const flat_set<Key, Compare, Allocator, Container>& r)
+        const flat_set<Key, Compare, Container>& l,
+        const flat_set<Key, Compare, Container>& r)
     {
         return l.size() == r.size()
             && std::equal(l.begin(), l.end(), r.begin());
@@ -324,55 +318,50 @@ namespace flat_hpp
 
     template < typename Key
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator!=(
-        const flat_set<Key, Compare, Allocator, Container>& l,
-        const flat_set<Key, Compare, Allocator, Container>& r)
+        const flat_set<Key, Compare, Container>& l,
+        const flat_set<Key, Compare, Container>& r)
     {
         return !(l == r);
     }
 
     template < typename Key
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator<(
-        const flat_set<Key, Compare, Allocator, Container>& l,
-        const flat_set<Key, Compare, Allocator, Container>& r)
+        const flat_set<Key, Compare, Container>& l,
+        const flat_set<Key, Compare, Container>& r)
     {
         return std::lexicographical_compare(l.begin(), l.end(), r.begin(), r.end());
     }
 
     template < typename Key
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator>(
-        const flat_set<Key, Compare, Allocator, Container>& l,
-        const flat_set<Key, Compare, Allocator, Container>& r)
+        const flat_set<Key, Compare, Container>& l,
+        const flat_set<Key, Compare, Container>& r)
     {
         return r < l;
     }
 
     template < typename Key
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator<=(
-        const flat_set<Key, Compare, Allocator, Container>& l,
-        const flat_set<Key, Compare, Allocator, Container>& r)
+        const flat_set<Key, Compare, Container>& l,
+        const flat_set<Key, Compare, Container>& r)
     {
         return !(r < l);
     }
 
     template < typename Key
              , typename Compare
-             , typename Allocator
              , typename Container >
     bool operator>=(
-        const flat_set<Key, Compare, Allocator, Container>& l,
-        const flat_set<Key, Compare, Allocator, Container>& r)
+        const flat_set<Key, Compare, Container>& l,
+        const flat_set<Key, Compare, Container>& r)
     {
         return !(l < r);
     }
