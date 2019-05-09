@@ -75,9 +75,9 @@ class flat_set;
 | `const_reference`        | `Container::const_reference`        |
 | `pointer`                | `Container::pointer`                |
 | `const_pointer`          | `Container::const_pointer`          |
-| `iterator`               | `Container::iterator`               |
+| `iterator`               | `Container::const_iterator`         |
 | `const_iterator`         | `Container::const_iterator`         |
-| `reverse_iterator`       | `Container::reverse_iterator`       |
+| `reverse_iterator`       | `Container::const_reverse_iterator` |
 | `const_reverse_iterator` | `Container::const_reverse_iterator` |
 
 ### Member functions
