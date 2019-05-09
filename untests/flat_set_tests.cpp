@@ -110,8 +110,8 @@ TEST_CASE("flat_set") {
     }
     SECTION("ctors") {
         using alloc_t = dummy_allocator<int>;
-        using set_t = flat_set<int, std::less<int>, alloc_t>;
-        using set2_t = flat_set<int, std::greater<int>, alloc_t>;
+        using set_t = flat_set<int, std::less<int>, std::vector<int, alloc_t>>;
+        using set2_t = flat_set<int, std::greater<int>, std::vector<int, alloc_t>>;
         using vec_t = std::vector<int>;
 
         {
@@ -147,13 +147,6 @@ TEST_CASE("flat_set") {
         }
 
         {
-            auto s0 = set_t();
-            auto s1 = set_t(alloc_t(42));
-            REQUIRE(s0.get_allocator().i == 0);
-            REQUIRE(s1.get_allocator().i == 42);
-        }
-
-        {
             auto s0 = set_t{0,1,2};
             auto s1 = s0;
             REQUIRE(s0 == set_t{0,1,2});
@@ -161,6 +154,11 @@ TEST_CASE("flat_set") {
             auto s2 = std::move(s1);
             REQUIRE(s1.empty());
             REQUIRE(s2 == set_t{0,1,2});
+            auto s3 = set_t(s2, alloc_t(42));
+            REQUIRE(s2 == s3);
+            auto s4 = set_t(std::move(s3), alloc_t(21));
+            REQUIRE(s3.empty());
+            REQUIRE(s4 == set_t{0,1,2});
         }
 
         {
@@ -226,7 +224,6 @@ TEST_CASE("flat_set") {
             using set2_t = flat_set<
                 int,
                 std::less<int>,
-                alloc2_t,
                 std::deque<int, alloc2_t>>;
 
             set2_t s1;

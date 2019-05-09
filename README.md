@@ -56,8 +56,7 @@ target_link_libraries(your_project_target flat.hpp)
 ```cpp
 template < typename Key
          , typename Compare = std::less<Key>
-         , typename Allocator = std::allocator<Key>
-         , typename Container = std::vector<Key, Allocator> >
+         , typename Container = std::vector<Key> >
 class flat_set;
 ```
 
@@ -71,57 +70,64 @@ class flat_set;
 | `difference_type`        | `Container::difference_type`        |
 | `key_compare`            | `Compare`                           |
 | `value_compare`          | `Compare`                           |
-| `allocator_type`         | `Allocator`                         |
 | `container_type`         | `Container`                         |
 | `reference`              | `Container::reference`              |
 | `const_reference`        | `Container::const_reference`        |
 | `pointer`                | `Container::pointer`                |
 | `const_pointer`          | `Container::const_pointer`          |
-| `iterator`               | `Container::iterator`               |
+| `iterator`               | `Container::const_iterator`         |
 | `const_iterator`         | `Container::const_iterator`         |
-| `reverse_iterator`       | `Container::reverse_iterator`       |
+| `reverse_iterator`       | `Container::const_reverse_iterator` |
 | `const_reverse_iterator` | `Container::const_reverse_iterator` |
 
 ### Member functions
 
 ```cpp
-explicit flat_set(
-    const Allocator& a);
+flat_set();
 
-explicit flat_set(
-    const Compare& c = Compare(),
-    const Allocator& a = Allocator());
+explicit flat_set(const Compare& c);
 
-template < typename InputIter >
-flat_set(
-    InputIter first,
-    InputIter last,
-    const Allocator& a);
+template < typename Allocator >
+explicit flat_set(const Allocator& a);
+
+template < typename Allocator >
+flat_set(const Compare& c, const Allocator& a);
 
 template < typename InputIter >
-flat_set(
-    InputIter first,
-    InputIter last,
-    const Compare& c = Compare(),
-    const Allocator& a = Allocator());
+flat_set(InputIter first, InputIter last);
 
-flat_set(
-    std::initializer_list<value_type> ilist,
-    const Allocator& a);
+template < typename InputIter >
+flat_set(InputIter first, InputIter last, const Compare& c);
 
-flat_set(
-    std::initializer_list<value_type> ilist,
-    const Compare& c = Compare(),
-    const Allocator& a = Allocator());
+template < typename InputIter, typename Allocator >
+flat_set(InputIter first, InputIter last, const Allocator& a);
+
+template < typename InputIter, typename Allocator >
+flat_set(InputIter first, InputIter last, const Compare& c, const Allocator& a);
+
+flat_set(std::initializer_list<value_type> ilist);
+
+flat_set(std::initializer_list<value_type> ilist, const Compare& c);
+
+template < typename Allocator >
+flat_set(std::initializer_list<value_type> ilist, const Allocator& a);
+
+template < typename Allocator >
+flat_set(std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
+
+template < typename Allocator >
+flat_set(flat_set&& other, const Allocator& a);
+
+template < typename Allocator >
+flat_set(const flat_set& other, const Allocator& a);
 
 flat_set(flat_set&& other);
-flat_set(const flat_set& other)
+flat_set(const flat_set& other);
 
 flat_set& operator=(flat_set&& other);
 flat_set& operator=(const flat_set& other);
-flat_set& operator=(std::initializer_list<value_type> ilist);
 
-allocator_type get_allocator() const;
+flat_set& operator=(std::initializer_list<value_type> ilist);
 ```
 
 ### Iterators
@@ -211,59 +217,52 @@ value_compare value_comp() const;
 ```cpp
 template < typename Key
          , typename Compare
-         , typename Allocator
          , typename Container >
 void swap(
-    flat_set<Key, Compare, Allocator, Container>& l,
-    flat_set<Key, Compare, Allocator, Container>& r);
+    flat_set<Key, Compare, Container>& l,
+    flat_set<Key, Compare, Container>& r);
 
 template < typename Key
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator==(
-    const flat_set<Key, Compare, Allocator, Container>& l,
-    const flat_set<Key, Compare, Allocator, Container>& r);
+    const flat_set<Key, Compare, Container>& l,
+    const flat_set<Key, Compare, Container>& r);
 
 template < typename Key
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator!=(
-    const flat_set<Key, Compare, Allocator, Container>& l,
-    const flat_set<Key, Compare, Allocator, Container>& r);
+    const flat_set<Key, Compare, Container>& l,
+    const flat_set<Key, Compare, Container>& r);
 
 template < typename Key
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator<(
-    const flat_set<Key, Compare, Allocator, Container>& l,
-    const flat_set<Key, Compare, Allocator, Container>& r);
+    const flat_set<Key, Compare, Container>& l,
+    const flat_set<Key, Compare, Container>& r);
 
 template < typename Key
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator>(
-    const flat_set<Key, Compare, Allocator, Container>& l,
-    const flat_set<Key, Compare, Allocator, Container>& r);
+    const flat_set<Key, Compare, Container>& l,
+    const flat_set<Key, Compare, Container>& r);
 
 template < typename Key
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator<=(
-    const flat_set<Key, Compare, Allocator, Container>& l,
-    const flat_set<Key, Compare, Allocator, Container>& r);
+    const flat_set<Key, Compare, Container>& l,
+    const flat_set<Key, Compare, Container>& r);
 
 template < typename Key
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator>=(
-    const flat_set<Key, Compare, Allocator, Container>& l,
-    const flat_set<Key, Compare, Allocator, Container>& r);
+    const flat_set<Key, Compare, Container>& l,
+    const flat_set<Key, Compare, Container>& r);
 ```
 
 ## Flat Map
@@ -272,8 +271,7 @@ bool operator>=(
 template < typename Key
          , typename Value
          , typename Compare = std::less<Key>
-         , typename Allocator = std::allocator<std::pair<Key, Value>>
-         , typename Container = std::vector<std::pair<Key, Value>, Allocator> >
+         , typename Container = std::vector<std::pair<Key, Value>> >
 class flat_map;
 ```
 
@@ -287,7 +285,6 @@ class flat_map;
 | `size_type`              | `Container::size_type`              |
 | `difference_type`        | `Container::difference_type`        |
 | `key_compare`            | `Compare`                           |
-| `allocator_type`         | `Allocator`                         |
 | `container_type`         | `Container`                         |
 | `reference`              | `Container::reference`              |
 | `const_reference`        | `Container::const_reference`        |
@@ -307,43 +304,51 @@ class value_compare;
 ### Member functions
 
 ```cpp
-explicit flat_map(
-    const Allocator& a);
+flat_map();
 
-explicit flat_map(
-    const Compare& c = Compare(),
-    const Allocator& a = Allocator());
+explicit flat_map(const Compare& c);
 
-template < typename InputIter >
-flat_map(
-    InputIter first,
-    InputIter last,
-    const Allocator& a);
+template < typename Allocator >
+explicit flat_map(const Allocator& a);
+
+template < typename Allocator >
+flat_map(const Compare& c, const Allocator& a);
 
 template < typename InputIter >
-flat_map(
-    InputIter first,
-    InputIter last,
-    const Compare& c = Compare(),
-    const Allocator& a = Allocator());
+flat_map(InputIter first, InputIter last);
 
-flat_map(
-    std::initializer_list<value_type> ilist,
-    const Allocator& a);
+template < typename InputIter >
+flat_map(InputIter first, InputIter last, const Compare& c);
 
-flat_map(
-    std::initializer_list<value_type> ilist,
-    const Compare& c = Compare(),
-    const Allocator& a = Allocator());
+template < typename InputIter, typename Allocator >
+flat_map(InputIter first, InputIter last, const Allocator& a);
+
+template < typename InputIter , typename Allocator >
+flat_map(InputIter first, InputIter last, const Compare& c, const Allocator& a);
+
+flat_map(std::initializer_list<value_type> ilist);
+
+flat_map(std::initializer_list<value_type> ilist, const Compare& c);
+
+template < typename Allocator >
+flat_map(std::initializer_list<value_type> ilist, const Allocator& a);
+
+template < typename Allocator >
+flat_map(std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
+
+template < typename Allocator >
+flat_map(flat_map&& other, const Allocator& a);
+
+template < typename Allocator >
+flat_map(const flat_map& other, const Allocator& a);
 
 flat_map(flat_map&& other);
 flat_map(const flat_map& other);
 
 flat_map& operator=(flat_map&& other);
 flat_map& operator=(const flat_map& other);
-flat_map& operator=(std::initializer_list<value_type> ilist);
 
-allocator_type get_allocator() const;
+flat_map& operator=(std::initializer_list<value_type> ilist);
 ```
 
 ### Iterators
@@ -444,65 +449,58 @@ value_compare value_comp() const;
 template < typename Key
          , typename Value
          , typename Compare
-         , typename Allocator
          , typename Container >
 void swap(
-    flat_map<Key, Value, Compare, Allocator, Container>& l,
-    flat_map<Key, Value, Compare, Allocator, Container>& r);
+    flat_map<Key, Value, Compare, Container>& l,
+    flat_map<Key, Value, Compare, Container>& r);
 
 template < typename Key
          , typename Value
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator==(
-    const flat_map<Key, Value, Compare, Allocator, Container>& l,
-    const flat_map<Key, Value, Compare, Allocator, Container>& r);
+    const flat_map<Key, Value, Compare, Container>& l,
+    const flat_map<Key, Value, Compare, Container>& r);
 
 template < typename Key
          , typename Value
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator!=(
-    const flat_map<Key, Value, Compare, Allocator, Container>& l,
-    const flat_map<Key, Value, Compare, Allocator, Container>& r);
+    const flat_map<Key, Value, Compare, Container>& l,
+    const flat_map<Key, Value, Compare, Container>& r);
 
 template < typename Key
          , typename Value
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator<(
-    const flat_map<Key, Value, Compare, Allocator, Container>& l,
-    const flat_map<Key, Value, Compare, Allocator, Container>& r);
+    const flat_map<Key, Value, Compare, Container>& l,
+    const flat_map<Key, Value, Compare, Container>& r);
 
 template < typename Key
          , typename Value
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator>(
-    const flat_map<Key, Value, Compare, Allocator, Container>& l,
-    const flat_map<Key, Value, Compare, Allocator, Container>& r);
+    const flat_map<Key, Value, Compare, Container>& l,
+    const flat_map<Key, Value, Compare, Container>& r);
 
 template < typename Key
          , typename Value
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator<=(
-    const flat_map<Key, Value, Compare, Allocator, Container>& l,
-    const flat_map<Key, Value, Compare, Allocator, Container>& r);
+    const flat_map<Key, Value, Compare, Container>& l,
+    const flat_map<Key, Value, Compare, Container>& r);
 
 template < typename Key
          , typename Value
          , typename Compare
-         , typename Allocator
          , typename Container >
 bool operator>=(
-    const flat_map<Key, Value, Compare, Allocator, Container>& l,
-    const flat_map<Key, Value, Compare, Allocator, Container>& r);
+    const flat_map<Key, Value, Compare, Container>& l,
+    const flat_map<Key, Value, Compare, Container>& r);
 ```
 
 ## Flat Multiset
