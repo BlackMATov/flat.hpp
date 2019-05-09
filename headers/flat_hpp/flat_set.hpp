@@ -37,9 +37,9 @@ namespace flat_hpp
         using pointer = typename Container::pointer;
         using const_pointer = typename Container::const_pointer;
 
-        using iterator = typename Container::iterator;
+        using iterator = typename Container::const_iterator;
         using const_iterator = typename Container::const_iterator;
-        using reverse_iterator = typename Container::reverse_iterator;
+        using reverse_iterator = typename Container::const_reverse_iterator;
         using const_reverse_iterator = typename Container::const_reverse_iterator;
     public:
         flat_set() {}
