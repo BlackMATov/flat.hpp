@@ -94,6 +94,18 @@ namespace flat_hpp_unbench
         v = std::move(nv);
     }
 
+    inline void generate_random_vector(std::size_t n, std::vector<std::pair<int,int>>& v) {
+        std::mt19937 engine(n);
+        std::uniform_int_distribution<int> dist;
+
+        std::vector<std::pair<int,int>> nv(n);
+        for ( std::size_t i = 0; i < n; ++i ) {
+            nv[i] = std::make_pair(dist(engine), dist(engine));
+        }
+
+        v = std::move(nv);
+    }
+
     inline double min_bench_statistics(const std::vector<double>& v) {
         return v.empty()
             ? 0.0
