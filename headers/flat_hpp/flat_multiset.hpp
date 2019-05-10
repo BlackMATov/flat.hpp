@@ -20,7 +20,8 @@ namespace flat_hpp
     template < typename Key
              , typename Compare = std::less<Key>
              , typename Container = std::vector<Key> >
-    class flat_multiset final {
+    class flat_multiset : private Compare {
+        using base_type = Compare;
     public:
         using key_type = Key;
         using value_type = Key;
@@ -42,10 +43,12 @@ namespace flat_hpp
         using reverse_iterator = typename Container::const_reverse_iterator;
         using const_reverse_iterator = typename Container::const_reverse_iterator;
     public:
-        flat_multiset() {}
+        flat_multiset()
+            noexcept(std::is_nothrow_default_constructible<base_type>::value
+                && std::is_nothrow_default_constructible<container_type>::value) {}
 
         explicit flat_multiset(const Compare& c)
-        : compare_(c) {}
+        : base_type(c) {}
 
         template < typename Allocator >
         explicit flat_multiset(const Allocator& a)
@@ -53,8 +56,8 @@ namespace flat_hpp
 
         template < typename Allocator >
         flat_multiset(const Compare& c, const Allocator& a)
-        : data_(a)
-        , compare_(c) {}
+        : base_type(c)
+        , data_(a) {}
 
         template < typename InputIter >
         flat_multiset(InputIter first, InputIter last) {
@@ -63,7 +66,7 @@ namespace flat_hpp
 
         template < typename InputIter >
         flat_multiset(InputIter first, InputIter last, const Compare& c)
-        : compare_(c) {
+        : base_type(c) {
             insert(first, last);
         }
 
@@ -75,8 +78,8 @@ namespace flat_hpp
 
         template < typename InputIter, typename Allocator >
         flat_multiset(InputIter first, InputIter last, const Compare& c, const Allocator& a)
-        : data_(a)
-        , compare_(c) {
+        : base_type(c)
+        , data_(a) {
             insert(first, last);
         }
 
@@ -85,7 +88,7 @@ namespace flat_hpp
         }
 
         flat_multiset(std::initializer_list<value_type> ilist, const Compare& c)
-        : compare_(c) {
+        : base_type(c) {
             insert(ilist);
         }
 
@@ -97,20 +100,20 @@ namespace flat_hpp
 
         template < typename Allocator >
         flat_multiset(std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a)
-        : data_(a)
-        , compare_(c) {
+        : base_type(c)
+        , data_(a) {
             insert(ilist);
         }
 
         template < typename Allocator >
         flat_multiset(flat_multiset&& other, const Allocator& a)
-        : data_(std::move(other.data_), a)
-        , compare_(std::move(other.compare_)) {}
+        : base_type(static_cast<base_type&&>(other))
+        , data_(std::move(other.data_), a) {}
 
         template < typename Allocator >
         flat_multiset(const flat_multiset& other, const Allocator& a)
-        : data_(other.data_, a)
-        , compare_(other.compare_) {}
+        : base_type(static_cast<const base_type&>(other))
+        , data_(other.data_, a) {}
 
         flat_multiset(flat_multiset&& other) = default;
         flat_multiset(const flat_multiset& other) = default;
@@ -174,15 +177,15 @@ namespace flat_hpp
         }
 
         iterator insert(const_iterator hint, value_type&& value) {
-            return (hint == begin() || !compare_(value, *(hint - 1)))
-                && (hint == end() || !compare_(*hint, value))
+            return (hint == begin() || !this->operator()(value, *(hint - 1)))
+                && (hint == end() || !this->operator()(*hint, value))
                 ? data_.insert(hint, std::move(value))
                 : insert(std::move(value));
         }
 
         iterator insert(const_iterator hint, const value_type& value) {
-            return (hint == begin() || !compare_(value, *(hint - 1)))
-                && (hint == end() || !compare_(*hint, value))
+            return (hint == begin() || !this->operator()(value, *(hint - 1)))
+                && (hint == end() || !this->operator()(*hint, value))
                 ? data_.insert(hint, value)
                 : insert(value);
         }
@@ -229,8 +232,10 @@ namespace flat_hpp
 
         void swap(flat_multiset& other) {
             using std::swap;
+            swap(
+                static_cast<base_type&>(*this),
+                static_cast<base_type&>(other));
             swap(data_, other.data_);
-            swap(compare_, other.compare_);
         }
 
         size_type count(const key_type& key) const {
@@ -240,52 +245,51 @@ namespace flat_hpp
 
         iterator find(const key_type& key) {
             const iterator iter = lower_bound(key);
-            return iter != end() && !compare_(key, *iter)
+            return iter != end() && !this->operator()(key, *iter)
                 ? iter
                 : end();
         }
 
         const_iterator find(const key_type& key) const {
             const const_iterator iter = lower_bound(key);
-            return iter != end() && !compare_(key, *iter)
+            return iter != end() && !this->operator()(key, *iter)
                 ? iter
                 : end();
         }
 
         std::pair<iterator, iterator> equal_range(const key_type& key) {
-            return std::equal_range(begin(), end(), key, compare_);
+            return std::equal_range(begin(), end(), key, key_comp());
         }
 
         std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
-            return std::equal_range(begin(), end(), key, compare_);
+            return std::equal_range(begin(), end(), key, key_comp());
         }
 
         iterator lower_bound(const key_type& key) {
-            return std::lower_bound(begin(), end(), key, compare_);
+            return std::lower_bound(begin(), end(), key, key_comp());
         }
 
         const_iterator lower_bound(const key_type& key) const {
-            return std::lower_bound(begin(), end(), key, compare_);
+            return std::lower_bound(begin(), end(), key, key_comp());
         }
 
         iterator upper_bound(const key_type& key) {
-            return std::upper_bound(begin(), end(), key, compare_);
+            return std::upper_bound(begin(), end(), key, key_comp());
         }
 
         const_iterator upper_bound(const key_type& key) const {
-            return std::upper_bound(begin(), end(), key, compare_);
+            return std::upper_bound(begin(), end(), key, key_comp());
         }
 
         key_compare key_comp() const {
-            return compare_;
+            return *this;
         }
 
         value_compare value_comp() const {
-            return value_compare(compare_);
+            return value_compare(key_comp());
         }
     private:
         container_type data_;
-        Compare compare_;
     };
 }
 
