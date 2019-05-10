@@ -17,32 +17,55 @@
 
 namespace flat_hpp
 {
+    namespace detail
+    {
+        template < typename Value, typename Compare >
+        class flat_multimap_compare : public Compare {
+        public:
+            flat_multimap_compare() = default;
+
+            flat_multimap_compare(const Compare& compare)
+            : Compare(compare) {}
+
+            bool operator()(
+                const typename Value::first_type& l,
+                const typename Value::first_type& r) const
+            {
+                return Compare::operator()(l, r);
+            }
+
+            bool operator()(
+                const typename Value::first_type& l,
+                const Value& r) const
+            {
+                return Compare::operator()(l, r.first);
+            }
+
+            bool operator()(
+                const Value& l,
+                const typename Value::first_type& r) const
+            {
+                return Compare::operator()(l.first, r);
+            }
+
+            bool operator()(const Value& l, const Value& r) const {
+                return Compare::operator()(l.first, r.first);
+            }
+        };
+    }
+
     template < typename Key
              , typename Value
              , typename Compare = std::less<Key>
              , typename Container = std::vector<std::pair<Key, Value>> >
-    class flat_multimap final {
-        class uber_comparer_type : public Compare {
-        public:
-            uber_comparer_type() = default;
-            uber_comparer_type(const Compare& c) : Compare(c) {}
-
-            bool operator()(const Key& l, const Key& r) const {
-                return Compare::operator()(l, r);
-            }
-
-            bool operator()(const Key& l, typename Container::const_reference r) const {
-                return Compare::operator()(l, r.first);
-            }
-
-            bool operator()(typename Container::const_reference l, const Key& r) const {
-                return Compare::operator()(l.first, r);
-            }
-
-            bool operator()(typename Container::const_reference l, typename Container::const_reference r) const {
-                return Compare::operator()(l.first, r.first);
-            }
-        };
+    class flat_multimap
+        : private detail::flat_multimap_compare<
+            typename Container::value_type,
+            Compare>
+    {
+        using base_type = detail::flat_multimap_compare<
+            typename Container::value_type,
+            Compare>;
     public:
         using key_type = Key;
         using mapped_type = Value;
@@ -64,23 +87,21 @@ namespace flat_hpp
         using reverse_iterator = typename Container::reverse_iterator;
         using const_reverse_iterator = typename Container::const_reverse_iterator;
 
-        class value_compare {
+        class value_compare : private key_compare {
         public:
             bool operator()(const value_type& l, const value_type& r) const {
-                return compare_(l.first, r.first);
+                return key_compare::operator()(l.first, r.first);
             }
         protected:
             friend class flat_multimap;
             explicit value_compare(key_compare compare)
-            : compare_(std::move(compare)) {}
-        private:
-            key_compare compare_;
+            : key_compare(std::move(compare)) {}
         };
     public:
         flat_multimap() {}
 
         explicit flat_multimap(const Compare& c)
-        : compare_(c) {}
+        : base_type(c) {}
 
         template < typename Allocator >
         explicit flat_multimap(const Allocator& a)
@@ -88,8 +109,8 @@ namespace flat_hpp
 
         template < typename Allocator >
         flat_multimap(const Compare& c, const Allocator& a)
-        : data_(a)
-        , compare_(c) {}
+        : base_type(c)
+        , data_(a) {}
 
         template < typename InputIter >
         flat_multimap(InputIter first, InputIter last) {
@@ -98,7 +119,7 @@ namespace flat_hpp
 
         template < typename InputIter >
         flat_multimap(InputIter first, InputIter last, const Compare& c)
-        : compare_(c) {
+        : base_type(c) {
             insert(first, last);
         }
 
@@ -110,8 +131,8 @@ namespace flat_hpp
 
         template < typename InputIter , typename Allocator >
         flat_multimap(InputIter first, InputIter last, const Compare& c, const Allocator& a)
-        : data_(a)
-        , compare_(c) {
+        : base_type(c)
+        , data_(a) {
             insert(first, last);
         }
 
@@ -120,7 +141,7 @@ namespace flat_hpp
         }
 
         flat_multimap(std::initializer_list<value_type> ilist, const Compare& c)
-        : compare_(c) {
+        : base_type(c) {
             insert(ilist);
         }
 
@@ -132,20 +153,20 @@ namespace flat_hpp
 
         template < typename Allocator >
         flat_multimap(std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a)
-        : data_(a)
-        , compare_(c) {
+        : base_type(c)
+        , data_(a) {
             insert(ilist);
         }
 
         template < typename Allocator >
         flat_multimap(flat_multimap&& other, const Allocator& a)
-        : data_(std::move(other.data_), a)
-        , compare_(std::move(other.compare_)) {}
+        : base_type(static_cast<base_type&&>(other))
+        , data_(std::move(other.data_), a) {}
 
         template < typename Allocator >
         flat_multimap(const flat_multimap& other, const Allocator& a)
-        : data_(other.data_, a)
-        , compare_(other.compare_) {}
+        : base_type(static_cast<const base_type&>(other))
+        , data_(other.data_, a) {}
 
         flat_multimap(flat_multimap&& other) = default;
         flat_multimap(const flat_multimap& other) = default;
@@ -239,15 +260,15 @@ namespace flat_hpp
         }
 
         iterator insert(const_iterator hint, value_type&& value) {
-            return (hint == begin() || !compare_(value, *(hint - 1)))
-                && (hint == end() || !compare_(*hint, value))
+            return (hint == begin() || !this->operator()(value, *(hint - 1)))
+                && (hint == end() || !this->operator()(*hint, value))
                 ? data_.insert(hint, std::move(value))
                 : insert(std::move(value));
         }
 
         iterator insert(const_iterator hint, const value_type& value) {
-            return (hint == begin() || !compare_(value, *(hint - 1)))
-                && (hint == end() || !compare_(*hint, value))
+            return (hint == begin() || !this->operator()(value, *(hint - 1)))
+                && (hint == end() || !this->operator()(*hint, value))
                 ? data_.insert(hint, value)
                 : insert(value);
         }
@@ -294,8 +315,10 @@ namespace flat_hpp
 
         void swap(flat_multimap& other) {
             using std::swap;
+            swap(
+                static_cast<base_type&>(*this),
+                static_cast<base_type&>(other));
             swap(data_, other.data_);
-            swap(compare_, other.compare_);
         }
 
         size_type count(const key_type& key) const {
@@ -305,52 +328,57 @@ namespace flat_hpp
 
         iterator find(const key_type& key) {
             const iterator iter = lower_bound(key);
-            return iter != end() && !compare_(key, iter->first)
+            return iter != end() && !this->operator()(key, iter->first)
                 ? iter
                 : end();
         }
 
         const_iterator find(const key_type& key) const {
             const const_iterator iter = lower_bound(key);
-            return iter != end() && !compare_(key, iter->first)
+            return iter != end() && !this->operator()(key, iter->first)
                 ? iter
                 : end();
         }
 
         std::pair<iterator, iterator> equal_range(const key_type& key) {
-            return std::equal_range(begin(), end(), key, compare_);
+            const base_type& comp = *this;
+            return std::equal_range(begin(), end(), key, comp);
         }
 
         std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
-            return std::equal_range(begin(), end(), key, compare_);
+            const base_type& comp = *this;
+            return std::equal_range(begin(), end(), key, comp);
         }
 
         iterator lower_bound(const key_type& key) {
-            return std::lower_bound(begin(), end(), key, compare_);
+            const base_type& comp = *this;
+            return std::lower_bound(begin(), end(), key, comp);
         }
 
         const_iterator lower_bound(const key_type& key) const {
-            return std::lower_bound(begin(), end(), key, compare_);
+            const base_type& comp = *this;
+            return std::lower_bound(begin(), end(), key, comp);
         }
 
         iterator upper_bound(const key_type& key) {
-            return std::upper_bound(begin(), end(), key, compare_);
+            const base_type& comp = *this;
+            return std::upper_bound(begin(), end(), key, comp);
         }
 
         const_iterator upper_bound(const key_type& key) const {
-            return std::upper_bound(begin(), end(), key, compare_);
+            const base_type& comp = *this;
+            return std::upper_bound(begin(), end(), key, comp);
         }
 
         key_compare key_comp() const {
-            return compare_;
+            return *this;
         }
 
         value_compare value_comp() const {
-            return value_compare(compare_);
+            return value_compare(key_comp());
         }
     private:
         container_type data_;
-        uber_comparer_type compare_;
     };
 }
 
