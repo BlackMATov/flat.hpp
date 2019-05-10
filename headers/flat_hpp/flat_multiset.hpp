@@ -43,7 +43,9 @@ namespace flat_hpp
         using reverse_iterator = typename Container::const_reverse_iterator;
         using const_reverse_iterator = typename Container::const_reverse_iterator;
     public:
-        flat_multiset() {}
+        flat_multiset()
+            noexcept(std::is_nothrow_default_constructible<base_type>::value
+                && std::is_nothrow_default_constructible<container_type>::value) {}
 
         explicit flat_multiset(const Compare& c)
         : base_type(c) {}

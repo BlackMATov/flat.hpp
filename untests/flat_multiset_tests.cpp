@@ -73,7 +73,8 @@ namespace
     template < typename T >
     class dummy_less {
     public:
-        dummy_less(int i) : i(i) {}
+        dummy_less() = default;
+        dummy_less(int i) noexcept : i(i) {}
         bool operator()(const T& l, const T& r) const {
             return l < r;
         }
@@ -94,6 +95,20 @@ TEST_CASE("flat_multiset") {
             int i;
         };
         REQUIRE(sizeof(vc) == sizeof(int));
+    }
+    SECTION("noexcept") {
+        using alloc_t = dummy_allocator<int>;
+        using set_t = flat_multiset<int, dummy_less<int>, std::vector<int, alloc_t>>;
+
+        static_assert(
+            std::is_nothrow_default_constructible<set_t>::value,
+            "unit test static error");
+        static_assert(
+            std::is_nothrow_move_constructible<set_t>::value,
+            "unit test static error");
+        static_assert(
+            std::is_nothrow_move_assignable<set_t>::value,
+            "unit test static error");
     }
     SECTION("types") {
         using set_t = flat_multiset<int>;

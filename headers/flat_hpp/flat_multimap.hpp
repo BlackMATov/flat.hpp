@@ -98,7 +98,9 @@ namespace flat_hpp
             : key_compare(std::move(compare)) {}
         };
     public:
-        flat_multimap() {}
+        flat_multimap()
+            noexcept(std::is_nothrow_default_constructible<base_type>::value
+                && std::is_nothrow_default_constructible<container_type>::value) {}
 
         explicit flat_multimap(const Compare& c)
         : base_type(c) {}
