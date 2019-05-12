@@ -10,14 +10,14 @@
 [badge.travis]: https://img.shields.io/travis/BlackMATov/flat.hpp/master.svg?logo=travis
 [badge.appveyor]: https://img.shields.io/appveyor/ci/BlackMATov/flat-hpp/master.svg?logo=appveyor
 [badge.codecov]: https://img.shields.io/codecov/c/github/BlackMATov/flat.hpp/master.svg?logo=codecov
-[badge.language]: https://img.shields.io/badge/language-C%2B%2B14-red.svg
+[badge.language]: https://img.shields.io/badge/language-C%2B%2B17-yellow.svg
 [badge.license]: https://img.shields.io/badge/license-MIT-blue.svg
 [badge.paypal]: https://img.shields.io/badge/donate-PayPal-orange.svg?logo=paypal&colorA=00457C
 
 [travis]: https://travis-ci.org/BlackMATov/flat.hpp
 [appveyor]: https://ci.appveyor.com/project/BlackMATov/flat-hpp
 [codecov]: https://codecov.io/gh/BlackMATov/flat.hpp
-[language]: https://en.wikipedia.org/wiki/C%2B%2B14
+[language]: https://en.wikipedia.org/wiki/C%2B%2B17
 [license]: https://en.wikipedia.org/wiki/MIT_License
 [paypal]: https://www.paypal.me/matov
 
@@ -133,30 +133,30 @@ flat_set& operator=(std::initializer_list<value_type> ilist);
 ### Iterators
 
 ```cpp
-iterator begin() noexcept;
-const_iterator begin() const noexcept;
-const_iterator cbegin() const noexcept;
+iterator begin();
+const_iterator begin() const;
+const_iterator cbegin() const;
 
-iterator end() noexcept;
-const_iterator end() const noexcept;
-const_iterator cend() const noexcept;
+iterator end();
+const_iterator end() const;
+const_iterator cend() const;
 
-reverse_iterator rbegin() noexcept;
-const_reverse_iterator rbegin() const noexcept;
-const_reverse_iterator crbegin() const noexcept;
+reverse_iterator rbegin();
+const_reverse_iterator rbegin() const;
+const_reverse_iterator crbegin() const;
 
-reverse_iterator rend() noexcept;
-const_reverse_iterator rend() const noexcept;
-const_reverse_iterator crend() const noexcept;
+reverse_iterator rend();
+const_reverse_iterator rend() const;
+const_reverse_iterator crend() const;
 ```
 
 ### Capacity
 
 ```cpp
-bool empty() const noexcept;
-size_type size() const noexcept;
-size_type max_size() const noexcept;
-size_type capacity() const noexcept;
+bool empty() const;
+size_type size() const;
+size_type max_size() const;
+size_type capacity() const;
 void reserve(size_type ncapacity);
 void shrink_to_fit();
 ```
@@ -179,7 +179,7 @@ std::pair<iterator, bool> emplace(Args&&... args);
 template < typename... Args >
 iterator emplace_hint(const_iterator hint, Args&&... args);
 
-void clear() noexcept;
+void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
@@ -354,30 +354,30 @@ flat_map& operator=(std::initializer_list<value_type> ilist);
 ### Iterators
 
 ```cpp
-iterator begin() noexcept;
-const_iterator begin() const noexcept;
-const_iterator cbegin() const noexcept;
+iterator begin();
+const_iterator begin() const;
+const_iterator cbegin() const;
 
-iterator end() noexcept;
-const_iterator end() const noexcept;
-const_iterator cend() const noexcept;
+iterator end();
+const_iterator end() const;
+const_iterator cend() const;
 
-reverse_iterator rbegin() noexcept;
-const_reverse_iterator rbegin() const noexcept;
-const_reverse_iterator crbegin() const noexcept;
+reverse_iterator rbegin();
+const_reverse_iterator rbegin() const;
+const_reverse_iterator crbegin() const;
 
-reverse_iterator rend() noexcept;
-const_reverse_iterator rend() const noexcept;
-const_reverse_iterator crend() const noexcept;
+reverse_iterator rend();
+const_reverse_iterator rend() const;
+const_reverse_iterator crend() const;
 ```
 
 ### Capacity
 
 ```cpp
-bool empty() const noexcept;
-size_type size() const noexcept;
-size_type max_size() const noexcept;
-size_type capacity() const noexcept;
+bool empty() const;
+size_type size() const;
+size_type max_size() const;
+size_type capacity() const;
 void reserve(size_type ncapacity);
 void shrink_to_fit();
 ```
@@ -410,7 +410,7 @@ std::pair<iterator, bool> emplace(Args&&... args);
 template < typename... Args >
 iterator emplace_hint(const_iterator hint, Args&&... args);
 
-void clear() noexcept;
+void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
@@ -585,30 +585,30 @@ flat_multiset& operator=(std::initializer_list<value_type> ilist);
 ### Iterators
 
 ```cpp
-iterator begin() noexcept;
-const_iterator begin() const noexcept;
-const_iterator cbegin() const noexcept;
+iterator begin();
+const_iterator begin() const;
+const_iterator cbegin() const;
 
-iterator end() noexcept;
-const_iterator end() const noexcept;
-const_iterator cend() const noexcept;
+iterator end();
+const_iterator end() const;
+const_iterator cend() const;
 
-reverse_iterator rbegin() noexcept;
-const_reverse_iterator rbegin() const noexcept;
-const_reverse_iterator crbegin() const noexcept;
+reverse_iterator rbegin();
+const_reverse_iterator rbegin() const;
+const_reverse_iterator crbegin() const;
 
-reverse_iterator rend() noexcept;
-const_reverse_iterator rend() const noexcept;
-const_reverse_iterator crend() const noexcept;
+reverse_iterator rend();
+const_reverse_iterator rend() const;
+const_reverse_iterator crend() const;
 ```
 
 ### Capacity
 
 ```cpp
-bool empty() const noexcept;
-size_type size() const noexcept;
-size_type max_size() const noexcept;
-size_type capacity() const noexcept;
+bool empty() const;
+size_type size() const;
+size_type max_size() const;
+size_type capacity() const;
 void reserve(size_type ncapacity);
 void shrink_to_fit();
 ```
@@ -631,7 +631,7 @@ iterator emplace(Args&&... args);
 template < typename... Args >
 iterator emplace_hint(const_iterator hint, Args&&... args);
 
-void clear() noexcept;
+void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
@@ -806,30 +806,30 @@ flat_multimap& operator=(std::initializer_list<value_type> ilist);
 ### Iterators
 
 ```cpp
-iterator begin() noexcept;
-const_iterator begin() const noexcept;
-const_iterator cbegin() const noexcept;
+iterator begin();
+const_iterator begin() const;
+const_iterator cbegin() const;
 
-iterator end() noexcept;
-const_iterator end() const noexcept;
-const_iterator cend() const noexcept;
+iterator end();
+const_iterator end() const;
+const_iterator cend() const;
 
-reverse_iterator rbegin() noexcept;
-const_reverse_iterator rbegin() const noexcept;
-const_reverse_iterator crbegin() const noexcept;
+reverse_iterator rbegin();
+const_reverse_iterator rbegin() const;
+const_reverse_iterator crbegin() const;
 
-reverse_iterator rend() noexcept;
-const_reverse_iterator rend() const noexcept;
-const_reverse_iterator crend() const noexcept;
+reverse_iterator rend();
+const_reverse_iterator rend() const;
+const_reverse_iterator crend() const;
 ```
 
 ### Capacity
 
 ```cpp
-bool empty() const noexcept;
-size_type size() const noexcept;
-size_type max_size() const noexcept;
-size_type capacity() const noexcept;
+bool empty() const;
+size_type size() const;
+size_type max_size() const;
+size_type capacity() const;
 void reserve(size_type ncapacity);
 void shrink_to_fit();
 ```
@@ -862,7 +862,7 @@ iterator emplace(Args&&... args);
 template < typename... Args >
 iterator emplace_hint(const_iterator hint, Args&&... args);
 
-void clear() noexcept;
+void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
