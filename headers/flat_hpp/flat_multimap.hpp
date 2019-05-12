@@ -181,43 +181,83 @@ namespace flat_hpp
             return *this;
         }
 
-        iterator begin() noexcept { return data_.begin(); }
-        const_iterator begin() const noexcept { return data_.begin(); }
-        const_iterator cbegin() const noexcept { return data_.cbegin(); }
+        iterator begin()
+        noexcept(noexcept(std::declval<container_type&>().begin())) {
+            return data_.begin();
+        }
 
-        iterator end() noexcept { return data_.end(); }
-        const_iterator end() const noexcept { return data_.end(); }
-        const_iterator cend() const noexcept { return data_.cend(); }
+        const_iterator begin() const
+        noexcept(noexcept(std::declval<const container_type&>().begin())) {
+            return data_.begin();
+        }
 
-        reverse_iterator rbegin() noexcept { return data_.rbegin(); }
-        const_reverse_iterator rbegin() const noexcept { return data_.rbegin(); }
-        const_reverse_iterator crbegin() const noexcept { return data_.crbegin(); }
+        const_iterator cbegin() const
+        noexcept(noexcept(std::declval<const container_type&>().cbegin())) {
+            return data_.cbegin();
+        }
 
-        reverse_iterator rend() noexcept { return data_.rend(); }
-        const_reverse_iterator rend() const noexcept { return data_.rend(); }
-        const_reverse_iterator crend() const noexcept { return data_.crend(); }
+        iterator end()
+        noexcept(noexcept(std::declval<container_type&>().end())) {
+            return data_.end();
+        }
+
+        const_iterator end() const
+        noexcept(noexcept(std::declval<const container_type&>().end())) {
+            return data_.end();
+        }
+
+        const_iterator cend() const
+        noexcept(noexcept(std::declval<const container_type&>().cend())) {
+            return data_.cend();
+        }
+
+        reverse_iterator rbegin()
+        noexcept(noexcept(std::declval<container_type&>().rbegin())) {
+            return data_.rbegin();
+        }
+
+        const_reverse_iterator rbegin() const
+        noexcept(noexcept(std::declval<const container_type&>().rbegin())) {
+            return data_.rbegin();
+        }
+
+        const_reverse_iterator crbegin() const
+        noexcept(noexcept(std::declval<const container_type&>().crbegin())) {
+            return data_.crbegin();
+        }
+
+        reverse_iterator rend()
+        noexcept(noexcept(std::declval<container_type&>().rend())) {
+            return data_.rend();
+        }
+
+        const_reverse_iterator rend() const
+        noexcept(noexcept(std::declval<const container_type&>().rend())) {
+            return data_.rend();
+        }
+
+        const_reverse_iterator crend() const
+        noexcept(noexcept(std::declval<const container_type&>().crend())) {
+            return data_.crend();
+        }
 
         bool empty() const
-            noexcept(noexcept(std::declval<const container_type&>().empty()))
-        {
+        noexcept(noexcept(std::declval<const container_type&>().empty())) {
             return data_.empty();
         }
 
         size_type size() const
-            noexcept(noexcept(std::declval<const container_type&>().size()))
-        {
+        noexcept(noexcept(std::declval<const container_type&>().size())) {
             return data_.size();
         }
 
         size_type max_size() const
-            noexcept(noexcept(std::declval<const container_type&>().max_size()))
-        {
+        noexcept(noexcept(std::declval<const container_type&>().max_size())) {
             return data_.max_size();
         }
 
         size_type capacity() const
-            noexcept(noexcept(std::declval<const container_type&>().capacity()))
-        {
+        noexcept(noexcept(std::declval<const container_type&>().capacity())) {
             return data_.capacity();
         }
 
@@ -305,8 +345,7 @@ namespace flat_hpp
         }
 
         void clear()
-            noexcept(noexcept(std::declval<container_type&>().clear()))
-        {
+        noexcept(noexcept(std::declval<container_type&>().clear())) {
             data_.clear();
         }
 

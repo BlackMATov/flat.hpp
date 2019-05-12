@@ -75,10 +75,24 @@ TEST_CASE("flat_multiset") {
         STATIC_REQUIRE(std::is_nothrow_swappable_v<set2_t>);
         STATIC_REQUIRE(!std::is_nothrow_swappable_v<set3_t>);
 
-        STATIC_REQUIRE(noexcept(std::declval<set_t&>().empty()));
-        STATIC_REQUIRE(noexcept(std::declval<set_t&>().size()));
-        STATIC_REQUIRE(noexcept(std::declval<set_t&>().max_size()));
-        STATIC_REQUIRE(noexcept(std::declval<set_t&>().capacity()));
+        STATIC_REQUIRE(noexcept(std::declval<set_t&>().begin()));
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().begin()));
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().cbegin()));
+        STATIC_REQUIRE(noexcept(std::declval<set_t&>().end()));
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().end()));
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().cend()));
+
+        STATIC_REQUIRE(noexcept(std::declval<set_t&>().rbegin()));
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().rbegin()));
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().crbegin()));
+        STATIC_REQUIRE(noexcept(std::declval<set_t&>().rend()));
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().rend()));
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().crend()));
+
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().empty()));
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().size()));
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().max_size()));
+        STATIC_REQUIRE(noexcept(std::declval<const set_t&>().capacity()));
 
         STATIC_REQUIRE(noexcept(std::declval<set_t&>().clear()));
     }

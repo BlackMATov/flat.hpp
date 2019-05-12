@@ -75,10 +75,24 @@ TEST_CASE("flat_multimap") {
         STATIC_REQUIRE(std::is_nothrow_swappable_v<map2_t>);
         STATIC_REQUIRE(!std::is_nothrow_swappable_v<map3_t>);
 
-        STATIC_REQUIRE(noexcept(std::declval<map_t&>().empty()));
-        STATIC_REQUIRE(noexcept(std::declval<map_t&>().size()));
-        STATIC_REQUIRE(noexcept(std::declval<map_t&>().max_size()));
-        STATIC_REQUIRE(noexcept(std::declval<map_t&>().capacity()));
+        STATIC_REQUIRE(noexcept(std::declval<map_t&>().begin()));
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().begin()));
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().cbegin()));
+        STATIC_REQUIRE(noexcept(std::declval<map_t&>().end()));
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().end()));
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().cend()));
+
+        STATIC_REQUIRE(noexcept(std::declval<map_t&>().rbegin()));
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().rbegin()));
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().crbegin()));
+        STATIC_REQUIRE(noexcept(std::declval<map_t&>().rend()));
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().rend()));
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().crend()));
+
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().empty()));
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().size()));
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().max_size()));
+        STATIC_REQUIRE(noexcept(std::declval<const map_t&>().capacity()));
 
         STATIC_REQUIRE(noexcept(std::declval<map_t&>().clear()));
     }
