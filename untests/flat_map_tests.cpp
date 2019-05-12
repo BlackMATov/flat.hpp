@@ -39,6 +39,15 @@ namespace
     }
 
     template < typename T >
+    class dummy_less3 {
+        dummy_less3() = default;
+        dummy_less3(dummy_less3&&) noexcept(false) {}
+        bool operator()(const T& l, const T& r) const {
+            return l < r;
+        }
+    };
+
+    template < typename T >
     constexpr std::add_const_t<T>& my_as_const(T& t) noexcept {
         return t;
     }
@@ -57,50 +66,30 @@ TEST_CASE("flat_map") {
         using alloc_t = std::allocator<std::pair<int,unsigned>>;
         using map_t = flat_map<int, unsigned, dummy_less<int>, std::vector<std::pair<int,unsigned>, alloc_t>>;
         using map2_t = flat_map<int, unsigned, dummy_less2<int>>;
+        using map3_t = flat_map<int, unsigned, dummy_less3<int>>;
 
-        static_assert(
-            std::is_nothrow_default_constructible_v<map_t>,
-            "unit test static error");
-        static_assert(
-            std::is_nothrow_move_constructible_v<map_t>,
-            "unit test static error");
-        static_assert(
-            std::is_nothrow_move_assignable_v<map_t>,
-            "unit test static error");
+        STATIC_REQUIRE(std::is_nothrow_default_constructible_v<map_t>);
+        STATIC_REQUIRE(std::is_nothrow_move_constructible_v<map_t>);
+        STATIC_REQUIRE(std::is_nothrow_move_assignable_v<map_t>);
+        STATIC_REQUIRE(std::is_nothrow_swappable_v<map_t>);
+        STATIC_REQUIRE(std::is_nothrow_swappable_v<map2_t>);
+        STATIC_REQUIRE(!std::is_nothrow_swappable_v<map3_t>);
     }
     SECTION("types") {
         using map_t = flat_map<int, unsigned>;
 
-        static_assert(
-            std::is_same_v<map_t::key_type, int>,
-            "unit test static error");
-        static_assert(
-            std::is_same_v<map_t::mapped_type, unsigned>,
-            "unit test static error");
-        static_assert(
-            std::is_same_v<map_t::value_type, std::pair<int, unsigned>>,
-            "unit test static error");
+        STATIC_REQUIRE(std::is_same_v<map_t::key_type, int>);
+        STATIC_REQUIRE(std::is_same_v<map_t::mapped_type, unsigned>);
+        STATIC_REQUIRE(std::is_same_v<map_t::value_type, std::pair<int, unsigned>>);
 
-        static_assert(
-            std::is_same_v<map_t::size_type, std::size_t>,
-            "unit test static error");
-        static_assert(
-            std::is_same_v<map_t::difference_type, std::ptrdiff_t>,
-            "unit test static error");
+        STATIC_REQUIRE(std::is_same_v<map_t::size_type, std::size_t>);
+        STATIC_REQUIRE(std::is_same_v<map_t::difference_type, std::ptrdiff_t>);
 
-        static_assert(
-            std::is_same_v<map_t::reference, std::pair<int, unsigned>&>,
-            "unit test static error");
-        static_assert(
-            std::is_same_v<map_t::const_reference, const std::pair<int, unsigned>&>,
-            "unit test static error");
+        STATIC_REQUIRE(std::is_same_v<map_t::reference, std::pair<int, unsigned>&>);
+        STATIC_REQUIRE(std::is_same_v<map_t::const_reference, const std::pair<int, unsigned>&>);
 
-        static_assert(
-            std::is_same_v<map_t::pointer, std::pair<int, unsigned>*>,
-            "unit test static error");
-        static_assert(
-            std::is_same_v<map_t::const_pointer, const std::pair<int, unsigned>*>,
-            "unit test static error");
+        STATIC_REQUIRE(std::is_same_v<map_t::pointer, std::pair<int, unsigned>*>);
+        STATIC_REQUIRE(std::is_same_v<map_t::const_pointer, const std::pair<int, unsigned>*>);
     }
     SECTION("ctors") {
         using alloc_t = std::allocator<

@@ -315,7 +315,10 @@ namespace flat_hpp
             return r;
         }
 
-        void swap(flat_multimap& other) {
+        void swap(flat_multimap& other)
+            noexcept(std::is_nothrow_swappable_v<base_type>
+                && std::is_nothrow_swappable_v<container_type>)
+        {
             using std::swap;
             swap(
                 static_cast<base_type&>(*this),
@@ -393,6 +396,7 @@ namespace flat_hpp
     void swap(
         flat_multimap<Key, Value, Compare, Container>& l,
         flat_multimap<Key, Value, Compare, Container>& r)
+        noexcept(noexcept(l.swap(r)))
     {
         l.swap(r);
     }

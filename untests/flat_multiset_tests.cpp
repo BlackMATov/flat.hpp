@@ -39,6 +39,15 @@ namespace
     }
 
     template < typename T >
+    class dummy_less3 {
+        dummy_less3() = default;
+        dummy_less3(dummy_less3&&) noexcept(false) {}
+        bool operator()(const T& l, const T& r) const {
+            return l < r;
+        }
+    };
+
+    template < typename T >
     constexpr std::add_const_t<T>& my_as_const(T& t) noexcept {
         return t;
     }
@@ -57,47 +66,29 @@ TEST_CASE("flat_multiset") {
         using alloc_t = std::allocator<int>;
         using set_t = flat_multiset<int, dummy_less<int>, std::vector<int, alloc_t>>;
         using set2_t = flat_multiset<int, dummy_less2<int>>;
+        using set3_t = flat_multiset<int, dummy_less3<int>>;
 
-        static_assert(
-            std::is_nothrow_default_constructible_v<set_t>,
-            "unit test static error");
-        static_assert(
-            std::is_nothrow_move_constructible_v<set_t>,
-            "unit test static error");
-        static_assert(
-            std::is_nothrow_move_assignable_v<set_t>,
-            "unit test static error");
+        STATIC_REQUIRE(std::is_nothrow_default_constructible_v<set_t>);
+        STATIC_REQUIRE(std::is_nothrow_move_constructible_v<set_t>);
+        STATIC_REQUIRE(std::is_nothrow_move_assignable_v<set_t>);
+        STATIC_REQUIRE(std::is_nothrow_swappable_v<set_t>);
+        STATIC_REQUIRE(std::is_nothrow_swappable_v<set2_t>);
+        STATIC_REQUIRE(!std::is_nothrow_swappable_v<set3_t>);
     }
     SECTION("types") {
         using set_t = flat_multiset<int>;
 
-        static_assert(
-            std::is_same_v<set_t::key_type, int>,
-            "unit test static error");
-        static_assert(
-            std::is_same_v<set_t::value_type, int>,
-            "unit test static error");
+        STATIC_REQUIRE(std::is_same_v<set_t::key_type, int>);
+        STATIC_REQUIRE(std::is_same_v<set_t::value_type, int>);
 
-        static_assert(
-            std::is_same_v<set_t::size_type, std::size_t>,
-            "unit test static error");
-        static_assert(
-            std::is_same_v<set_t::difference_type, std::ptrdiff_t>,
-            "unit test static error");
+        STATIC_REQUIRE(std::is_same_v<set_t::size_type, std::size_t>);
+        STATIC_REQUIRE(std::is_same_v<set_t::difference_type, std::ptrdiff_t>);
 
-        static_assert(
-            std::is_same_v<set_t::reference, int&>,
-            "unit test static error");
-        static_assert(
-            std::is_same_v<set_t::const_reference, const int&>,
-            "unit test static error");
+        STATIC_REQUIRE(std::is_same_v<set_t::reference, int&>);
+        STATIC_REQUIRE(std::is_same_v<set_t::const_reference, const int&>);
 
-        static_assert(
-            std::is_same_v<set_t::pointer, int*>,
-            "unit test static error");
-        static_assert(
-            std::is_same_v<set_t::const_pointer, const int*>,
-            "unit test static error");
+        STATIC_REQUIRE(std::is_same_v<set_t::pointer, int*>);
+        STATIC_REQUIRE(std::is_same_v<set_t::const_pointer, const int*>);
     }
     SECTION("ctors") {
         using alloc_t = std::allocator<int>;
