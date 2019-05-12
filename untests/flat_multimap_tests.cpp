@@ -74,6 +74,13 @@ TEST_CASE("flat_multimap") {
         STATIC_REQUIRE(std::is_nothrow_swappable_v<map_t>);
         STATIC_REQUIRE(std::is_nothrow_swappable_v<map2_t>);
         STATIC_REQUIRE(!std::is_nothrow_swappable_v<map3_t>);
+
+        STATIC_REQUIRE(noexcept(std::declval<map_t&>().empty()));
+        STATIC_REQUIRE(noexcept(std::declval<map_t&>().size()));
+        STATIC_REQUIRE(noexcept(std::declval<map_t&>().max_size()));
+        STATIC_REQUIRE(noexcept(std::declval<map_t&>().capacity()));
+
+        STATIC_REQUIRE(noexcept(std::declval<map_t&>().clear()));
     }
     SECTION("types") {
         using map_t = flat_multimap<int, unsigned>;

@@ -74,6 +74,13 @@ TEST_CASE("flat_multiset") {
         STATIC_REQUIRE(std::is_nothrow_swappable_v<set_t>);
         STATIC_REQUIRE(std::is_nothrow_swappable_v<set2_t>);
         STATIC_REQUIRE(!std::is_nothrow_swappable_v<set3_t>);
+
+        STATIC_REQUIRE(noexcept(std::declval<set_t&>().empty()));
+        STATIC_REQUIRE(noexcept(std::declval<set_t&>().size()));
+        STATIC_REQUIRE(noexcept(std::declval<set_t&>().max_size()));
+        STATIC_REQUIRE(noexcept(std::declval<set_t&>().capacity()));
+
+        STATIC_REQUIRE(noexcept(std::declval<set_t&>().clear()));
     }
     SECTION("types") {
         using set_t = flat_multiset<int>;

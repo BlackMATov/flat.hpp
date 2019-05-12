@@ -142,19 +142,27 @@ namespace flat_hpp
         const_reverse_iterator rend() const noexcept { return data_.rend(); }
         const_reverse_iterator crend() const noexcept { return data_.crend(); }
 
-        bool empty() const noexcept {
+        bool empty() const
+            noexcept(noexcept(std::declval<const container_type&>().empty()))
+        {
             return data_.empty();
         }
 
-        size_type size() const noexcept {
+        size_type size() const
+            noexcept(noexcept(std::declval<const container_type&>().size()))
+        {
             return data_.size();
         }
 
-        size_type max_size() const noexcept {
+        size_type max_size() const
+            noexcept(noexcept(std::declval<const container_type&>().max_size()))
+        {
             return data_.max_size();
         }
 
-        size_type capacity() const noexcept {
+        size_type capacity() const
+            noexcept(noexcept(std::declval<const container_type&>().capacity()))
+        {
             return data_.capacity();
         }
 
@@ -215,7 +223,9 @@ namespace flat_hpp
             return insert(hint, value_type(std::forward<Args>(args)...));
         }
 
-        void clear() noexcept {
+        void clear()
+            noexcept(noexcept(std::declval<container_type&>().clear()))
+        {
             data_.clear();
         }
 
