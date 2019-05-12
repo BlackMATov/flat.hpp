@@ -99,8 +99,8 @@ namespace flat_hpp
         };
     public:
         flat_multimap()
-            noexcept(std::is_nothrow_default_constructible<base_type>::value
-                && std::is_nothrow_default_constructible<container_type>::value) {}
+            noexcept(std::is_nothrow_default_constructible_v<base_type>
+                && std::is_nothrow_default_constructible_v<container_type>) {}
 
         explicit flat_multimap(const Compare& c)
         : base_type(c) {}

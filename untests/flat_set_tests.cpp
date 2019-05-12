@@ -15,62 +15,6 @@ using namespace flat_hpp;
 namespace
 {
     template < typename T >
-    class dummy_allocator {
-    public:
-        using size_type = std::size_t;
-        using difference_type = std::ptrdiff_t;
-        using pointer = T*;
-        using const_pointer = const T*;
-        using reference = T&;
-        using const_reference = const T&;
-        using value_type = T;
-
-        using propagate_on_container_move_assignment = std::true_type;
-        using is_always_equal = std::true_type;
-
-        template < typename U >
-        struct rebind { using other = dummy_allocator<U>; };
-
-        dummy_allocator() = default;
-        dummy_allocator(int i) : i(i) {}
-
-        template < typename U >
-        dummy_allocator(const dummy_allocator<U>& o) noexcept {
-            i = o.i;
-        }
-
-        T* allocate(std::size_t n) noexcept {
-            return static_cast<T*>(std::malloc(sizeof(T) * n));
-        }
-
-        void deallocate(T* p, std::size_t n) noexcept {
-            (void)n;
-            std::free(p);
-        }
-
-        template < typename U, typename... Args >
-        void construct(U* p, Args&&... args) {
-            ::new((void*)p) U(std::forward<Args>(args)...);
-        }
-
-        void destroy(pointer p) {
-            p->~T();
-        }
-
-        int i = 0;
-    };
-
-    template < typename T, typename U >
-    bool operator==(const dummy_allocator<T>&, const dummy_allocator<U>&) noexcept {
-        return true;
-    }
-
-    template < typename T, typename U >
-    bool operator!=(const dummy_allocator<T>& l, const dummy_allocator<U>& r) noexcept {
-        return !(l == r);
-    }
-
-    template < typename T >
     class dummy_less {
     public:
         dummy_less() = default;
@@ -80,6 +24,19 @@ namespace
         }
         int i = 0;
     };
+
+    template < typename T >
+    class dummy_less2 {
+        dummy_less2() = default;
+        dummy_less2(dummy_less2&&) noexcept(false) {}
+        bool operator()(const T& l, const T& r) const {
+            return l < r;
+        }
+    };
+
+    template < typename T >
+    void swap(dummy_less2<T>&, dummy_less2<T>&) noexcept {
+    }
 
     template < typename T >
     constexpr std::add_const_t<T>& my_as_const(T& t) noexcept {
@@ -97,52 +54,53 @@ TEST_CASE("flat_set") {
         REQUIRE(sizeof(vc) == sizeof(int));
     }
     SECTION("noexcept") {
-        using alloc_t = dummy_allocator<int>;
+        using alloc_t = std::allocator<int>;
         using set_t = flat_set<int, dummy_less<int>, std::vector<int, alloc_t>>;
+        using set2_t = flat_set<int, dummy_less2<int>>;
 
         static_assert(
-            std::is_nothrow_default_constructible<set_t>::value,
+            std::is_nothrow_default_constructible_v<set_t>,
             "unit test static error");
         static_assert(
-            std::is_nothrow_move_constructible<set_t>::value,
+            std::is_nothrow_move_constructible_v<set_t>,
             "unit test static error");
         static_assert(
-            std::is_nothrow_move_assignable<set_t>::value,
+            std::is_nothrow_move_assignable_v<set_t>,
             "unit test static error");
     }
     SECTION("types") {
         using set_t = flat_set<int>;
 
         static_assert(
-            std::is_same<set_t::key_type, int>::value,
+            std::is_same_v<set_t::key_type, int>,
             "unit test static error");
         static_assert(
-            std::is_same<set_t::value_type, int>::value,
-            "unit test static error");
-
-        static_assert(
-            std::is_same<set_t::size_type, std::size_t>::value,
-            "unit test static error");
-        static_assert(
-            std::is_same<set_t::difference_type, std::ptrdiff_t>::value,
+            std::is_same_v<set_t::value_type, int>,
             "unit test static error");
 
         static_assert(
-            std::is_same<set_t::reference, int&>::value,
+            std::is_same_v<set_t::size_type, std::size_t>,
             "unit test static error");
         static_assert(
-            std::is_same<set_t::const_reference, const int&>::value,
+            std::is_same_v<set_t::difference_type, std::ptrdiff_t>,
             "unit test static error");
 
         static_assert(
-            std::is_same<set_t::pointer, int*>::value,
+            std::is_same_v<set_t::reference, int&>,
             "unit test static error");
         static_assert(
-            std::is_same<set_t::const_pointer, const int*>::value,
+            std::is_same_v<set_t::const_reference, const int&>,
+            "unit test static error");
+
+        static_assert(
+            std::is_same_v<set_t::pointer, int*>,
+            "unit test static error");
+        static_assert(
+            std::is_same_v<set_t::const_pointer, const int*>,
             "unit test static error");
     }
     SECTION("ctors") {
-        using alloc_t = dummy_allocator<int>;
+        using alloc_t = std::allocator<int>;
         using set_t = flat_set<int, std::less<int>, std::vector<int, alloc_t>>;
         using set2_t = flat_set<int, std::greater<int>, std::vector<int, alloc_t>>;
         using vec_t = std::vector<int>;
@@ -187,9 +145,9 @@ TEST_CASE("flat_set") {
             auto s2 = std::move(s1);
             REQUIRE(s1.empty());
             REQUIRE(s2 == set_t{0,1,2});
-            auto s3 = set_t(s2, alloc_t(42));
+            auto s3 = set_t(s2, alloc_t());
             REQUIRE(s2 == s3);
-            auto s4 = set_t(std::move(s3), alloc_t(21));
+            auto s4 = set_t(std::move(s3), alloc_t());
             REQUIRE(s3.empty());
             REQUIRE(s4 == set_t{0,1,2});
         }
@@ -252,7 +210,7 @@ TEST_CASE("flat_set") {
             REQUIRE(s0.capacity() == 3);
             REQUIRE(s0 == set_t{1,2,3});
 
-            using alloc2_t = dummy_allocator<int>;
+            using alloc2_t = std::allocator<int>;
 
             using set2_t = flat_set<
                 int,

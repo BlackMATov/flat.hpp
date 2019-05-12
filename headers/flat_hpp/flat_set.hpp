@@ -44,8 +44,8 @@ namespace flat_hpp
         using const_reverse_iterator = typename Container::const_reverse_iterator;
     public:
         flat_set()
-            noexcept(std::is_nothrow_default_constructible<base_type>::value
-                && std::is_nothrow_default_constructible<container_type>::value) {}
+            noexcept(std::is_nothrow_default_constructible_v<base_type>
+                && std::is_nothrow_default_constructible_v<container_type>) {}
 
         explicit flat_set(const Compare& c)
         : base_type(c) {}
