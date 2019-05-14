@@ -28,7 +28,7 @@
 [flat.hpp][flat] is a header-only library. All you need to do is copy the headers files from `headers` directory into your project and include them:
 
 ```cpp
-#include "flat_hpp/flat_set.hpp"
+#include "flat.hpp/flat_set.hpp"
 using namespace flat_hpp;
 
 int main() {
