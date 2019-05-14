@@ -9,7 +9,7 @@
 
 #include <deque>
 
-#include <flat_hpp/flat_multimap.hpp>
+#include <flat.hpp/flat_multimap.hpp>
 using namespace flat_hpp;
 
 namespace
