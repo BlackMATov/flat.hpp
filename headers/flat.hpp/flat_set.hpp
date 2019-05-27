@@ -279,7 +279,18 @@ namespace flat_hpp
         }
 
         size_type erase(const key_type& key) {
-            const iterator iter = find(key);
+            const const_iterator iter = find(key);
+            return iter != end()
+                ? (erase(iter), 1)
+                : 0;
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            size_type>
+        erase(const K& key) {
+            const const_iterator iter = find(key);
             return iter != end()
                 ? (erase(iter), 1)
                 : 0;
@@ -297,6 +308,15 @@ namespace flat_hpp
         }
 
         size_type count(const key_type& key) const {
+            const const_iterator iter = find(key);
+            return iter != end() ? 1 : 0;
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            size_type>
+        count(const K& key) const {
             const const_iterator iter = find(key);
             return iter != end() ? 1 : 0;
         }
@@ -342,6 +362,22 @@ namespace flat_hpp
         }
 
         std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
+            return std::equal_range(begin(), end(), key, key_comp());
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            std::pair<iterator, iterator>>
+        equal_range(const K& key) {
+            return std::equal_range(begin(), end(), key, key_comp());
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            std::pair<const_iterator, const_iterator>>
+        equal_range(const K& key) const {
             return std::equal_range(begin(), end(), key, key_comp());
         }
 

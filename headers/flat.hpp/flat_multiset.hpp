@@ -281,6 +281,17 @@ namespace flat_hpp
             return r;
         }
 
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            size_type>
+        erase(const K& key) {
+            const auto p = equal_range(key);
+            size_type r = std::distance(p.first, p.second);
+            erase(p.first, p.second);
+            return r;
+        }
+
         void swap(flat_multiset& other)
             noexcept(std::is_nothrow_swappable_v<base_type>
                 && std::is_nothrow_swappable_v<container_type>)
@@ -293,6 +304,15 @@ namespace flat_hpp
         }
 
         size_type count(const key_type& key) const {
+            const auto p = equal_range(key);
+            return std::distance(p.first, p.second);
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            size_type>
+        count(const K& key) const {
             const auto p = equal_range(key);
             return std::distance(p.first, p.second);
         }
@@ -338,6 +358,22 @@ namespace flat_hpp
         }
 
         std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
+            return std::equal_range(begin(), end(), key, key_comp());
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            std::pair<iterator, iterator>>
+        equal_range(const K& key) {
+            return std::equal_range(begin(), end(), key, key_comp());
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            std::pair<const_iterator, const_iterator>>
+        equal_range(const K& key) const {
             return std::equal_range(begin(), end(), key, key_comp());
         }
 

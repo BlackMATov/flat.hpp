@@ -265,6 +265,30 @@ namespace flat_hpp
             throw std::out_of_range("flat_map::at: key not found");
         }
 
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            mapped_type&>
+        at(const K& key) {
+            const iterator iter = find(key);
+            if ( iter != end() ) {
+                return iter->second;
+            }
+            throw std::out_of_range("flat_map::at: key not found");
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            const mapped_type&>
+        at(const K& key) const {
+            const const_iterator iter = find(key);
+            if ( iter != end() ) {
+                return iter->second;
+            }
+            throw std::out_of_range("flat_map::at: key not found");
+        }
+
         std::pair<iterator, bool> insert(value_type&& value) {
             const iterator iter = lower_bound(value.first);
             return iter == end() || this->operator()(value, *iter)
@@ -328,7 +352,18 @@ namespace flat_hpp
         }
 
         size_type erase(const key_type& key) {
-            const iterator iter = find(key);
+            const const_iterator iter = find(key);
+            return iter != end()
+                ? (erase(iter), 1)
+                : 0;
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            size_type>
+        erase(const K& key) {
+            const const_iterator iter = find(key);
             return iter != end()
                 ? (erase(iter), 1)
                 : 0;
@@ -346,6 +381,15 @@ namespace flat_hpp
         }
 
         size_type count(const key_type& key) const {
+            const const_iterator iter = find(key);
+            return iter != end() ? 1 : 0;
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            size_type>
+        count(const K& key) const {
             const const_iterator iter = find(key);
             return iter != end() ? 1 : 0;
         }
@@ -392,6 +436,24 @@ namespace flat_hpp
         }
 
         std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
+            const base_type& comp = *this;
+            return std::equal_range(begin(), end(), key, comp);
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            std::pair<iterator, iterator>>
+        equal_range(const K& key) {
+            const base_type& comp = *this;
+            return std::equal_range(begin(), end(), key, comp);
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            std::pair<const_iterator, const_iterator>>
+        equal_range(const K& key) const {
             const base_type& comp = *this;
             return std::equal_range(begin(), end(), key, comp);
         }

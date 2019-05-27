@@ -265,6 +265,30 @@ namespace flat_hpp
             throw std::out_of_range("flat_multimap::at: key not found");
         }
 
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            mapped_type&>
+        at(const K& key) {
+            const iterator iter = find(key);
+            if ( iter != end() ) {
+                return iter->second;
+            }
+            throw std::out_of_range("flat_multimap::at: key not found");
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            const mapped_type&>
+        at(const K& key) const {
+            const const_iterator iter = find(key);
+            if ( iter != end() ) {
+                return iter->second;
+            }
+            throw std::out_of_range("flat_multimap::at: key not found");
+        }
+
         iterator insert(value_type&& value) {
             const iterator iter = upper_bound(value.first);
             return data_.insert(iter, std::move(value));
@@ -330,6 +354,17 @@ namespace flat_hpp
             return r;
         }
 
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            size_type>
+        erase(const K& key) {
+            const auto p = equal_range(key);
+            size_type r = std::distance(p.first, p.second);
+            erase(p.first, p.second);
+            return r;
+        }
+
         void swap(flat_multimap& other)
             noexcept(std::is_nothrow_swappable_v<base_type>
                 && std::is_nothrow_swappable_v<container_type>)
@@ -342,6 +377,15 @@ namespace flat_hpp
         }
 
         size_type count(const key_type& key) const {
+            const auto p = equal_range(key);
+            return std::distance(p.first, p.second);
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            size_type>
+        count(const K& key) const {
             const auto p = equal_range(key);
             return std::distance(p.first, p.second);
         }
@@ -388,6 +432,24 @@ namespace flat_hpp
         }
 
         std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
+            const base_type& comp = *this;
+            return std::equal_range(begin(), end(), key, comp);
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            std::pair<iterator, iterator>>
+        equal_range(const K& key) {
+            const base_type& comp = *this;
+            return std::equal_range(begin(), end(), key, comp);
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            std::pair<const_iterator, const_iterator>>
+        equal_range(const K& key) const {
             const base_type& comp = *this;
             return std::equal_range(begin(), end(), key, comp);
         }
