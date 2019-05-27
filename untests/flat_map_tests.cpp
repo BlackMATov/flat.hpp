@@ -424,7 +424,6 @@ TEST_CASE("flat_map") {
         REQUIRE(s0.upper_bound(std::string_view("hello")) == s0.begin() + 1);
         REQUIRE(my_as_const(s0).upper_bound(std::string_view("hello")) == s0.begin() + 1);
 
-        REQUIRE(s0.erase(std::string_view("hello")) == 1);
         REQUIRE(s0.at(std::string_view("world")) == 84);
         REQUIRE(my_as_const(s0).at(std::string_view("world")) == 84);
     }

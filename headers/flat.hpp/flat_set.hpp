@@ -285,17 +285,6 @@ namespace flat_hpp
                 : 0;
         }
 
-        template < typename K >
-        std::enable_if_t<
-            detail::is_transparent_v<Compare, K>,
-            size_type>
-        erase(const K& key) {
-            const const_iterator iter = find(key);
-            return iter != end()
-                ? (erase(iter), 1)
-                : 0;
-        }
-
         void swap(flat_set& other)
             noexcept(std::is_nothrow_swappable_v<base_type>
                 && std::is_nothrow_swappable_v<container_type>)
