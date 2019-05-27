@@ -183,7 +183,6 @@ void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
-template < typename K > size_type erase(const K& key);
 
 void swap(flat_set& other);
 ```
@@ -431,7 +430,6 @@ void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
-template < typename K > size_type erase(const K& key);
 
 void swap(flat_map& other)
 ```
@@ -666,7 +664,6 @@ void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
-template < typename K > size_type erase(const K& key);
 
 void swap(flat_multiset& other);
 ```
@@ -914,7 +911,6 @@ void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
-template < typename K > size_type erase(const K& key);
 
 void swap(flat_multimap& other)
 ```

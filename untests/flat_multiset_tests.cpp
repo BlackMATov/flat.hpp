@@ -401,8 +401,6 @@ TEST_CASE("flat_multiset") {
 
         REQUIRE(s0.upper_bound(std::string_view("hello")) == s0.begin() + 1);
         REQUIRE(my_as_const(s0).upper_bound(std::string_view("hello")) == s0.begin() + 1);
-
-        REQUIRE(s0.erase(std::string_view("hello")) == 1);
     }
     SECTION("observers") {
         struct my_less {

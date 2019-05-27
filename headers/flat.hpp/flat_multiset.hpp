@@ -281,17 +281,6 @@ namespace flat_hpp
             return r;
         }
 
-        template < typename K >
-        std::enable_if_t<
-            detail::is_transparent_v<Compare, K>,
-            size_type>
-        erase(const K& key) {
-            const auto p = equal_range(key);
-            size_type r = std::distance(p.first, p.second);
-            erase(p.first, p.second);
-            return r;
-        }
-
         void swap(flat_multiset& other)
             noexcept(std::is_nothrow_swappable_v<base_type>
                 && std::is_nothrow_swappable_v<container_type>)
