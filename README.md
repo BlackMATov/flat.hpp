@@ -195,14 +195,23 @@ size_type count(const key_type& key) const;
 iterator find(const key_type& key);
 const_iterator find(const key_type& key) const;
 
+template < typename K > iterator find(const K& key);
+template < typename K > const_iterator find(const K& key) const;
+
 std::pair<iterator, iterator> equal_range(const key_type& key);
 std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
 
 iterator lower_bound(const key_type& key);
 const_iterator lower_bound(const key_type& key) const;
 
+template < typename K > iterator lower_bound(const K& key);
+template < typename K > const_iterator lower_bound(const K& key) const;
+
 iterator upper_bound(const key_type& key);
 const_iterator upper_bound(const key_type& key) const;
+
+template < typename K > iterator upper_bound(const K& key);
+template < typename K > const_iterator upper_bound(const K& key) const;
 ```
 
 ### Observers
@@ -426,14 +435,23 @@ size_type count(const key_type& key) const;
 iterator find(const key_type& key);
 const_iterator find(const key_type& key) const;
 
+template < typename K > iterator find(const K& key);
+template < typename K > const_iterator find(const K& key) const;
+
 std::pair<iterator, iterator> equal_range(const key_type& key);
 std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
 
 iterator lower_bound(const key_type& key);
 const_iterator lower_bound(const key_type& key) const;
 
+template < typename K > iterator lower_bound(const K& key);
+template < typename K > const_iterator lower_bound(const K& key) const;
+
 iterator upper_bound(const key_type& key);
 const_iterator upper_bound(const key_type& key) const;
+
+template < typename K > iterator upper_bound(const K& key);
+template < typename K > const_iterator upper_bound(const K& key) const;
 ```
 
 ### Observers
@@ -647,14 +665,23 @@ size_type count(const key_type& key) const;
 iterator find(const key_type& key);
 const_iterator find(const key_type& key) const;
 
+template < typename K > iterator find(const K& key);
+template < typename K > const_iterator find(const K& key) const;
+
 std::pair<iterator, iterator> equal_range(const key_type& key);
 std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
 
 iterator lower_bound(const key_type& key);
 const_iterator lower_bound(const key_type& key) const;
 
+template < typename K > iterator lower_bound(const K& key);
+template < typename K > const_iterator lower_bound(const K& key) const;
+
 iterator upper_bound(const key_type& key);
 const_iterator upper_bound(const key_type& key) const;
+
+template < typename K > iterator upper_bound(const K& key);
+template < typename K > const_iterator upper_bound(const K& key) const;
 ```
 
 ### Observers
@@ -878,14 +905,23 @@ size_type count(const key_type& key) const;
 iterator find(const key_type& key);
 const_iterator find(const key_type& key) const;
 
+template < typename K > iterator find(const K& key);
+template < typename K > const_iterator find(const K& key) const;
+
 std::pair<iterator, iterator> equal_range(const key_type& key);
 std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
 
 iterator lower_bound(const key_type& key);
 const_iterator lower_bound(const key_type& key) const;
 
+template < typename K > iterator lower_bound(const K& key);
+template < typename K > const_iterator lower_bound(const K& key) const;
+
 iterator upper_bound(const key_type& key);
 const_iterator upper_bound(const key_type& key) const;
+
+template < typename K > iterator upper_bound(const K& key);
+template < typename K > const_iterator upper_bound(const K& key) const;
 ```
 
 ### Observers

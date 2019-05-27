@@ -9,6 +9,9 @@
 
 #include <deque>
 
+#include <string>
+#include <string_view>
+
 #include <flat.hpp/flat_map.hpp>
 using namespace flat_hpp;
 
@@ -54,6 +57,10 @@ namespace
 }
 
 TEST_CASE("flat_map") {
+    SECTION("detail") {
+        STATIC_REQUIRE(detail::is_transparent<std::less<>, int>::value);
+        STATIC_REQUIRE_FALSE(detail::is_transparent<std::less<int>, int>::value);
+    }
     SECTION("sizeof") {
         REQUIRE(sizeof(flat_map<int, unsigned>) == sizeof(std::vector<std::pair<int, unsigned>>));
 
@@ -402,6 +409,13 @@ TEST_CASE("flat_map") {
             REQUIRE(s0.lower_bound(10) == s0.end());
             REQUIRE(my_as_const(s0).lower_bound(-1) == s0.cbegin());
             REQUIRE(my_as_const(s0).lower_bound(7) == s0.cbegin() + 3);
+        }
+        {
+            flat_map<std::string, int, std::less<>> s0{{"hello", 42}, {"world", 84}};
+            REQUIRE(s0.find(std::string_view("hello")) == s0.begin());
+            REQUIRE(my_as_const(s0).find(std::string_view("world")) == s0.begin() + 1);
+            REQUIRE(s0.find(std::string_view("42")) == s0.end());
+            REQUIRE(my_as_const(s0).find(std::string_view("42")) == s0.cend());
         }
     }
     SECTION("observers") {
