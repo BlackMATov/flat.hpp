@@ -183,6 +183,7 @@ void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
+template < typename K > size_type erase(const K& key);
 
 void swap(flat_set& other);
 ```
@@ -191,18 +192,31 @@ void swap(flat_set& other);
 
 ```cpp
 size_type count(const key_type& key) const;
+template < typename K > size_type count(const K& key) const;
 
 iterator find(const key_type& key);
 const_iterator find(const key_type& key) const;
 
+template < typename K > iterator find(const K& key);
+template < typename K > const_iterator find(const K& key) const;
+
 std::pair<iterator, iterator> equal_range(const key_type& key);
 std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
+
+template < typename K > std::pair<iterator, iterator> equal_range(const K& key);
+template < typename K > std::pair<const_iterator, const_iterator> equal_range(const K& key) const;
 
 iterator lower_bound(const key_type& key);
 const_iterator lower_bound(const key_type& key) const;
 
+template < typename K > iterator lower_bound(const K& key);
+template < typename K > const_iterator lower_bound(const K& key) const;
+
 iterator upper_bound(const key_type& key);
 const_iterator upper_bound(const key_type& key) const;
+
+template < typename K > iterator upper_bound(const K& key);
+template < typename K > const_iterator upper_bound(const K& key) const;
 ```
 
 ### Observers
@@ -390,6 +404,9 @@ mapped_type& operator[](const key_type& key);
 
 mapped_type& at(const key_type& key);
 const mapped_type& at(const key_type& key) const;
+
+template < typename K > mapped_type& at(const K& key);
+template < typename K > const mapped_type& at(const K& key) const;
 ```
 
 ### Modifiers
@@ -414,6 +431,7 @@ void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
+template < typename K > size_type erase(const K& key);
 
 void swap(flat_map& other)
 ```
@@ -422,18 +440,31 @@ void swap(flat_map& other)
 
 ```cpp
 size_type count(const key_type& key) const;
+template < typename K > size_type count(const K& key) const;
 
 iterator find(const key_type& key);
 const_iterator find(const key_type& key) const;
 
+template < typename K > iterator find(const K& key);
+template < typename K > const_iterator find(const K& key) const;
+
 std::pair<iterator, iterator> equal_range(const key_type& key);
 std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
+
+template < typename K > std::pair<iterator, iterator> equal_range(const K& key);
+template < typename K > std::pair<const_iterator, const_iterator> equal_range(const K& key) const;
 
 iterator lower_bound(const key_type& key);
 const_iterator lower_bound(const key_type& key) const;
 
+template < typename K > iterator lower_bound(const K& key);
+template < typename K > const_iterator lower_bound(const K& key) const;
+
 iterator upper_bound(const key_type& key);
 const_iterator upper_bound(const key_type& key) const;
+
+template < typename K > iterator upper_bound(const K& key);
+template < typename K > const_iterator upper_bound(const K& key) const;
 ```
 
 ### Observers
@@ -635,6 +666,7 @@ void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
+template < typename K > size_type erase(const K& key);
 
 void swap(flat_multiset& other);
 ```
@@ -643,18 +675,31 @@ void swap(flat_multiset& other);
 
 ```cpp
 size_type count(const key_type& key) const;
+template < typename K > size_type count(const K& key) const;
 
 iterator find(const key_type& key);
 const_iterator find(const key_type& key) const;
 
+template < typename K > iterator find(const K& key);
+template < typename K > const_iterator find(const K& key) const;
+
 std::pair<iterator, iterator> equal_range(const key_type& key);
 std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
+
+template < typename K > std::pair<iterator, iterator> equal_range(const K& key);
+template < typename K > std::pair<const_iterator, const_iterator> equal_range(const K& key) const;
 
 iterator lower_bound(const key_type& key);
 const_iterator lower_bound(const key_type& key) const;
 
+template < typename K > iterator lower_bound(const K& key);
+template < typename K > const_iterator lower_bound(const K& key) const;
+
 iterator upper_bound(const key_type& key);
 const_iterator upper_bound(const key_type& key) const;
+
+template < typename K > iterator upper_bound(const K& key);
+template < typename K > const_iterator upper_bound(const K& key) const;
 ```
 
 ### Observers
@@ -842,6 +887,9 @@ mapped_type& operator[](const key_type& key);
 
 mapped_type& at(const key_type& key);
 const mapped_type& at(const key_type& key) const;
+
+template < typename K > mapped_type& at(const K& key);
+template < typename K > const mapped_type& at(const K& key) const;
 ```
 
 ### Modifiers
@@ -866,6 +914,7 @@ void clear();
 iterator erase(const_iterator iter);
 iterator erase(const_iterator first, const_iterator last);
 size_type erase(const key_type& key);
+template < typename K > size_type erase(const K& key);
 
 void swap(flat_multimap& other)
 ```
@@ -874,18 +923,31 @@ void swap(flat_multimap& other)
 
 ```cpp
 size_type count(const key_type& key) const;
+template < typename K > size_type count(const K& key) const;
 
 iterator find(const key_type& key);
 const_iterator find(const key_type& key) const;
 
+template < typename K > iterator find(const K& key);
+template < typename K > const_iterator find(const K& key) const;
+
 std::pair<iterator, iterator> equal_range(const key_type& key);
 std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const;
+
+template < typename K > std::pair<iterator, iterator> equal_range(const K& key);
+template < typename K > std::pair<const_iterator, const_iterator> equal_range(const K& key) const;
 
 iterator lower_bound(const key_type& key);
 const_iterator lower_bound(const key_type& key) const;
 
+template < typename K > iterator lower_bound(const K& key);
+template < typename K > const_iterator lower_bound(const K& key) const;
+
 iterator upper_bound(const key_type& key);
 const_iterator upper_bound(const key_type& key) const;
+
+template < typename K > iterator upper_bound(const K& key);
+template < typename K > const_iterator upper_bound(const K& key) const;
 ```
 
 ### Observers

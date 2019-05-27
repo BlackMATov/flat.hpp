@@ -9,6 +9,9 @@
 
 #include <deque>
 
+#include <string>
+#include <string_view>
+
 #include <flat.hpp/flat_set.hpp>
 using namespace flat_hpp;
 
@@ -54,6 +57,10 @@ namespace
 }
 
 TEST_CASE("flat_set") {
+    SECTION("detail") {
+        STATIC_REQUIRE(detail::is_transparent<std::less<>, int>::value);
+        STATIC_REQUIRE_FALSE(detail::is_transparent<std::less<int>, int>::value);
+    }
     SECTION("sizeof") {
         REQUIRE(sizeof(flat_set<int>) == sizeof(std::vector<int>));
 
@@ -379,6 +386,21 @@ TEST_CASE("flat_set") {
             REQUIRE(my_as_const(s0).lower_bound(-1) == s0.cbegin());
             REQUIRE(my_as_const(s0).lower_bound(7) == s0.cbegin() + 3);
         }
+    }
+    SECTION("heterogeneous") {
+        flat_set<std::string, std::less<>> s0{"hello", "world"};
+        REQUIRE(s0.find(std::string_view("hello")) == s0.begin());
+        REQUIRE(my_as_const(s0).find(std::string_view("world")) == s0.begin() + 1);
+        REQUIRE(s0.find(std::string_view("42")) == s0.end());
+        REQUIRE(my_as_const(s0).find(std::string_view("42")) == s0.cend());
+
+        REQUIRE(my_as_const(s0).count(std::string_view("hello")) == 1);
+        REQUIRE(my_as_const(s0).count(std::string_view("hello_42")) == 0);
+
+        REQUIRE(s0.upper_bound(std::string_view("hello")) == s0.begin() + 1);
+        REQUIRE(my_as_const(s0).upper_bound(std::string_view("hello")) == s0.begin() + 1);
+
+        REQUIRE(s0.erase(std::string_view("hello")) == 1);
     }
     SECTION("observers") {
         struct my_less {
