@@ -15,6 +15,7 @@
 #include <type_traits>
 #include <initializer_list>
 
+#include "detail/eq_compare.hpp"
 #include "detail/pair_compare.hpp"
 #include "detail/is_transparent.hpp"
 
@@ -315,9 +316,9 @@ namespace flat_hpp
 
         template < typename InputIter >
         void insert(InputIter first, InputIter last) {
-            while ( first != last ) {
-                insert(*first++);
-            }
+            const auto mid_iter = data_.insert(data_.end(), first, last);
+            std::sort(mid_iter, data_.end(), value_comp());
+            std::inplace_merge(data_.begin(), mid_iter, data_.end());
         }
 
         void insert(std::initializer_list<value_type> ilist) {

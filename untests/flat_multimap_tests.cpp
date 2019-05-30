@@ -342,6 +342,14 @@ TEST_CASE("flat_multimap") {
             REQUIRE(i6 == s0.end() - 1);
             REQUIRE(s0 == map_t{{0,21},{1,42},{1,21},{2,42},{3,84},{4,84},{5,100500},{6,100500}});
         }
+
+        {
+            map_t s0;
+            s0.insert({{6,2},{4,6},{2,4},{4,2}});
+            REQUIRE(s0 == map_t{{2,4},{4,6},{4,2},{6,2}});
+            s0.insert({{9,3},{7,5},{3,9},{5,3},{5,3}});
+            REQUIRE(s0 == map_t{{2,4},{3,9},{4,6},{4,2},{5,3},{5,3},{6,2},{7,5},{9,3}});
+        }
     }
     SECTION("erasers") {
         using map_t = flat_multimap<int, unsigned>;

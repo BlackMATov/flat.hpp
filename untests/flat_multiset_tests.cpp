@@ -318,6 +318,14 @@ TEST_CASE("flat_multiset") {
             s0.emplace_hint(s0.cend(), 6); // 1,2,3,3,4,5,6
             REQUIRE(s0 == set_t{1,2,3,3,4,5,6});
         }
+
+        {
+            set_t s0;
+            s0.insert({6,4,2,4});
+            REQUIRE(s0 == set_t{2,4,4,6});
+            s0.insert({9,7,3,5,5});
+            REQUIRE(s0 == set_t{2,3,4,4,5,5,6,7,9});
+        }
     }
     SECTION("erasers") {
         using set_t = flat_multiset<int>;
