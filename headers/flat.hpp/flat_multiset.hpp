@@ -6,23 +6,13 @@
 
 #pragma once
 
-#include <vector>
-#include <memory>
-#include <utility>
-#include <iterator>
-#include <algorithm>
-#include <functional>
-#include <type_traits>
-#include <initializer_list>
-
-#include "detail/eq_compare.hpp"
-#include "detail/is_transparent.hpp"
+#include "flat_fwd.hpp"
 
 namespace flat_hpp
 {
     template < typename Key
-             , typename Compare = std::less<Key>
-             , typename Container = std::vector<Key> >
+             , typename Compare
+             , typename Container >
     class flat_multiset : private Compare {
         using base_type = Compare;
     public:

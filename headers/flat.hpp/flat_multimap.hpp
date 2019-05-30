@@ -6,25 +6,14 @@
 
 #pragma once
 
-#include <vector>
-#include <memory>
-#include <utility>
-#include <iterator>
-#include <algorithm>
-#include <functional>
-#include <type_traits>
-#include <initializer_list>
-
-#include "detail/eq_compare.hpp"
-#include "detail/pair_compare.hpp"
-#include "detail/is_transparent.hpp"
+#include "flat_fwd.hpp"
 
 namespace flat_hpp
 {
     template < typename Key
              , typename Value
-             , typename Compare = std::less<Key>
-             , typename Container = std::vector<std::pair<Key, Value>> >
+             , typename Compare
+             , typename Container >
     class flat_multimap
         : private detail::pair_compare<
             typename Container::value_type,
