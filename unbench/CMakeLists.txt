@@ -44,5 +44,3 @@ if(Boost_CONTAINER_FOUND)
     target_compile_definitions(${PROJECT_NAME}
         PRIVATE BOOST_CONTAINER_FOUND)
 endif()
-
-add_test(${PROJECT_NAME} ${PROJECT_NAME})

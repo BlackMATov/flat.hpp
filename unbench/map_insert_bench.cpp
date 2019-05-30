@@ -7,7 +7,7 @@
 #include "bench_base.hpp"
 using namespace flat_hpp_unbench;
 
-#include <flat_hpp/flat_map.hpp>
+#include <flat.hpp/flat_map.hpp>
 using namespace flat_hpp;
 
 #ifdef BOOST_CONTAINER_FOUND
