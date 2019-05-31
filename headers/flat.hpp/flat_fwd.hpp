@@ -14,12 +14,19 @@
 #include <type_traits>
 #include <initializer_list>
 
+#include "detail/is_sorted.hpp"
 #include "detail/eq_compare.hpp"
 #include "detail/pair_compare.hpp"
 #include "detail/is_transparent.hpp"
 
 namespace flat_hpp
 {
+    struct sorted_range_t {};
+    inline constexpr sorted_range_t sorted_range = sorted_range_t();
+
+    struct sorted_unique_range_t : public sorted_range_t {};
+    inline constexpr sorted_unique_range_t sorted_unique_range = sorted_unique_range_t();
+
     template < typename Key
              , typename Compare = std::less<Key>
              , typename Container = std::vector<Key> >

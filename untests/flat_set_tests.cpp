@@ -326,6 +326,16 @@ TEST_CASE("flat_set") {
             s0.insert({9,7,3,5,5});
             REQUIRE(s0 == set_t{2,3,4,5,6,7,9});
         }
+
+        {
+            set_t s0;
+            s0.insert(sorted_unique_range, {1,2,3});
+            REQUIRE(s0 == set_t{1,2,3});
+
+            set_t s1;
+            s1.insert(sorted_range, {1,2,2,3});
+            REQUIRE(s1 == set_t{1,2,3});
+        }
     }
     SECTION("erasers") {
         using set_t = flat_set<int>;

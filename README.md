@@ -95,25 +95,53 @@ flat_set(const Compare& c, const Allocator& a);
 
 template < typename InputIter >
 flat_set(InputIter first, InputIter last);
+template < typename InputIter >
+flat_set(sorted_range_t, InputIter first, InputIter last);
+template < typename InputIter >
+flat_set(sorted_unique_range_t, InputIter first, InputIter last);
 
 template < typename InputIter >
 flat_set(InputIter first, InputIter last, const Compare& c);
+template < typename InputIter >
+flat_set(sorted_range_t, InputIter first, InputIter last, const Compare& c);
+template < typename InputIter >
+flat_set(sorted_unique_range_t, InputIter first, InputIter last, const Compare& c);
 
 template < typename InputIter, typename Allocator >
 flat_set(InputIter first, InputIter last, const Allocator& a);
+template < typename InputIter, typename Allocator >
+flat_set(sorted_range_t, InputIter first, InputIter last, const Allocator& a);
+template < typename InputIter, typename Allocator >
+flat_set(sorted_unique_range_t, InputIter first, InputIter last, const Allocator& a);
 
 template < typename InputIter, typename Allocator >
 flat_set(InputIter first, InputIter last, const Compare& c, const Allocator& a);
+template < typename InputIter, typename Allocator >
+flat_set(sorted_range_t, InputIter first, InputIter last, const Compare& c, const Allocator& a);
+template < typename InputIter, typename Allocator >
+flat_set(sorted_unique_range_t, InputIter first, InputIter last, const Compare& c, const Allocator& a);
 
 flat_set(std::initializer_list<value_type> ilist);
+flat_set(sorted_range_t, std::initializer_list<value_type> ilist);
+flat_set(sorted_unique_range_t, std::initializer_list<value_type> ilist);
 
 flat_set(std::initializer_list<value_type> ilist, const Compare& c);
+flat_set(sorted_range_t, std::initializer_list<value_type> ilist, const Compare& c);
+flat_set(sorted_unique_range_t, std::initializer_list<value_type> ilist, const Compare& c);
 
 template < typename Allocator >
 flat_set(std::initializer_list<value_type> ilist, const Allocator& a);
+template < typename Allocator >
+flat_set(sorted_range_t, std::initializer_list<value_type> ilist, const Allocator& a);
+template < typename Allocator >
+flat_set(sorted_unique_range_t, std::initializer_list<value_type> ilist, const Allocator& a);
 
 template < typename Allocator >
 flat_set(std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
+template < typename Allocator >
+flat_set(sorted_range_t, std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
+template < typename Allocator >
+flat_set(sorted_unique_range_t, std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
 
 template < typename Allocator >
 flat_set(flat_set&& other, const Allocator& a);
@@ -172,7 +200,11 @@ iterator insert(const_iterator hint, const value_type& value);
 
 template < typename InputIter >
 void insert(InputIter first, InputIter last);
+template < typename InputIter >
+void insert(sorted_range_t, InputIter first, InputIter last);
+
 void insert(std::initializer_list<value_type> ilist);
+void insert(sorted_range_t, std::initializer_list<value_type> ilist);
 
 template < typename... Args >
 std::pair<iterator, bool> emplace(Args&&... args);
@@ -329,25 +361,53 @@ flat_map(const Compare& c, const Allocator& a);
 
 template < typename InputIter >
 flat_map(InputIter first, InputIter last);
+template < typename InputIter >
+flat_map(sorted_range_t, InputIter first, InputIter last);
+template < typename InputIter >
+flat_map(sorted_unique_range_t, InputIter first, InputIter last);
 
 template < typename InputIter >
 flat_map(InputIter first, InputIter last, const Compare& c);
+template < typename InputIter >
+flat_map(sorted_range_t, InputIter first, InputIter last, const Compare& c);
+template < typename InputIter >
+flat_map(sorted_unique_range_t, InputIter first, InputIter last, const Compare& c);
 
 template < typename InputIter, typename Allocator >
 flat_map(InputIter first, InputIter last, const Allocator& a);
+template < typename InputIter, typename Allocator >
+flat_map(sorted_range_t, InputIter first, InputIter last, const Allocator& a);
+template < typename InputIter, typename Allocator >
+flat_map(sorted_unique_range_t, InputIter first, InputIter last, const Allocator& a);
 
 template < typename InputIter , typename Allocator >
 flat_map(InputIter first, InputIter last, const Compare& c, const Allocator& a);
+template < typename InputIter , typename Allocator >
+flat_map(sorted_range_t, InputIter first, InputIter last, const Compare& c, const Allocator& a);
+template < typename InputIter , typename Allocator >
+flat_map(sorted_unique_range_t, InputIter first, InputIter last, const Compare& c, const Allocator& a);
 
 flat_map(std::initializer_list<value_type> ilist);
+flat_map(sorted_range_t, std::initializer_list<value_type> ilist);
+flat_map(sorted_unique_range_t, std::initializer_list<value_type> ilist);
 
 flat_map(std::initializer_list<value_type> ilist, const Compare& c);
+flat_map(sorted_range_t, std::initializer_list<value_type> ilist, const Compare& c);
+flat_map(sorted_unique_range_t, std::initializer_list<value_type> ilist, const Compare& c);
 
 template < typename Allocator >
 flat_map(std::initializer_list<value_type> ilist, const Allocator& a);
+template < typename Allocator >
+flat_map(sorted_range_t, std::initializer_list<value_type> ilist, const Allocator& a);
+template < typename Allocator >
+flat_map(sorted_unique_range_t, std::initializer_list<value_type> ilist, const Allocator& a);
 
 template < typename Allocator >
 flat_map(std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
+template < typename Allocator >
+flat_map(sorted_range_t, std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
+template < typename Allocator >
+flat_map(sorted_unique_range_t, std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
 
 template < typename Allocator >
 flat_map(flat_map&& other, const Allocator& a);
@@ -419,7 +479,11 @@ iterator insert(const_iterator hint, const value_type& value);
 
 template < typename InputIter >
 void insert(InputIter first, InputIter last);
+template < typename InputIter >
+void insert(sorted_range_t, InputIter first, InputIter last);
+
 void insert(std::initializer_list<value_type> ilist);
+void insert(sorted_range_t, std::initializer_list<value_type> ilist);
 
 template < typename... Args >
 std::pair<iterator, bool> emplace(Args&&... args);
@@ -576,25 +640,39 @@ flat_multiset(const Compare& c, const Allocator& a);
 
 template < typename InputIter >
 flat_multiset(InputIter first, InputIter last);
+template < typename InputIter >
+flat_multiset(sorted_range_t, InputIter first, InputIter last);
 
 template < typename InputIter >
 flat_multiset(InputIter first, InputIter last, const Compare& c);
+template < typename InputIter >
+flat_multiset(sorted_range_t, InputIter first, InputIter last, const Compare& c);
 
 template < typename InputIter, typename Allocator >
 flat_multiset(InputIter first, InputIter last, const Allocator& a);
+template < typename InputIter, typename Allocator >
+flat_multiset(sorted_range_t, InputIter first, InputIter last, const Allocator& a);
 
 template < typename InputIter, typename Allocator >
 flat_multiset(InputIter first, InputIter last, const Compare& c, const Allocator& a);
+template < typename InputIter, typename Allocator >
+flat_multiset(sorted_range_t, InputIter first, InputIter last, const Compare& c, const Allocator& a);
 
 flat_multiset(std::initializer_list<value_type> ilist);
+flat_multiset(sorted_range_t, std::initializer_list<value_type> ilist);
 
 flat_multiset(std::initializer_list<value_type> ilist, const Compare& c);
+flat_multiset(sorted_range_t, std::initializer_list<value_type> ilist, const Compare& c);
 
 template < typename Allocator >
 flat_multiset(std::initializer_list<value_type> ilist, const Allocator& a);
+template < typename Allocator >
+flat_multiset(sorted_range_t, std::initializer_list<value_type> ilist, const Allocator& a);
 
 template < typename Allocator >
 flat_multiset(std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
+template < typename Allocator >
+flat_multiset(sorted_range_t, std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
 
 template < typename Allocator >
 flat_multiset(flat_multiset&& other, const Allocator& a);
@@ -653,7 +731,11 @@ iterator insert(const_iterator hint, const value_type& value);
 
 template < typename InputIter >
 void insert(InputIter first, InputIter last);
+template < typename InputIter >
+void insert(sorted_range_t, InputIter first, InputIter last);
+
 void insert(std::initializer_list<value_type> ilist);
+void insert(sorted_range_t, std::initializer_list<value_type> ilist);
 
 template < typename... Args >
 iterator emplace(Args&&... args);
@@ -810,25 +892,39 @@ flat_multimap(const Compare& c, const Allocator& a);
 
 template < typename InputIter >
 flat_multimap(InputIter first, InputIter last);
+template < typename InputIter >
+flat_multimap(sorted_range_t, InputIter first, InputIter last);
 
 template < typename InputIter >
 flat_multimap(InputIter first, InputIter last, const Compare& c);
+template < typename InputIter >
+flat_multimap(sorted_range_t, InputIter first, InputIter last, const Compare& c);
 
 template < typename InputIter, typename Allocator >
 flat_multimap(InputIter first, InputIter last, const Allocator& a);
+template < typename InputIter, typename Allocator >
+flat_multimap(sorted_range_t, InputIter first, InputIter last, const Allocator& a);
 
 template < typename InputIter , typename Allocator >
 flat_multimap(InputIter first, InputIter last, const Compare& c, const Allocator& a);
+template < typename InputIter , typename Allocator >
+flat_multimap(sorted_range_t, InputIter first, InputIter last, const Compare& c, const Allocator& a);
 
 flat_multimap(std::initializer_list<value_type> ilist);
+flat_multimap(sorted_range_t, std::initializer_list<value_type> ilist);
 
 flat_multimap(std::initializer_list<value_type> ilist, const Compare& c);
+flat_multimap(sorted_range_t, std::initializer_list<value_type> ilist, const Compare& c);
 
 template < typename Allocator >
 flat_multimap(std::initializer_list<value_type> ilist, const Allocator& a);
+template < typename Allocator >
+flat_multimap(sorted_range_t, std::initializer_list<value_type> ilist, const Allocator& a);
 
 template < typename Allocator >
 flat_multimap(std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
+template < typename Allocator >
+flat_multimap(sorted_range_t, std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a);
 
 template < typename Allocator >
 flat_multimap(flat_multimap&& other, const Allocator& a);
@@ -900,7 +996,11 @@ iterator insert(const_iterator hint, const value_type& value);
 
 template < typename InputIter >
 void insert(InputIter first, InputIter last);
+template < typename InputIter >
+void insert(sorted_range_t, InputIter first, InputIter last);
+
 void insert(std::initializer_list<value_type> ilist);
+void insert(sorted_range_t, std::initializer_list<value_type> ilist);
 
 template < typename... Args >
 iterator emplace(Args&&... args);

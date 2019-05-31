@@ -350,6 +350,16 @@ TEST_CASE("flat_multimap") {
             s0.insert({{9,3},{7,5},{3,9},{5,3},{5,3}});
             REQUIRE(s0 == map_t{{2,4},{3,9},{4,6},{4,2},{5,3},{5,3},{6,2},{7,5},{9,3}});
         }
+
+        {
+            map_t s0;
+            s0.insert(sorted_unique_range, {{1,3},{2,2},{3,1}});
+            REQUIRE(s0 == map_t{{1,3},{2,2},{3,1}});
+
+            map_t s1;
+            s1.insert(sorted_range, {{1,3},{2,2},{2,2},{3,1}});
+            REQUIRE(s1 == map_t{{1,3},{2,2},{2,2},{3,1}});
+        }
     }
     SECTION("erasers") {
         using map_t = flat_multimap<int, unsigned>;
