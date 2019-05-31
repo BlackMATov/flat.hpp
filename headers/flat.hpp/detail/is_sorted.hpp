@@ -10,17 +10,29 @@ namespace flat_hpp::detail
 {
     template < typename Iter, typename Compare >
     bool is_sorted(Iter first, Iter last, Compare comp) {
-        (void)first;
-        (void)last;
-        (void)comp;
+        if ( first != last ) {
+            Iter next = first;
+            while ( ++next != last ) {
+                if ( comp(*next, *first) ) {
+                    return false;
+                }
+                ++first;
+            }
+        }
         return true;
     }
 
     template < typename Iter, typename Compare >
     bool is_sorted_unique(Iter first, Iter last, Compare comp) {
-        (void)first;
-        (void)last;
-        (void)comp;
+        if ( first != last ){
+            Iter next = first;
+            while ( ++next != last ) {
+                if ( !comp(*first, *next) ) {
+                    return false;
+                }
+                ++first;
+            }
+        }
         return true;
     }
 }
