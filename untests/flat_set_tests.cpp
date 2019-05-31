@@ -186,6 +186,15 @@ TEST_CASE("flat_set") {
             s3 = {1,2,3};
             REQUIRE(s3 == set_t{1,2,3});
         }
+
+        {
+            auto s0 = set_t(sorted_unique_range, {1,2,3});
+            REQUIRE(s0 == set_t{1,2,3});
+
+            vec_t v1({1,2,3});
+            auto s1 = set_t(sorted_unique_range, v1.begin(), v1.end());
+            REQUIRE(s1 == set_t{1,2,3});
+        }
     }
     SECTION("capacity") {
         using set_t = flat_set<int>;
@@ -195,13 +204,13 @@ TEST_CASE("flat_set") {
 
             REQUIRE(s0.empty());
             REQUIRE_FALSE(s0.size());
-            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+            REQUIRE(s0.max_size() == std::vector<int>().max_size());
 
             s0.insert(42);
 
             REQUIRE_FALSE(s0.empty());
             REQUIRE(s0.size() == 1u);
-            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+            REQUIRE(s0.max_size() == std::vector<int>().max_size());
 
             s0.insert(42);
             REQUIRE(s0.size() == 1u);
@@ -213,7 +222,7 @@ TEST_CASE("flat_set") {
 
             REQUIRE(s0.empty());
             REQUIRE_FALSE(s0.size());
-            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+            REQUIRE(s0.max_size() == std::vector<int>().max_size());
         }
 
         {
@@ -317,6 +326,24 @@ TEST_CASE("flat_set") {
             s0.emplace_hint(s0.cbegin(), 5);
             s0.emplace_hint(s0.cend(), 6);
             REQUIRE(s0 == set_t{1,2,3,4,5,6});
+        }
+
+        {
+            set_t s0;
+            s0.insert({6,4,2,4});
+            REQUIRE(s0 == set_t{2,4,6});
+            s0.insert({9,7,3,5,5});
+            REQUIRE(s0 == set_t{2,3,4,5,6,7,9});
+        }
+
+        {
+            set_t s0;
+            s0.insert(sorted_unique_range, {1,2,3});
+            REQUIRE(s0 == set_t{1,2,3});
+
+            set_t s1;
+            s1.insert(sorted_range, {1,2,2,3});
+            REQUIRE(s1 == set_t{1,2,3});
         }
     }
     SECTION("erasers") {

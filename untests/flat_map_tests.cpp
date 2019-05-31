@@ -200,6 +200,15 @@ TEST_CASE("flat_map") {
             s3 = {{0,1}, {1,2}};
             REQUIRE(s3 == map_t{{0,1}, {1,2}});
         }
+
+        {
+            auto s0 = map_t(sorted_range, {{1,4},{2,3},{2,2},{3,1}});
+            REQUIRE(s0 == map_t{{1,4},{2,3},{3,1}});
+
+            vec_t v1({{1,4},{2,3},{2,2},{3,1}});
+            auto s1 = map_t(sorted_range, v1.begin(), v1.end());
+            REQUIRE(s1 == map_t{{1,4},{2,3},{3,1}});
+        }
     }
     SECTION("capacity") {
         using map_t = flat_map<int, unsigned>;
@@ -209,13 +218,13 @@ TEST_CASE("flat_map") {
 
             REQUIRE(s0.empty());
             REQUIRE_FALSE(s0.size());
-            REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
+            REQUIRE(s0.max_size() == std::vector<std::pair<int,unsigned>>().max_size());
 
             s0.insert({2,42});
 
             REQUIRE_FALSE(s0.empty());
             REQUIRE(s0.size() == 1u);
-            REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
+            REQUIRE(s0.max_size() == std::vector<std::pair<int,unsigned>>().max_size());
 
             s0.insert({2,84});
             REQUIRE(s0.size() == 1u);
@@ -227,7 +236,7 @@ TEST_CASE("flat_map") {
 
             REQUIRE(s0.empty());
             REQUIRE_FALSE(s0.size());
-            REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
+            REQUIRE(s0.max_size() == std::vector<std::pair<int,unsigned>>().max_size());
         }
 
         {
@@ -341,6 +350,24 @@ TEST_CASE("flat_map") {
             auto i6 = s0.emplace_hint(s0.cend(), 6, 100500);
             REQUIRE(i6 == s0.end() - 1);
             REQUIRE(s0 == map_t{{0,21},{1,42},{2,42},{3,84},{4,84},{5,100500},{6,100500}});
+        }
+
+        {
+            map_t s0;
+            s0.insert({{6,2},{4,6},{2,4},{4,2}});
+            REQUIRE(s0 == map_t{{2,4},{4,6},{6,2}});
+            s0.insert({{9,3},{7,5},{3,9},{5,3},{5,3}});
+            REQUIRE(s0 == map_t{{2,4},{3,9},{4,6},{5,3},{6,2},{7,5},{9,3}});
+        }
+
+        {
+            map_t s0;
+            s0.insert(sorted_unique_range, {{1,3},{2,2},{3,1}});
+            REQUIRE(s0 == map_t{{1,3},{2,2},{3,1}});
+
+            map_t s1;
+            s1.insert(sorted_range, {{1,3},{2,2},{2,2},{3,1}});
+            REQUIRE(s1 == map_t{{1,3},{2,2},{3,1}});
         }
     }
     SECTION("erasers") {
