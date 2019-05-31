@@ -549,7 +549,7 @@ namespace flat_hpp
         void insert_range_(Iter first, Iter last) {
             const auto mid_iter = data_.insert(data_.end(), first, last);
             std::sort(mid_iter, data_.end(), key_comp());
-            std::inplace_merge(data_.begin(), mid_iter, data_.end());
+            std::inplace_merge(data_.begin(), mid_iter, data_.end(), key_comp());
             data_.erase(
                 std::unique(data_.begin(), data_.end(),
                     detail::eq_compare<key_compare>(key_comp())),
@@ -560,7 +560,7 @@ namespace flat_hpp
         void insert_range_(sorted_range_t, Iter first, Iter last) {
             assert(detail::is_sorted(first, last, key_comp()));
             const auto mid_iter = data_.insert(data_.end(), first, last);
-            std::inplace_merge(data_.begin(), mid_iter, data_.end());
+            std::inplace_merge(data_.begin(), mid_iter, data_.end(), key_comp());
             data_.erase(
                 std::unique(data_.begin(), data_.end(),
                     detail::eq_compare<key_compare>(key_comp())),
