@@ -54,140 +54,140 @@ namespace flat_hpp
 
         template < typename InputIter >
         flat_set(InputIter first, InputIter last) {
-            insert(first, last);
+            from_range_(first, last);
         }
 
         template < typename InputIter >
         flat_set(sorted_range_t, InputIter first, InputIter last) {
-            insert(sorted_range, first, last);
+            from_range_(sorted_range, first, last);
         }
 
         template < typename InputIter >
         flat_set(sorted_unique_range_t, InputIter first, InputIter last) {
-            insert(sorted_unique_range, first, last);
+            from_range_(sorted_unique_range, first, last);
         }
 
         template < typename InputIter >
         flat_set(InputIter first, InputIter last, const Compare& c)
         : base_type(c) {
-            insert(first, last);
+            from_range_(first, last);
         }
 
         template < typename InputIter >
         flat_set(sorted_range_t, InputIter first, InputIter last, const Compare& c)
         : base_type(c) {
-            insert(sorted_range, first, last);
+            from_range_(sorted_range, first, last);
         }
 
         template < typename InputIter >
         flat_set(sorted_unique_range_t, InputIter first, InputIter last, const Compare& c)
         : base_type(c) {
-            insert(sorted_unique_range, first, last);
+            from_range_(sorted_unique_range, first, last);
         }
 
         template < typename InputIter, typename Allocator >
         flat_set(InputIter first, InputIter last, const Allocator& a)
         : data_(a) {
-            insert(first, last);
+            from_range_(first, last);
         }
 
         template < typename InputIter, typename Allocator >
         flat_set(sorted_range_t, InputIter first, InputIter last, const Allocator& a)
         : data_(a) {
-            insert(sorted_range, first, last);
+            from_range_(sorted_range, first, last);
         }
 
         template < typename InputIter, typename Allocator >
         flat_set(sorted_unique_range_t, InputIter first, InputIter last, const Allocator& a)
         : data_(a) {
-            insert(sorted_unique_range, first, last);
+            from_range_(sorted_unique_range, first, last);
         }
 
         template < typename InputIter, typename Allocator >
         flat_set(InputIter first, InputIter last, const Compare& c, const Allocator& a)
         : base_type(c)
         , data_(a) {
-            insert(first, last);
+            from_range_(first, last);
         }
 
         template < typename InputIter, typename Allocator >
         flat_set(sorted_range_t, InputIter first, InputIter last, const Compare& c, const Allocator& a)
         : base_type(c)
         , data_(a) {
-            insert(sorted_range, first, last);
+            from_range_(sorted_range, first, last);
         }
 
         template < typename InputIter, typename Allocator >
         flat_set(sorted_unique_range_t, InputIter first, InputIter last, const Compare& c, const Allocator& a)
         : base_type(c)
         , data_(a) {
-            insert(sorted_unique_range, first, last);
+            from_range_(sorted_unique_range, first, last);
         }
 
         flat_set(std::initializer_list<value_type> ilist) {
-            insert(ilist);
+            from_range_(ilist.begin(), ilist.end());
         }
 
         flat_set(sorted_range_t, std::initializer_list<value_type> ilist) {
-            insert(sorted_range, ilist);
+            from_range_(sorted_range, ilist.begin(), ilist.end());
         }
 
         flat_set(sorted_unique_range_t, std::initializer_list<value_type> ilist) {
-            insert(sorted_unique_range, ilist);
+            from_range_(sorted_unique_range, ilist.begin(), ilist.end());
         }
 
         flat_set(std::initializer_list<value_type> ilist, const Compare& c)
         : base_type(c) {
-            insert(ilist);
+            from_range_(ilist.begin(), ilist.end());
         }
 
         flat_set(sorted_range_t, std::initializer_list<value_type> ilist, const Compare& c)
         : base_type(c) {
-            insert(sorted_range, ilist);
+            from_range_(sorted_range, ilist.begin(), ilist.end());
         }
 
         flat_set(sorted_unique_range_t, std::initializer_list<value_type> ilist, const Compare& c)
         : base_type(c) {
-            insert(sorted_unique_range, ilist);
+            from_range_(sorted_unique_range, ilist.begin(), ilist.end());
         }
 
         template < typename Allocator >
         flat_set(std::initializer_list<value_type> ilist, const Allocator& a)
         : data_(a) {
-            insert(ilist);
+            from_range_(ilist.begin(), ilist.end());
         }
 
         template < typename Allocator >
         flat_set(sorted_range_t, std::initializer_list<value_type> ilist, const Allocator& a)
         : data_(a) {
-            insert(sorted_range, ilist);
+            from_range_(sorted_range, ilist.begin(), ilist.end());
         }
 
         template < typename Allocator >
         flat_set(sorted_unique_range_t, std::initializer_list<value_type> ilist, const Allocator& a)
         : data_(a) {
-            insert(sorted_unique_range, ilist);
+            from_range_(sorted_unique_range, ilist.begin(), ilist.end());
         }
 
         template < typename Allocator >
         flat_set(std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a)
         : base_type(c)
         , data_(a) {
-            insert(ilist);
+            from_range_(ilist.begin(), ilist.end());
         }
 
         template < typename Allocator >
         flat_set(sorted_range_t, std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a)
         : base_type(c)
         , data_(a) {
-            insert(sorted_range, ilist);
+            from_range_(sorted_range, ilist.begin(), ilist.end());
         }
 
         template < typename Allocator >
         flat_set(sorted_unique_range_t, std::initializer_list<value_type> ilist, const Compare& c, const Allocator& a)
         : base_type(c)
         , data_(a) {
-            insert(sorted_unique_range, ilist);
+            from_range_(sorted_unique_range, ilist.begin(), ilist.end());
         }
 
         template < typename Allocator >
@@ -329,32 +329,20 @@ namespace flat_hpp
 
         template < typename InputIter >
         void insert(InputIter first, InputIter last) {
-            const auto mid_iter = data_.insert(data_.end(), first, last);
-            std::sort(mid_iter, data_.end(), value_comp());
-            std::inplace_merge(data_.begin(), mid_iter, data_.end());
-            data_.erase(
-                std::unique(data_.begin(), data_.end(),
-                    detail::eq_compare<value_compare>(value_comp())),
-                data_.end());
+            insert_range_(first, last);
         }
 
         template < typename InputIter >
         void insert(sorted_range_t, InputIter first, InputIter last) {
-            assert(detail::is_sorted(first, last, value_comp()));
-            const auto mid_iter = data_.insert(data_.end(), first, last);
-            std::inplace_merge(data_.begin(), mid_iter, data_.end());
-            data_.erase(
-                std::unique(data_.begin(), data_.end(),
-                    detail::eq_compare<value_compare>(value_comp())),
-                data_.end());
+            insert_range_(sorted_range, first, last);
         }
 
         void insert(std::initializer_list<value_type> ilist) {
-            insert(ilist.begin(), ilist.end());
+            insert_range_(ilist.begin(), ilist.end());
         }
 
         void insert(sorted_range_t, std::initializer_list<value_type> ilist) {
-            insert(sorted_range, ilist.begin(), ilist.end());
+            insert_range_(sorted_range, ilist.begin(), ilist.end());
         }
 
         template < typename... Args >
@@ -526,6 +514,57 @@ namespace flat_hpp
 
         value_compare value_comp() const {
             return value_compare(key_comp());
+        }
+    private:
+        template < typename Iter >
+        void from_range_(Iter first, Iter last) {
+            assert(data_.empty());
+            data_.insert(data_.end(), first, last);
+            std::sort(data_.begin(), data_.end(), key_comp());
+            data_.erase(
+                std::unique(data_.begin(), data_.end(),
+                    detail::eq_compare<key_compare>(key_comp())),
+                data_.end());
+        }
+
+        template < typename Iter >
+        void from_range_(sorted_range_t, Iter first, Iter last) {
+            assert(data_.empty());
+            assert(detail::is_sorted(first, last, key_comp()));
+            data_.insert(data_.end(), first, last);
+            data_.erase(
+                std::unique(data_.begin(), data_.end(),
+                    detail::eq_compare<key_compare>(key_comp())),
+                data_.end());
+        }
+
+        template < typename Iter >
+        void from_range_(sorted_unique_range_t, Iter first, Iter last) {
+            assert(data_.empty());
+            assert(detail::is_sorted_unique(first, last, key_comp()));
+            data_.insert(data_.end(), first, last);
+        }
+    private:
+        template < typename Iter >
+        void insert_range_(Iter first, Iter last) {
+            const auto mid_iter = data_.insert(data_.end(), first, last);
+            std::sort(mid_iter, data_.end(), key_comp());
+            std::inplace_merge(data_.begin(), mid_iter, data_.end());
+            data_.erase(
+                std::unique(data_.begin(), data_.end(),
+                    detail::eq_compare<key_compare>(key_comp())),
+                data_.end());
+        }
+
+        template < typename Iter >
+        void insert_range_(sorted_range_t, Iter first, Iter last) {
+            assert(detail::is_sorted(first, last, key_comp()));
+            const auto mid_iter = data_.insert(data_.end(), first, last);
+            std::inplace_merge(data_.begin(), mid_iter, data_.end());
+            data_.erase(
+                std::unique(data_.begin(), data_.end(),
+                    detail::eq_compare<key_compare>(key_comp())),
+                data_.end());
         }
     private:
         container_type data_;

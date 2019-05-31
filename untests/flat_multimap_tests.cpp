@@ -200,6 +200,15 @@ TEST_CASE("flat_multimap") {
             s3 = {{0,1}, {1,2}};
             REQUIRE(s3 == map_t{{0,1}, {1,2}});
         }
+
+        {
+            auto s0 = map_t(sorted_range, {{1,4},{2,3},{2,2},{3,1}});
+            REQUIRE(s0 == map_t{{1,4},{2,3},{2,2},{3,1}});
+
+            vec_t v1({{1,4},{2,3},{2,2},{3,1}});
+            auto s1 = map_t(sorted_range, v1.begin(), v1.end());
+            REQUIRE(s1 == map_t{{1,4},{2,3},{2,2},{3,1}});
+        }
     }
     SECTION("capacity") {
         using map_t = flat_multimap<int, unsigned>;

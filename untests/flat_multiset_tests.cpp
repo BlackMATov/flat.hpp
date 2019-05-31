@@ -186,6 +186,15 @@ TEST_CASE("flat_multiset") {
             s3 = {1,2,3};
             REQUIRE(s3 == set_t{1,2,3});
         }
+
+        {
+            auto s0 = set_t(sorted_range, {1,2,2,3});
+            REQUIRE(s0 == set_t{1,2,2,3});
+
+            vec_t v1({1,2,3,3});
+            auto s1 = set_t(sorted_range, v1.begin(), v1.end());
+            REQUIRE(s1 == set_t{1,2,3,3});
+        }
     }
     SECTION("capacity") {
         using set_t = flat_multiset<int>;
