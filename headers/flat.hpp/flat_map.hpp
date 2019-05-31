@@ -508,6 +508,18 @@ namespace flat_hpp
                 : end();
         }
 
+        bool contains(const key_type& key) const {
+            return find(key) != end();
+        }
+
+        template < typename K >
+        std::enable_if_t<
+            detail::is_transparent_v<Compare, K>,
+            bool>
+        contains(const K& key) const {
+            return find(key) != end();
+        }
+
         std::pair<iterator, iterator> equal_range(const key_type& key) {
             const base_type& comp = *this;
             return std::equal_range(begin(), end(), key, comp);
