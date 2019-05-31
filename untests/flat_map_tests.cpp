@@ -218,13 +218,13 @@ TEST_CASE("flat_map") {
 
             REQUIRE(s0.empty());
             REQUIRE_FALSE(s0.size());
-            REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
+            REQUIRE(s0.max_size() == std::vector<std::pair<int,unsigned>>().max_size());
 
             s0.insert({2,42});
 
             REQUIRE_FALSE(s0.empty());
             REQUIRE(s0.size() == 1u);
-            REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
+            REQUIRE(s0.max_size() == std::vector<std::pair<int,unsigned>>().max_size());
 
             s0.insert({2,84});
             REQUIRE(s0.size() == 1u);
@@ -236,7 +236,7 @@ TEST_CASE("flat_map") {
 
             REQUIRE(s0.empty());
             REQUIRE_FALSE(s0.size());
-            REQUIRE(s0.max_size() == std::allocator<std::pair<int,unsigned>>().max_size());
+            REQUIRE(s0.max_size() == std::vector<std::pair<int,unsigned>>().max_size());
         }
 
         {

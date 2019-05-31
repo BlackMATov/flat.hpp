@@ -204,13 +204,13 @@ TEST_CASE("flat_multiset") {
 
             REQUIRE(s0.empty());
             REQUIRE_FALSE(s0.size());
-            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+            REQUIRE(s0.max_size() == std::vector<int>().max_size());
 
             s0.insert(42);
 
             REQUIRE_FALSE(s0.empty());
             REQUIRE(s0.size() == 1u);
-            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+            REQUIRE(s0.max_size() == std::vector<int>().max_size());
 
             s0.insert(42);
             REQUIRE(s0.size() == 2u);
@@ -222,7 +222,7 @@ TEST_CASE("flat_multiset") {
 
             REQUIRE(s0.empty());
             REQUIRE_FALSE(s0.size());
-            REQUIRE(s0.max_size() == std::allocator<int>().max_size());
+            REQUIRE(s0.max_size() == std::vector<int>().max_size());
         }
 
         {
