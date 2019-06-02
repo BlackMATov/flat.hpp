@@ -369,6 +369,34 @@ TEST_CASE("flat_map") {
             s1.insert(sorted_range, {{1,3},{2,2},{2,2},{3,1}});
             REQUIRE(s1 == map_t{{1,3},{2,2},{3,1}});
         }
+
+        {
+            map_t s0;
+            auto i0 = s0.insert_or_assign(1, 4);
+            REQUIRE(i0 == std::make_pair(s0.begin(), true));
+            REQUIRE(s0 == map_t{{1,4}});
+            auto i1 = s0.insert_or_assign(1, 8);
+            REQUIRE(i1 == std::make_pair(s0.begin(), false));
+            REQUIRE(s0 == map_t{{1,8}});
+
+            const obj_t k0{2};
+            auto i2 = s0.insert_or_assign(k0, 6);
+            REQUIRE(i2 == std::make_pair(s0.begin() + 1, true));
+            REQUIRE(s0 == map_t{{1,8}, {2,6}});
+            auto i3 = s0.insert_or_assign(k0, 2);
+            REQUIRE(i3 == std::make_pair(s0.begin() + 1, false));
+            REQUIRE(s0 == map_t{{1,8}, {2,2}});
+        }
+
+        {
+            map_t s0;
+            auto i0 = s0.try_emplace(1, 4);
+            REQUIRE(i0 == std::make_pair(s0.begin(), true));
+            REQUIRE(s0 == map_t{{1,4}});
+            auto i1 = s0.try_emplace(1, 8);
+            REQUIRE(i1 == std::make_pair(s0.begin(), false));
+            REQUIRE(s0 == map_t{{1,4}});
+        }
     }
     SECTION("erasers") {
         using map_t = flat_map<int, unsigned>;

@@ -399,6 +399,28 @@ namespace flat_hpp
                 : insert(value).first;
         }
 
+        template < typename TT >
+        std::pair<iterator, bool> insert_or_assign(key_type&& key, TT&& value) {
+            iterator iter = lower_bound(key);
+            if ( iter == end() || this->operator()(key, *iter) ) {
+                iter = emplace_hint(iter, std::move(key), std::forward<TT>(value));
+                return {iter, true};
+            }
+            (*iter).second = std::forward<TT>(value);
+            return {iter, false};
+        }
+
+        template < typename TT >
+        std::pair<iterator, bool> insert_or_assign(const key_type& key, TT&& value) {
+            iterator iter = lower_bound(key);
+            if ( iter == end() || this->operator()(key, *iter) ) {
+                iter = emplace_hint(iter, key, std::forward<TT>(value));
+                return {iter, true};
+            }
+            (*iter).second = std::forward<TT>(value);
+            return {iter, false};
+        }
+
         template < typename InputIter >
         void insert(InputIter first, InputIter last) {
             insert_range_(first, last);
@@ -425,6 +447,26 @@ namespace flat_hpp
         template < typename... Args >
         iterator emplace_hint(const_iterator hint, Args&&... args) {
             return insert(hint, value_type(std::forward<Args>(args)...));
+        }
+
+        template < typename... Args >
+        std::pair<iterator, bool> try_emplace(key_type&& key, Args&&... args) {
+            iterator iter = lower_bound(key);
+            if ( iter == end() || this->operator()(key, *iter) ) {
+                iter = emplace_hint(iter, std::move(key), std::forward<Args>(args)...);
+                return {iter, true};
+            }
+            return {iter, false};
+        }
+
+        template < typename... Args >
+        std::pair<iterator, bool> try_emplace(const key_type& key, Args&&... args) {
+            iterator iter = lower_bound(key);
+            if ( iter == end() || this->operator()(key, *iter) ) {
+                iter = emplace_hint(iter, key, std::forward<Args>(args)...);
+                return {iter, true};
+            }
+            return {iter, false};
         }
 
         void clear()
