@@ -477,6 +477,11 @@ std::pair<iterator, bool> insert(const value_type& value);
 iterator insert(const_iterator hint, value_type&& value);
 iterator insert(const_iterator hint, const value_type& value);
 
+template < typename TT >
+std::pair<iterator, bool> insert_or_assign(key_type&& key, TT&& value);
+template < typename TT >
+std::pair<iterator, bool> insert_or_assign(const key_type& key, TT&& value);
+
 template < typename InputIter >
 void insert(InputIter first, InputIter last);
 template < typename InputIter >
@@ -489,6 +494,11 @@ template < typename... Args >
 std::pair<iterator, bool> emplace(Args&&... args);
 template < typename... Args >
 iterator emplace_hint(const_iterator hint, Args&&... args);
+
+template < typename... Args >
+std::pair<iterator, bool> try_emplace(key_type&& key, Args&&... args);
+template < typename... Args >
+std::pair<iterator, bool> try_emplace(const key_type& key, Args&&... args);
 
 void clear();
 iterator erase(const_iterator iter);

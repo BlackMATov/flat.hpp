@@ -399,6 +399,9 @@ TEST_CASE("flat_multiset") {
             REQUIRE(my_as_const(s0).find(3) == s0.cbegin() + 2);
             REQUIRE(s0.find(6) == s0.end());
             REQUIRE(my_as_const(s0).find(0) == s0.cend());
+            REQUIRE(my_as_const(s0).contains(1));
+            REQUIRE(my_as_const(s0).contains(3));
+            REQUIRE_FALSE(my_as_const(s0).contains(0));
         }
         {
             set_t s0{1,2,3,3,4,5};
@@ -422,6 +425,9 @@ TEST_CASE("flat_multiset") {
         REQUIRE(my_as_const(s0).find(std::string_view("world")) == s0.begin() + 1);
         REQUIRE(s0.find(std::string_view("42")) == s0.end());
         REQUIRE(my_as_const(s0).find(std::string_view("42")) == s0.cend());
+
+        REQUIRE(my_as_const(s0).contains(std::string_view("hello")));
+        REQUIRE_FALSE(my_as_const(s0).contains(std::string_view("42")));
 
         REQUIRE(my_as_const(s0).count(std::string_view("hello")) == 1);
         REQUIRE(my_as_const(s0).count(std::string_view("hello_42")) == 0);
