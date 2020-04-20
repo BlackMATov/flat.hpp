@@ -147,7 +147,7 @@ matrix:
       osx_image: xcode10
       stage: coverage
       name: coverage, xcode10
-      addons: { homebrew: { packages: ["lcov"] } }
+      addons: { homebrew: { packages: ["lcov"], update: true } }
       script: ./scripts/upload_coverage.sh
 
 before_install:
