@@ -7,7 +7,7 @@
 #define CATCH_CONFIG_FAST_COMPILE
 #include <catch2/catch.hpp>
 
-#include <flat.hpp/detail/is_sorted.hpp>
+#include <flat.hpp/flat.hpp>
 using namespace flat_hpp;
 
 namespace
