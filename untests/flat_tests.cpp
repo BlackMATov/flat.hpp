@@ -4,18 +4,18 @@
  * Copyright (C) 2019-2020, by Matvey Cherevko (blackmatov@gmail.com)
  ******************************************************************************/
 
-#define CATCH_CONFIG_FAST_COMPILE
-#include <catch2/catch.hpp>
-
 #include <flat.hpp/flat.hpp>
-using namespace flat_hpp;
+
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include "doctest/doctest.h"
 
 namespace
 {
+    using namespace flat_hpp;
 }
 
 TEST_CASE("flat_map_detail") {
-    SECTION("is_sorted") {
+    SUBCASE("is_sorted") {
         auto i1 = {1,2,3,4};
         REQUIRE(detail::is_sorted(i1.begin(), i1.end(), std::less<int>()));
         REQUIRE_FALSE(detail::is_sorted(i1.begin(), i1.end(), std::greater<int>()));
@@ -28,7 +28,7 @@ TEST_CASE("flat_map_detail") {
         REQUIRE_FALSE(detail::is_sorted(i3.begin(), i3.end(), std::less<int>()));
         REQUIRE_FALSE(detail::is_sorted(i3.begin(), i3.end(), std::greater<int>()));
     }
-    SECTION("is_sorted_unique") {
+    SUBCASE("is_sorted_unique") {
         auto i1 = {1,2,3,4};
         auto i1d = {1,2,2,3,4};
         REQUIRE(detail::is_sorted_unique(i1.begin(), i1.end(), std::less<int>()));

@@ -1,6 +1,3 @@
-# 3.11 version is required for `FetchContent`
-cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
-
 project(flat.hpp.untests)
 
 #
@@ -32,20 +29,3 @@ target_compile_options(${PROJECT_NAME}
         -Wall -Wextra -Wpedantic>)
 
 add_test(${PROJECT_NAME} ${PROJECT_NAME})
-
-#
-# catchorg/catch2
-#
-
-include(FetchContent)
-FetchContent_Declare(
-    catchorg_catch2
-    GIT_REPOSITORY https://github.com/catchorg/catch2
-    GIT_TAG v2.13.2)
-
-FetchContent_GetProperties(catchorg_catch2)
-if(NOT catchorg_catch2_POPULATED)
-    FetchContent_Populate(catchorg_catch2)
-    target_include_directories(${PROJECT_NAME}
-        PRIVATE ${catchorg_catch2_SOURCE_DIR}/single_include)
-endif()

@@ -4,19 +4,19 @@
  * Copyright (C) 2019-2020, by Matvey Cherevko (blackmatov@gmail.com)
  ******************************************************************************/
 
-#define CATCH_CONFIG_FAST_COMPILE
-#include <catch2/catch.hpp>
+#include <flat.hpp/flat_map.hpp>
+
+#include "doctest/doctest.h"
+#include "flat_tests.hpp"
 
 #include <deque>
-
 #include <string>
 #include <string_view>
 
-#include <flat.hpp/flat_map.hpp>
-using namespace flat_hpp;
-
 namespace
 {
+    using namespace flat_hpp;
+
     template < typename T >
     class dummy_less {
     public:
@@ -57,11 +57,11 @@ namespace
 }
 
 TEST_CASE("flat_map") {
-    SECTION("detail") {
+    SUBCASE("detail") {
         STATIC_REQUIRE(detail::is_transparent<std::less<>, int>::value);
         STATIC_REQUIRE_FALSE(detail::is_transparent<std::less<int>, int>::value);
     }
-    SECTION("sizeof") {
+    SUBCASE("sizeof") {
         REQUIRE(sizeof(flat_map<int, unsigned>) == sizeof(std::vector<std::pair<int, unsigned>>));
 
         struct vc : flat_map<int, unsigned>::value_compare {
@@ -69,7 +69,7 @@ TEST_CASE("flat_map") {
         };
         REQUIRE(sizeof(vc) == sizeof(int));
     }
-    SECTION("noexcept") {
+    SUBCASE("noexcept") {
         using alloc_t = std::allocator<std::pair<int,unsigned>>;
         using map_t = flat_map<int, unsigned, dummy_less<int>, std::vector<std::pair<int,unsigned>, alloc_t>>;
         using map2_t = flat_map<int, unsigned, dummy_less2<int>>;
@@ -103,7 +103,7 @@ TEST_CASE("flat_map") {
 
         STATIC_REQUIRE(noexcept(std::declval<map_t&>().clear()));
     }
-    SECTION("types") {
+    SUBCASE("types") {
         using map_t = flat_map<int, unsigned>;
 
         STATIC_REQUIRE(std::is_same_v<map_t::key_type, int>);
@@ -119,7 +119,7 @@ TEST_CASE("flat_map") {
         STATIC_REQUIRE(std::is_same_v<map_t::pointer, std::pair<int, unsigned>*>);
         STATIC_REQUIRE(std::is_same_v<map_t::const_pointer, const std::pair<int, unsigned>*>);
     }
-    SECTION("ctors") {
+    SUBCASE("ctors") {
         using alloc_t = std::allocator<
             std::pair<int,unsigned>>;
 
@@ -210,7 +210,7 @@ TEST_CASE("flat_map") {
             REQUIRE(s1 == map_t{{1,4},{2,3},{3,1}});
         }
     }
-    SECTION("capacity") {
+    SUBCASE("capacity") {
         using map_t = flat_map<int, unsigned>;
 
         {
@@ -266,7 +266,7 @@ TEST_CASE("flat_map") {
             REQUIRE(s1 == map2_t{{1,2},{2,3},{3,4}});
         }
     }
-    SECTION("access") {
+    SUBCASE("access") {
         struct obj_t {
             obj_t(int i) : i(i) {}
             int i;
@@ -302,7 +302,7 @@ TEST_CASE("flat_map") {
         REQUIRE_THROWS_AS(s0.at(0), std::out_of_range);
         REQUIRE_THROWS_AS(my_as_const(s0).at(0), std::out_of_range);
     }
-    SECTION("inserts") {
+    SUBCASE("inserts") {
         struct obj_t {
             obj_t(int i) : i(i) {}
             int i;
@@ -398,7 +398,7 @@ TEST_CASE("flat_map") {
             REQUIRE(s0 == map_t{{1,4}});
         }
     }
-    SECTION("erasers") {
+    SUBCASE("erasers") {
         using map_t = flat_map<int, unsigned>;
         {
             map_t s0{{1,2},{2,3},{3,4}};
@@ -434,7 +434,7 @@ TEST_CASE("flat_map") {
             REQUIRE(s1 == map_t{{2,3},{3,4},{5,6}});
         }
     }
-    SECTION("lookup") {
+    SUBCASE("lookup") {
         using map_t = flat_map<int, unsigned>;
         {
             map_t s0{{1,2},{2,3},{3,4},{4,5},{5,6}};
@@ -469,7 +469,7 @@ TEST_CASE("flat_map") {
             REQUIRE(my_as_const(s0).lower_bound(7) == s0.cbegin() + 3);
         }
     }
-    SECTION("heterogeneous") {
+    SUBCASE("heterogeneous") {
         flat_map<std::string, int, std::less<>> s0{{"hello", 42}, {"world", 84}};
         REQUIRE(s0.find(std::string_view("hello")) == s0.begin());
         REQUIRE(my_as_const(s0).find(std::string_view("world")) == s0.begin() + 1);
@@ -488,7 +488,7 @@ TEST_CASE("flat_map") {
         REQUIRE(s0.at(std::string_view("world")) == 84);
         REQUIRE(my_as_const(s0).at(std::string_view("world")) == 84);
     }
-    SECTION("observers") {
+    SUBCASE("observers") {
         struct my_less {
             int i;
             my_less(int i) : i(i) {}
@@ -501,7 +501,7 @@ TEST_CASE("flat_map") {
         REQUIRE(my_as_const(s0).key_comp().i == 42);
         REQUIRE(my_as_const(s0).value_comp()({2,50},{4,20}));
     }
-    SECTION("custom_less") {
+    SUBCASE("custom_less") {
         using map_t = flat_map<int, unsigned, dummy_less<int>>;
         auto s0 = map_t(dummy_less<int>(42));
         auto s1 = map_t(dummy_less<int>(21));
@@ -511,7 +511,7 @@ TEST_CASE("flat_map") {
         REQUIRE(s0.key_comp().i == 21);
         REQUIRE(s1.key_comp().i == 42);
     }
-    SECTION("operators") {
+    SUBCASE("operators") {
         using map_t = flat_map<int, unsigned>;
 
         REQUIRE(map_t{{1,2},{3,4}} == map_t{{3,4},{1,2}});
