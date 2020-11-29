@@ -4,19 +4,19 @@
  * Copyright (C) 2019-2020, by Matvey Cherevko (blackmatov@gmail.com)
  ******************************************************************************/
 
-#define CATCH_CONFIG_FAST_COMPILE
-#include <catch2/catch.hpp>
+#include <flat.hpp/flat_multiset.hpp>
+
+#include "doctest/doctest.h"
+#include "flat_tests.hpp"
 
 #include <deque>
-
 #include <string>
 #include <string_view>
 
-#include <flat.hpp/flat_multiset.hpp>
-using namespace flat_hpp;
-
 namespace
 {
+    using namespace flat_hpp;
+
     template < typename T >
     class dummy_less {
     public:
@@ -57,11 +57,85 @@ namespace
 }
 
 TEST_CASE("flat_multiset") {
-    SECTION("detail") {
+    SUBCASE("guides") {
+        {
+            std::vector<int> vs;
+
+            auto s0 = flat_multiset(vs.begin(), vs.end());
+            auto s1 = flat_multiset(flat_hpp::sorted_range, vs.begin(), vs.end());
+            auto s2 = flat_multiset(flat_hpp::sorted_unique_range, vs.begin(), vs.end());
+
+            auto s3 = flat_multiset(vs.begin(), vs.end(), std::less<int>());
+            auto s4 = flat_multiset(flat_hpp::sorted_range, vs.begin(), vs.end(), std::less<int>());
+            auto s5 = flat_multiset(flat_hpp::sorted_unique_range, vs.begin(), vs.end(), std::less<int>());
+
+            auto s6 = flat_multiset(vs.begin(), vs.end(), std::allocator<int>());
+            auto s7 = flat_multiset(flat_hpp::sorted_range, vs.begin(), vs.end(), std::allocator<int>());
+            auto s8 = flat_multiset(flat_hpp::sorted_unique_range, vs.begin(), vs.end(), std::allocator<int>());
+
+            auto s9 = flat_multiset(vs.begin(), vs.end(), std::less<int>(), std::allocator<int>());
+            auto s10 = flat_multiset(flat_hpp::sorted_range, vs.begin(), vs.end(), std::less<int>(), std::allocator<int>());
+            auto s11 = flat_multiset(flat_hpp::sorted_unique_range, vs.begin(), vs.end(), std::less<int>(), std::allocator<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s0)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s4)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s5)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s6)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s7)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s8)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s9)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s10)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s11)::key_type, int>);
+        }
+
+        {
+            auto s1 = flat_multiset({1, 2});
+            auto s2 = flat_multiset(flat_hpp::sorted_range, {1, 2});
+            auto s3 = flat_multiset(flat_hpp::sorted_unique_range, {1, 2});
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+        }
+
+        {
+            auto s1 = flat_multiset({1, 2}, std::less<int>());
+            auto s2 = flat_multiset(flat_hpp::sorted_range, {1, 2}, std::less<int>());
+            auto s3 = flat_multiset(flat_hpp::sorted_unique_range, {1, 2}, std::less<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+        }
+
+        {
+            auto s1 = flat_multiset({1, 2}, std::allocator<int>());
+            auto s2 = flat_multiset(flat_hpp::sorted_range, {1, 2}, std::allocator<int>());
+            auto s3 = flat_multiset(flat_hpp::sorted_unique_range, {1, 2}, std::allocator<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+        }
+
+        {
+            auto s1 = flat_multiset({1, 2}, std::less<int>(), std::allocator<int>());
+            auto s2 = flat_multiset(flat_hpp::sorted_range, {1, 2}, std::less<int>(), std::allocator<int>());
+            auto s3 = flat_multiset(flat_hpp::sorted_unique_range, {1, 2}, std::less<int>(), std::allocator<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+        }
+    }
+    SUBCASE("detail") {
         STATIC_REQUIRE(detail::is_transparent<std::less<>, int>::value);
         STATIC_REQUIRE_FALSE(detail::is_transparent<std::less<int>, int>::value);
     }
-    SECTION("sizeof") {
+    SUBCASE("sizeof") {
         REQUIRE(sizeof(flat_multiset<int>) == sizeof(std::vector<int>));
 
         struct vc : flat_multiset<int>::value_compare {
@@ -69,7 +143,7 @@ TEST_CASE("flat_multiset") {
         };
         REQUIRE(sizeof(vc) == sizeof(int));
     }
-    SECTION("noexcept") {
+    SUBCASE("noexcept") {
         using alloc_t = std::allocator<int>;
         using set_t = flat_multiset<int, dummy_less<int>, std::vector<int, alloc_t>>;
         using set2_t = flat_multiset<int, dummy_less2<int>>;
@@ -103,7 +177,7 @@ TEST_CASE("flat_multiset") {
 
         STATIC_REQUIRE(noexcept(std::declval<set_t&>().clear()));
     }
-    SECTION("types") {
+    SUBCASE("types") {
         using set_t = flat_multiset<int>;
 
         STATIC_REQUIRE(std::is_same_v<set_t::key_type, int>);
@@ -118,7 +192,7 @@ TEST_CASE("flat_multiset") {
         STATIC_REQUIRE(std::is_same_v<set_t::pointer, int*>);
         STATIC_REQUIRE(std::is_same_v<set_t::const_pointer, const int*>);
     }
-    SECTION("ctors") {
+    SUBCASE("ctors") {
         using alloc_t = std::allocator<int>;
         using set_t = flat_multiset<int, std::less<int>, std::vector<int, alloc_t>>;
         using set2_t = flat_multiset<int, std::greater<int>, std::vector<int, alloc_t>>;
@@ -196,7 +270,7 @@ TEST_CASE("flat_multiset") {
             REQUIRE(s1 == set_t{1,2,3,3});
         }
     }
-    SECTION("capacity") {
+    SUBCASE("capacity") {
         using set_t = flat_multiset<int>;
 
         {
@@ -250,7 +324,7 @@ TEST_CASE("flat_multiset") {
             REQUIRE(s1 == set2_t{1,2,3});
         }
     }
-    SECTION("inserts") {
+    SUBCASE("inserts") {
         struct obj_t {
             obj_t(int i) : i(i) {}
             int i;
@@ -346,7 +420,7 @@ TEST_CASE("flat_multiset") {
             REQUIRE(s1 == set_t{1,2,2,3});
         }
     }
-    SECTION("erasers") {
+    SUBCASE("erasers") {
         using set_t = flat_multiset<int>;
         {
             set_t s0{1,2,3,4,5};
@@ -383,7 +457,7 @@ TEST_CASE("flat_multiset") {
             REQUIRE(s1 == set_t{3,4,5});
         }
     }
-    SECTION("lookup") {
+    SUBCASE("lookup") {
         using set_t = flat_multiset<int>;
         {
             set_t s0{1,2,3,3,4,5};
@@ -419,7 +493,7 @@ TEST_CASE("flat_multiset") {
             REQUIRE(my_as_const(s0).lower_bound(7) == s0.cbegin() + 4);
         }
     }
-    SECTION("heterogeneous") {
+    SUBCASE("heterogeneous") {
         flat_multiset<std::string, std::less<>> s0{"hello", "world"};
         REQUIRE(s0.find(std::string_view("hello")) == s0.begin());
         REQUIRE(my_as_const(s0).find(std::string_view("world")) == s0.begin() + 1);
@@ -435,7 +509,7 @@ TEST_CASE("flat_multiset") {
         REQUIRE(s0.upper_bound(std::string_view("hello")) == s0.begin() + 1);
         REQUIRE(my_as_const(s0).upper_bound(std::string_view("hello")) == s0.begin() + 1);
     }
-    SECTION("observers") {
+    SUBCASE("observers") {
         struct my_less {
             int i;
             my_less(int i) : i(i) {}
@@ -448,7 +522,7 @@ TEST_CASE("flat_multiset") {
         REQUIRE(my_as_const(s0).key_comp().i == 42);
         REQUIRE(my_as_const(s0).value_comp().i == 42);
     }
-    SECTION("custom_less") {
+    SUBCASE("custom_less") {
         using set_t = flat_multiset<int, dummy_less<int>>;
         auto s0 = set_t(dummy_less<int>(42));
         auto s1 = set_t(dummy_less<int>(21));
@@ -458,7 +532,7 @@ TEST_CASE("flat_multiset") {
         REQUIRE(s0.key_comp().i == 21);
         REQUIRE(s1.key_comp().i == 42);
     }
-    SECTION("operators") {
+    SUBCASE("operators") {
         using set_t = flat_multiset<int>;
 
         REQUIRE(set_t{1,2,3} == set_t{3,2,1});

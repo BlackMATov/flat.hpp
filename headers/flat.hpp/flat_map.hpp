@@ -711,6 +711,102 @@ namespace flat_hpp
 
 namespace flat_hpp
 {
+    template < typename InputIter, typename Allocator
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(InputIter, InputIter, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_map<detail::iter_key_type<InputIter>, detail::iter_mapped_type<InputIter>>;
+
+    template < typename InputIter, typename Allocator
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(sorted_range_t, InputIter, InputIter, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_map<detail::iter_key_type<InputIter>, detail::iter_mapped_type<InputIter>>;
+
+    template < typename InputIter, typename Allocator
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(sorted_unique_range_t, InputIter, InputIter, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_map<detail::iter_key_type<InputIter>, detail::iter_mapped_type<InputIter>>;
+
+    //
+
+    template < typename InputIter
+             , typename Compare = std::less<detail::iter_key_type<InputIter>>
+             , typename Allocator = std::allocator<std::pair<
+                    std::add_const_t<detail::iter_key_type<InputIter>>,
+                    detail::iter_mapped_type<InputIter>>>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(InputIter, InputIter, Compare = Compare(), Allocator = Allocator())
+        -> flat_map<detail::iter_key_type<InputIter>, detail::iter_mapped_type<InputIter>, Compare>;
+
+    template < typename InputIter
+             , typename Compare = std::less<detail::iter_key_type<InputIter>>
+             , typename Allocator = std::allocator<std::pair<
+                    std::add_const_t<detail::iter_key_type<InputIter>>,
+                    detail::iter_mapped_type<InputIter>>>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(sorted_range_t, InputIter, InputIter, Compare = Compare(), Allocator = Allocator())
+        -> flat_map<detail::iter_key_type<InputIter>, detail::iter_mapped_type<InputIter>, Compare>;
+
+    template < typename InputIter
+             , typename Compare = std::less<detail::iter_key_type<InputIter>>
+             , typename Allocator = std::allocator<std::pair<
+                    std::add_const_t<detail::iter_key_type<InputIter>>,
+                    detail::iter_mapped_type<InputIter>>>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(sorted_unique_range_t, InputIter, InputIter, Compare = Compare(), Allocator = Allocator())
+        -> flat_map<detail::iter_key_type<InputIter>, detail::iter_mapped_type<InputIter>, Compare>;
+
+    //
+
+    template < typename Key, typename Value
+             , typename Allocator = std::allocator<std::pair<const Key, Value>>
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(std::initializer_list<std::pair<Key, Value>>, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_map<std::remove_const_t<Key>, Value>;
+
+    template < typename Key, typename Value
+             , typename Allocator = std::allocator<std::pair<const Key, Value>>
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(sorted_range_t, std::initializer_list<std::pair<Key, Value>>, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_map<std::remove_const_t<Key>, Value>;
+
+    template < typename Key, typename Value
+             , typename Allocator = std::allocator<std::pair<const Key, Value>>
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(sorted_unique_range_t, std::initializer_list<std::pair<Key, Value>>, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_map<std::remove_const_t<Key>, Value>;
+
+    //
+
+    template < typename Key, typename Value
+             , typename Compare = std::less<std::remove_const_t<Key>>
+             , typename Allocator = std::allocator<std::pair<const Key, Value>>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(std::initializer_list<std::pair<Key, Value>>, Compare = Compare(), Allocator = Allocator())
+        -> flat_map<std::remove_const_t<Key>, Value, Compare>;
+
+    template < typename Key, typename Value
+             , typename Compare = std::less<std::remove_const_t<Key>>
+             , typename Allocator = std::allocator<std::pair<const Key, Value>>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(sorted_range_t, std::initializer_list<std::pair<Key, Value>>, Compare = Compare(), Allocator = Allocator())
+        -> flat_map<std::remove_const_t<Key>, Value, Compare>;
+
+    template < typename Key, typename Value
+             , typename Compare = std::less<std::remove_const_t<Key>>
+             , typename Allocator = std::allocator<std::pair<const Key, Value>>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_map(sorted_unique_range_t, std::initializer_list<std::pair<Key, Value>>, Compare = Compare(), Allocator = Allocator())
+        -> flat_map<std::remove_const_t<Key>, Value, Compare>;
+}
+
+namespace flat_hpp
+{
     template < typename Key
              , typename Value
              , typename Compare

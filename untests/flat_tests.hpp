@@ -4,6 +4,10 @@
  * Copyright (C) 2019-2020, by Matvey Cherevko (blackmatov@gmail.com)
  ******************************************************************************/
 
-#define CATCH_CONFIG_MAIN
-#define CATCH_CONFIG_FAST_COMPILE
-#include <catch2/catch.hpp>
+#define STATIC_REQUIRE(...)\
+    static_assert(__VA_ARGS__, #__VA_ARGS__);\
+    REQUIRE(__VA_ARGS__);
+
+#define STATIC_REQUIRE_FALSE(...)\
+    static_assert(!(__VA_ARGS__), "!(" #__VA_ARGS__ ")");\
+    REQUIRE(!(__VA_ARGS__));

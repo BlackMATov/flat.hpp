@@ -512,6 +512,96 @@ namespace flat_hpp
 
 namespace flat_hpp
 {
+    template < typename InputIter, typename Allocator
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(InputIter, InputIter, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_multiset<detail::iter_value_type<InputIter>>;
+
+    template < typename InputIter, typename Allocator
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(sorted_range_t, InputIter, InputIter, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_multiset<detail::iter_value_type<InputIter>>;
+
+    template < typename InputIter, typename Allocator
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(sorted_unique_range_t, InputIter, InputIter, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_multiset<detail::iter_value_type<InputIter>>;
+
+    //
+
+    template < typename InputIter
+             , typename Compare = std::less<detail::iter_value_type<InputIter>>
+             , typename Allocator = std::allocator<detail::iter_value_type<InputIter>>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(InputIter, InputIter, Compare = Compare(), Allocator = Allocator())
+        -> flat_multiset<detail::iter_value_type<InputIter>, Compare>;
+
+    template < typename InputIter
+             , typename Compare = std::less<detail::iter_value_type<InputIter>>
+             , typename Allocator = std::allocator<detail::iter_value_type<InputIter>>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(sorted_range_t, InputIter, InputIter, Compare = Compare(), Allocator = Allocator())
+        -> flat_multiset<detail::iter_value_type<InputIter>, Compare>;
+
+    template < typename InputIter
+             , typename Compare = std::less<detail::iter_value_type<InputIter>>
+             , typename Allocator = std::allocator<detail::iter_value_type<InputIter>>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(sorted_unique_range_t, InputIter, InputIter, Compare = Compare(), Allocator = Allocator())
+        -> flat_multiset<detail::iter_value_type<InputIter>, Compare>;
+
+    //
+
+    template < typename Key
+             , typename Allocator = std::allocator<Key>
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(std::initializer_list<Key>, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_multiset<Key>;
+
+    template < typename Key
+             , typename Allocator = std::allocator<Key>
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(sorted_range_t, std::initializer_list<Key>, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_multiset<Key>;
+
+    template < typename Key
+             , typename Allocator = std::allocator<Key>
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(sorted_unique_range_t, std::initializer_list<Key>, Allocator, int* msvc_2017_workaround = nullptr)
+        -> flat_multiset<Key>;
+
+    //
+
+    template < typename Key
+             , typename Compare = std::less<Key>
+             , typename Allocator = std::allocator<Key>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(std::initializer_list<Key>, Compare = Compare(), Allocator = Allocator())
+        -> flat_multiset<Key, Compare>;
+
+    template < typename Key
+             , typename Compare = std::less<Key>
+             , typename Allocator = std::allocator<Key>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(sorted_range_t, std::initializer_list<Key>, Compare = Compare(), Allocator = Allocator())
+        -> flat_multiset<Key, Compare>;
+
+    template < typename Key
+             , typename Compare = std::less<Key>
+             , typename Allocator = std::allocator<Key>
+             , std::enable_if_t<!detail::is_allocator<Compare>::value, int> = 0
+             , std::enable_if_t<detail::is_allocator<Allocator>::value, int> = 0 >
+    flat_multiset(sorted_unique_range_t, std::initializer_list<Key>, Compare = Compare(), Allocator = Allocator())
+        -> flat_multiset<Key, Compare>;
+}
+
+namespace flat_hpp
+{
     template < typename Key
              , typename Compare
              , typename Container >
