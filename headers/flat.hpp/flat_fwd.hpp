@@ -6,18 +6,21 @@
 
 #pragma once
 
-#include <vector>
-#include <cassert>
-#include <utility>
 #include <algorithm>
+#include <cassert>
 #include <functional>
-#include <type_traits>
 #include <initializer_list>
+#include <stdexcept>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
-#include "detail/is_sorted.hpp"
 #include "detail/eq_compare.hpp"
-#include "detail/pair_compare.hpp"
+#include "detail/is_allocator.hpp"
+#include "detail/is_sorted.hpp"
 #include "detail/is_transparent.hpp"
+#include "detail/iter_traits.hpp"
+#include "detail/pair_compare.hpp"
 
 namespace flat_hpp
 {

@@ -57,6 +57,80 @@ namespace
 }
 
 TEST_CASE("flat_set") {
+    SUBCASE("guides") {
+        {
+            std::vector<int> vs;
+
+            auto s0 = flat_set(vs.begin(), vs.end());
+            auto s1 = flat_set(flat_hpp::sorted_range, vs.begin(), vs.end());
+            auto s2 = flat_set(flat_hpp::sorted_unique_range, vs.begin(), vs.end());
+
+            auto s3 = flat_set(vs.begin(), vs.end(), std::less<int>());
+            auto s4 = flat_set(flat_hpp::sorted_range, vs.begin(), vs.end(), std::less<int>());
+            auto s5 = flat_set(flat_hpp::sorted_unique_range, vs.begin(), vs.end(), std::less<int>());
+
+            auto s6 = flat_set(vs.begin(), vs.end(), std::allocator<int>());
+            auto s7 = flat_set(flat_hpp::sorted_range, vs.begin(), vs.end(), std::allocator<int>());
+            auto s8 = flat_set(flat_hpp::sorted_unique_range, vs.begin(), vs.end(), std::allocator<int>());
+
+            auto s9 = flat_set(vs.begin(), vs.end(), std::less<int>(), std::allocator<int>());
+            auto s10 = flat_set(flat_hpp::sorted_range, vs.begin(), vs.end(), std::less<int>(), std::allocator<int>());
+            auto s11 = flat_set(flat_hpp::sorted_unique_range, vs.begin(), vs.end(), std::less<int>(), std::allocator<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s0)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s4)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s5)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s6)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s7)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s8)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s9)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s10)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s11)::key_type, int>);
+        }
+
+        {
+            auto s1 = flat_set({1, 2});
+            auto s2 = flat_set(flat_hpp::sorted_range, {1, 2});
+            auto s3 = flat_set(flat_hpp::sorted_unique_range, {1, 2});
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+        }
+
+        {
+            auto s1 = flat_set({1, 2}, std::less<int>());
+            auto s2 = flat_set(flat_hpp::sorted_range, {1, 2}, std::less<int>());
+            auto s3 = flat_set(flat_hpp::sorted_unique_range, {1, 2}, std::less<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+        }
+
+        {
+            auto s1 = flat_set({1, 2}, std::allocator<int>());
+            auto s2 = flat_set(flat_hpp::sorted_range, {1, 2}, std::allocator<int>());
+            auto s3 = flat_set(flat_hpp::sorted_unique_range, {1, 2}, std::allocator<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+        }
+
+        {
+            auto s1 = flat_set({1, 2}, std::less<int>(), std::allocator<int>());
+            auto s2 = flat_set(flat_hpp::sorted_range, {1, 2}, std::less<int>(), std::allocator<int>());
+            auto s3 = flat_set(flat_hpp::sorted_unique_range, {1, 2}, std::less<int>(), std::allocator<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+        }
+    }
     SUBCASE("detail") {
         STATIC_REQUIRE(detail::is_transparent<std::less<>, int>::value);
         STATIC_REQUIRE_FALSE(detail::is_transparent<std::less<int>, int>::value);

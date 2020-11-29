@@ -57,6 +57,109 @@ namespace
 }
 
 TEST_CASE("flat_map") {
+    SUBCASE("guides") {
+        {
+            std::vector<std::pair<int,unsigned>> vs;
+
+            auto s0 = flat_map(vs.begin(), vs.end());
+            auto s1 = flat_map(flat_hpp::sorted_range, vs.begin(), vs.end());
+            auto s2 = flat_map(flat_hpp::sorted_unique_range, vs.begin(), vs.end());
+
+            auto s3 = flat_map(vs.begin(), vs.end(), std::less<int>());
+            auto s4 = flat_map(flat_hpp::sorted_range, vs.begin(), vs.end(), std::less<int>());
+            auto s5 = flat_map(flat_hpp::sorted_unique_range, vs.begin(), vs.end(), std::less<int>());
+
+            auto s6 = flat_map(vs.begin(), vs.end(), std::allocator<int>());
+            auto s7 = flat_map(flat_hpp::sorted_range, vs.begin(), vs.end(), std::allocator<int>());
+            auto s8 = flat_map(flat_hpp::sorted_unique_range, vs.begin(), vs.end(), std::allocator<int>());
+
+            auto s9 = flat_map(vs.begin(), vs.end(), std::less<int>(), std::allocator<int>());
+            auto s10 = flat_map(flat_hpp::sorted_range, vs.begin(), vs.end(), std::less<int>(), std::allocator<int>());
+            auto s11 = flat_map(flat_hpp::sorted_unique_range, vs.begin(), vs.end(), std::less<int>(), std::allocator<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s0)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s4)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s5)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s6)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s7)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s8)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s9)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s10)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s11)::key_type, int>);
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s0)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s4)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s5)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s6)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s7)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s8)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s9)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s10)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s11)::mapped_type, unsigned>);
+        }
+
+        {
+            auto s1 = flat_map({std::pair{1,1u}, std::pair{2,2u}});
+            auto s2 = flat_map(flat_hpp::sorted_range, {std::pair{1,1u}, std::pair{2,2u}});
+            auto s3 = flat_map(flat_hpp::sorted_unique_range, {std::pair{1,1u}, std::pair{2,2u}});
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::mapped_type, unsigned>);
+        }
+
+        {
+            auto s1 = flat_map({std::pair{1,1u}, std::pair{2,2u}}, std::less<int>());
+            auto s2 = flat_map(flat_hpp::sorted_range, {std::pair{1,1u}, std::pair{2,2u}}, std::less<int>());
+            auto s3 = flat_map(flat_hpp::sorted_unique_range, {std::pair{1,1u}, std::pair{2,2u}}, std::less<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::mapped_type, unsigned>);
+        }
+
+        {
+            auto s1 = flat_map({std::pair{1,1u}, std::pair{2,2u}}, std::allocator<int>());
+            auto s2 = flat_map(flat_hpp::sorted_range, {std::pair{1,1u}, std::pair{2,2u}}, std::allocator<int>());
+            auto s3 = flat_map(flat_hpp::sorted_unique_range, {std::pair{1,1u}, std::pair{2,2u}}, std::allocator<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::mapped_type, unsigned>);
+        }
+
+        {
+            auto s1 = flat_map({std::pair{1,1u}, std::pair{2,2u}}, std::less<int>(), std::allocator<int>());
+            auto s2 = flat_map(flat_hpp::sorted_range, {std::pair{1,1u}, std::pair{2,2u}}, std::less<int>(), std::allocator<int>());
+            auto s3 = flat_map(flat_hpp::sorted_unique_range, {std::pair{1,1u}, std::pair{2,2u}}, std::less<int>(), std::allocator<int>());
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::key_type, int>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::key_type, int>);
+
+            STATIC_REQUIRE(std::is_same_v<decltype(s1)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s2)::mapped_type, unsigned>);
+            STATIC_REQUIRE(std::is_same_v<decltype(s3)::mapped_type, unsigned>);
+        }
+    }
     SUBCASE("detail") {
         STATIC_REQUIRE(detail::is_transparent<std::less<>, int>::value);
         STATIC_REQUIRE_FALSE(detail::is_transparent<std::less<int>, int>::value);
