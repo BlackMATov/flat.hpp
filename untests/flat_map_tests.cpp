@@ -5,9 +5,7 @@
  ******************************************************************************/
 
 #include <flat.hpp/flat_map.hpp>
-
-#include "doctest/doctest.h"
-#include "flat_tests.hpp"
+#include "doctest/doctest.hpp"
 
 #include <deque>
 #include <string>
