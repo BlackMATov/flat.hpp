@@ -16,7 +16,7 @@ endif()
 # executable
 #
 
-file(GLOB UNTESTS_SOURCES "*.cpp" "*.hpp")
+file(GLOB_RECURSE UNTESTS_SOURCES "*.cpp" "*.hpp")
 add_executable(${PROJECT_NAME} ${UNTESTS_SOURCES})
 target_link_libraries(${PROJECT_NAME} flat.hpp)
 
