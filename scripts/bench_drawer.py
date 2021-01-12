@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Script to visualize google-benchmark output"""
 from __future__ import print_function
 import argparse
@@ -62,6 +62,13 @@ def parse_args():
     return args
 
 
+def parse_input_size(name):
+    splits = name.split('/')
+    if len(splits) == 1:
+        return 1
+    return int(splits[1])
+
+
 def read_data(args):
     """Read and process dataframe using commandline args"""
     try:
@@ -71,7 +78,7 @@ def read_data(args):
         logging.error(msg)
         exit(1)
     data['label'] = data['name'].apply(lambda x: x.split('/')[0])
-    data['input'] = data['name'].apply(lambda x: int(x.split('/')[1]))
+    data['input'] = data['name'].apply(parse_input_size)
     data[args.metric] = data[args.metric].apply(TRANSFORMS[args.transform])
     return data
 
@@ -79,7 +86,7 @@ def read_data(args):
 def plot_groups(label_groups, args):
     """Display the processed data"""
     for label, group in label_groups.items():
-        plt.plot(group['input'], group[args.metric], label=label)
+        plt.plot(group['input'], group[args.metric], label=label, marker='.')
     if args.logx:
         plt.xscale('log')
     if args.logy:
@@ -101,7 +108,7 @@ def main():
     if args.relative_to is not None:
         try:
             baseline = label_groups[args.relative_to][args.metric].copy()
-        except KeyError, key:
+        except KeyError as key:
             msg = 'Key %s is not present in the benchmark output'
             logging.error(msg, str(key))
             exit(1)
