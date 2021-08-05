@@ -320,7 +320,7 @@ namespace flat_hpp
 
         size_type erase(const key_type& key) {
             const auto p = equal_range(key);
-            size_type r = std::distance(p.first, p.second);
+            size_type r = static_cast<size_type>(std::distance(p.first, p.second));
             erase(p.first, p.second);
             return r;
         }
@@ -338,7 +338,7 @@ namespace flat_hpp
 
         size_type count(const key_type& key) const {
             const auto p = equal_range(key);
-            return std::distance(p.first, p.second);
+            return static_cast<size_type>(std::distance(p.first, p.second));
         }
 
         template < typename K >
@@ -347,7 +347,7 @@ namespace flat_hpp
             size_type>
         count(const K& key) const {
             const auto p = equal_range(key);
-            return std::distance(p.first, p.second);
+            return static_cast<size_type>(std::distance(p.first, p.second));
         }
 
         iterator find(const key_type& key) {
