@@ -36,7 +36,7 @@ namespace
     };
 
     template < typename T >
-    void swap(dummy_less2<T>&, dummy_less2<T>&) noexcept {
+    [[maybe_unused]] void swap(dummy_less2<T>&, dummy_less2<T>&) noexcept {
     }
 
     template < typename T >
@@ -511,7 +511,7 @@ TEST_CASE("flat_multiset") {
         struct my_less {
             int i;
             my_less(int i) : i(i) {}
-            bool operator()(int l, int r) const {
+            [[maybe_unused]] bool operator()(int l, int r) const {
                 return l < r;
             }
         };

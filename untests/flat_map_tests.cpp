@@ -36,7 +36,7 @@ namespace
     };
 
     template < typename T >
-    void swap(dummy_less2<T>&, dummy_less2<T>&) noexcept {
+    [[maybe_unused]] void swap(dummy_less2<T>&, dummy_less2<T>&) noexcept {
     }
 
     template < typename T >
