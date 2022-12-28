@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of the "https://github.com/blackmatov/flat.hpp"
  * For conditions of distribution and use, see copyright notice in LICENSE.md
- * Copyright (C) 2019-2021, by Matvey Cherevko (blackmatov@gmail.com)
+ * Copyright (C) 2019-2022, by Matvey Cherevko (blackmatov@gmail.com)
  ******************************************************************************/
 
 #pragma once
@@ -36,9 +36,8 @@ namespace flat_hpp
         using reverse_iterator = typename Container::const_reverse_iterator;
         using const_reverse_iterator = typename Container::const_reverse_iterator;
     public:
-        flat_set()
-            noexcept(std::is_nothrow_default_constructible_v<base_type>
-                && std::is_nothrow_default_constructible_v<container_type>) {}
+        flat_set() = default;
+        ~flat_set() = default;
 
         explicit flat_set(const Compare& c)
         : base_type(c) {}
@@ -200,9 +199,11 @@ namespace flat_hpp
         : base_type(static_cast<const base_type&>(other))
         , data_(other.data_, a) {}
 
+        // NOLINTNEXTLINE(*-noexcept-move-constructor)
         flat_set(flat_set&& other) = default;
         flat_set(const flat_set& other) = default;
 
+        // NOLINTNEXTLINE(*-noexcept-move-constructor)
         flat_set& operator=(flat_set&& other) = default;
         flat_set& operator=(const flat_set& other) = default;
 

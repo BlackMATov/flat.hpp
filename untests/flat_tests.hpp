@@ -4,7 +4,12 @@
  * Copyright (C) 2019-2022, by Matvey Cherevko (blackmatov@gmail.com)
  ******************************************************************************/
 
-#include "flat_map.hpp"
-#include "flat_multimap.hpp"
-#include "flat_multiset.hpp"
-#include "flat_set.hpp"
+#include <doctest/doctest.h>
+
+#define STATIC_REQUIRE(...)\
+    static_assert(__VA_ARGS__, #__VA_ARGS__);\
+    REQUIRE(__VA_ARGS__)
+
+#define STATIC_REQUIRE_FALSE(...)\
+    static_assert(!(__VA_ARGS__), "!(" #__VA_ARGS__ ")");\
+    REQUIRE(!(__VA_ARGS__))
