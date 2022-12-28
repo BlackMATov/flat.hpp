@@ -1,0 +1,17 @@
+---
+Checks: '-*,
+
+        bugprone-*,
+
+        clang-analyzer-*,
+
+        concurrency-*,
+
+        modernize-*,
+        -modernize-use-auto,
+        -modernize-use-trailing-return-type,
+        -modernize-use-transparent-functors,
+
+        portability-*,
+        '
+...

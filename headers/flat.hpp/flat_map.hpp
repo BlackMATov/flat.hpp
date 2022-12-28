@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of the "https://github.com/blackmatov/flat.hpp"
  * For conditions of distribution and use, see copyright notice in LICENSE.md
- * Copyright (C) 2019-2021, by Matvey Cherevko (blackmatov@gmail.com)
+ * Copyright (C) 2019-2022, by Matvey Cherevko (blackmatov@gmail.com)
  ******************************************************************************/
 
 #pragma once
@@ -54,9 +54,8 @@ namespace flat_hpp
             : key_compare(std::move(compare)) {}
         };
     public:
-        flat_map()
-            noexcept(std::is_nothrow_default_constructible_v<base_type>
-                && std::is_nothrow_default_constructible_v<container_type>) {}
+        flat_map() = default;
+        ~flat_map() = default;
 
         explicit flat_map(const Compare& c)
         : base_type(c) {}
@@ -218,9 +217,11 @@ namespace flat_hpp
         : base_type(static_cast<const base_type&>(other))
         , data_(other.data_, a) {}
 
+        // NOLINTNEXTLINE(*-noexcept-move-constructor)
         flat_map(flat_map&& other) = default;
         flat_map(const flat_map& other) = default;
 
+        // NOLINTNEXTLINE(*-noexcept-move-constructor)
         flat_map& operator=(flat_map&& other) = default;
         flat_map& operator=(const flat_map& other) = default;
 

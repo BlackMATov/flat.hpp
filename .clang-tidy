@@ -1,0 +1,27 @@
+---
+Checks: '-*,
+
+        bugprone-*,
+
+        clang-analyzer-*,
+
+        concurrency-*,
+
+        cppcoreguidelines-*,
+        -cppcoreguidelines-macro-usage,
+        -cppcoreguidelines-pro-bounds-constant-array-index,
+
+        modernize-*,
+        -modernize-use-auto,
+        -modernize-use-trailing-return-type,
+
+        performance-*,
+
+        portability-*,
+
+        readability-*,
+        -readability-identifier-length,
+        -readability-named-parameter,
+        -readability-redundant-access-specifiers,
+        '
+...

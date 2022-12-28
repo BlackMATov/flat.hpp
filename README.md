@@ -5,21 +5,18 @@
 [![linux][badge.linux]][linux]
 [![darwin][badge.darwin]][darwin]
 [![windows][badge.windows]][windows]
-[![codecov][badge.codecov]][codecov]
 [![language][badge.language]][language]
 [![license][badge.license]][license]
 
-[badge.darwin]: https://img.shields.io/github/workflow/status/BlackMATov/flat.hpp/darwin/main?label=Xcode&logo=xcode
-[badge.linux]: https://img.shields.io/github/workflow/status/BlackMATov/flat.hpp/linux/main?label=GCC%2FClang&logo=linux
-[badge.windows]: https://img.shields.io/github/workflow/status/BlackMATov/flat.hpp/windows/main?label=Visual%20Studio&logo=visual-studio
-[badge.codecov]: https://img.shields.io/codecov/c/github/BlackMATov/flat.hpp/main?logo=codecov
+[badge.darwin]: https://img.shields.io/github/actions/workflow/status/BlackMATov/flat.hpp/.github/workflows/darwin.yml?label=Xcode&logo=xcode
+[badge.linux]: https://img.shields.io/github/actions/workflow/status/BlackMATov/flat.hpp/.github/workflows/linux.yml?label=GCC%2FClang&logo=linux
+[badge.windows]: https://img.shields.io/github/actions/workflow/status/BlackMATov/flat.hpp/.github/workflows/windows.yml?label=Visual%20Studio&logo=visual-studio
 [badge.language]: https://img.shields.io/badge/language-C%2B%2B17-yellow
 [badge.license]: https://img.shields.io/badge/license-MIT-blue
 
 [darwin]: https://github.com/BlackMATov/flat.hpp/actions?query=workflow%3Adarwin
 [linux]: https://github.com/BlackMATov/flat.hpp/actions?query=workflow%3Alinux
 [windows]: https://github.com/BlackMATov/flat.hpp/actions?query=workflow%3Awindows
-[codecov]: https://codecov.io/gh/BlackMATov/flat.hpp
 [language]: https://en.wikipedia.org/wiki/C%2B%2B17
 [license]: https://en.wikipedia.org/wiki/MIT_License
 
@@ -27,9 +24,10 @@
 
 ## Requirements
 
+- [clang](https://clang.llvm.org/) **>= 7**
 - [gcc](https://www.gnu.org/software/gcc/) **>= 7**
-- [clang](https://clang.llvm.org/) **>= 5.0**
-- [msvc](https://visualstudio.microsoft.com/) **>= 2017**
+- [msvc](https://visualstudio.microsoft.com/) **>= 2019**
+- [xcode](https://developer.apple.com/xcode/) **>= 10.3**
 
 ## Installation
 
@@ -37,20 +35,13 @@
 
 ```cpp
 #include "flat.hpp/flat_set.hpp"
-using namespace flat_hpp;
-
-int main() {
-    flat_set<int> s;
-    s.insert(42);
-    return 0;
-}
 ```
 
 Also, you can add the root repository directory to your [cmake](https://cmake.org) project:
 
 ```cmake
 add_subdirectory(external/flat.hpp)
-target_link_libraries(your_project_target flat.hpp)
+target_link_libraries(your_project_target PUBLIC flat.hpp)
 ```
 
 ## API

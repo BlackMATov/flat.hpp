@@ -1,11 +1,11 @@
 /*******************************************************************************
  * This file is part of the "https://github.com/blackmatov/flat.hpp"
  * For conditions of distribution and use, see copyright notice in LICENSE.md
- * Copyright (C) 2019-2021, by Matvey Cherevko (blackmatov@gmail.com)
+ * Copyright (C) 2019-2022, by Matvey Cherevko (blackmatov@gmail.com)
  ******************************************************************************/
 
 #include <flat.hpp/flat_multiset.hpp>
-#include "doctest/doctest.hpp"
+#include "flat_tests.hpp"
 
 #include <deque>
 #include <string>
@@ -19,7 +19,7 @@ namespace
     class dummy_less {
     public:
         dummy_less() = default;
-        dummy_less(int i) noexcept : i(i) {}
+        dummy_less(int ni) noexcept : i(ni) {}
         bool operator()(const T& l, const T& r) const {
             return l < r;
         }
@@ -324,13 +324,15 @@ TEST_CASE("flat_multiset") {
     }
     SUBCASE("inserts") {
         struct obj_t {
-            obj_t(int i) : i(i) {}
+            obj_t(int ni) : i(ni) {}
             int i;
 
+            [[maybe_unused]]
             bool operator<(const obj_t& o) const {
                 return i < o.i;
             }
 
+            [[maybe_unused]]
             bool operator==(const obj_t& o) const {
                 return i == o.i;
             }
@@ -510,7 +512,7 @@ TEST_CASE("flat_multiset") {
     SUBCASE("observers") {
         struct my_less {
             int i;
-            my_less(int i) : i(i) {}
+            my_less(int ni) : i(ni) {}
             [[maybe_unused]] bool operator()(int l, int r) const {
                 return l < r;
             }
