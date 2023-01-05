@@ -41,7 +41,7 @@ Also, you can add the root repository directory to your [cmake](https://cmake.or
 
 ```cmake
 add_subdirectory(external/flat.hpp)
-target_link_libraries(your_project_target PUBLIC flat.hpp)
+target_link_libraries(your_project_target PUBLIC flat.hpp::flat.hpp)
 ```
 
 ## API

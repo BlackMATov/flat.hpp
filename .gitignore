@@ -1,4 +1,4 @@
 build/*
+install/*
 .clangd/*
-.vscode/*
 CMakeLists.txt.user
