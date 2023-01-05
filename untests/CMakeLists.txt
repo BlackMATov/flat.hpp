@@ -4,7 +4,7 @@ file(GLOB_RECURSE UNTESTS_SOURCES "*.cpp" "*.hpp")
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${UNTESTS_SOURCES})
 
 add_executable(${PROJECT_NAME} ${UNTESTS_SOURCES})
-target_link_libraries(${PROJECT_NAME} PRIVATE flat.hpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE flat.hpp::flat.hpp)
 
 #
 # setup defines
@@ -23,14 +23,14 @@ setup_defines_for_target(${PROJECT_NAME})
 #
 
 function(setup_libraries_for_target TARGET)
-    target_link_libraries(${TARGET} PRIVATE doctest_with_main)
+    target_link_libraries(${TARGET} PRIVATE doctest::doctest_with_main)
 
     if(${BUILD_WITH_COVERAGE})
-        target_link_libraries(${TARGET} PRIVATE enable_gcov)
+        target_link_libraries(${TARGET} PRIVATE flat.hpp::enable_gcov)
     endif()
 
     if(${BUILD_WITH_SANITIZERS})
-        target_link_libraries(${TARGET} PRIVATE enable_asan enable_ubsan)
+        target_link_libraries(${TARGET} PRIVATE flat.hpp::enable_asan flat.hpp::enable_ubsan)
     endif()
 endfunction()
 
